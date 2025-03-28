@@ -12,12 +12,12 @@ import { Color } from '@tiptap/extension-color';
 import { DOMSerializer } from '@tiptap/pm/model';
 import { toast } from 'react-hot-toast';
 import {
-Bold, Italic, Underline as UnderlineIcon, Link as LinkIcon, List, ListOrdered,
-AlignLeft, AlignCenter, AlignRight, Code, Quote, Highlighter,
-Minus, PanelLeftClose, RotateCcw, RotateCw, Eye as EyeIcon,
-FileText, AlignJustify as AlignJustifyIcon, Maximize2, Minimize2,
-BookOpen, Palette, Eraser, Strikethrough, BrainCircuit, Image, Focus,
-Plus, Briefcase, MessageSquare, ChevronDown
+    Bold, Italic, Underline as UnderlineIcon, Link as LinkIcon, List, ListOrdered,
+    AlignLeft, AlignCenter, AlignRight, Code, Quote, Highlighter,
+    Minus, PanelLeftClose, RotateCcw, RotateCw, Eye as EyeIcon,
+    FileText, AlignJustify as AlignJustifyIcon, Maximize2, Minimize2,
+    BookOpen, Palette, Eraser, Strikethrough, BrainCircuit, Image,
+    Plus, Briefcase, MessageSquare, ChevronDown
 } from 'lucide-react';
 import {
     DocumentDuplicateIcon, PencilIcon, CheckIcon, ChevronDownIcon,
@@ -28,6 +28,7 @@ import {
     BeakerIcon, MegaphoneIcon, XMarkIcon
 } from '@heroicons/react/24/outline';   
 import { PDFSettingsDialog, exportToPDF, type PDFExportSettings } from './PDFExport';
+import { SmartComposeExtension, SmartComposePluginKey } from './SmartComposeExtension';
 
 interface ActionButtonProps {
     icon: React.ReactNode;
@@ -1895,15 +1896,10 @@ function example() {
     const [showShortcuts, setShowShortcuts] = useState(false);
     const [smartComposeEnabled, setSmartComposeEnabled] = useState(false);
     const [suggestion, setSuggestion] = useState('');
-    const previousTextRef = useRef('');
-    const [showSettingsModal, setShowSettingsModal] = useState(false);
     const [fontSize, setFontSize] = useState(16);
     const [lineHeight, setLineHeight] = useState(1.5);
     const [readingMode, setReadingMode] = useState(false);
-    const [focusMode, setFocusMode] = useState(false);
     
-    // Reference to track if we should update document on activeDocument change
-    const shouldUpdateDocumentRef = useRef(true);
     // Reference to track current document content
     const documentContentRef = useRef<{ id: number, content: string } | null>(null);
     // Reference for auto-save debounce
@@ -1944,6 +1940,10 @@ function example() {
             }),
             TextStyle,
             Color,
+            // Add SmartCompose extension
+            SmartComposeExtension.configure({
+                enabled: smartComposeEnabled,
+            }),
         ],
         content: activeDocumentContent,
         immediatelyRender: false,
@@ -2144,24 +2144,54 @@ function example() {
         }
     }, [editor, suggestion, smartComposeEnabled]);
 
-    // When smart compose is toggled, update the extension configuration
     useEffect(() => {
-        if (editor) {
-            // Recreate the editor with updated configuration instead of modifying existing extension
-            if (!smartComposeEnabled) {
-                setSuggestion('');
-            }
-
-            // Store the smartComposeEnabled state in editor storage for other components to access
-            if (!editor.storage.smartCompose) {
-                editor.storage.smartCompose = {};
-            }
-            editor.storage.smartCompose.enabled = smartComposeEnabled;
-
-            // Force a state update to refresh decorations
+        if (!editor) return;
+        
+        // Update the SmartComposeExtension enabled state when it changes
+        const extension = editor.extensionManager.extensions.find(ext => ext.name === 'smartCompose');
+        if (extension) {
+            extension.options.enabled = smartComposeEnabled;
             editor.view.updateState(editor.view.state);
+            console.log('enabled', extension.options.enabled)
+        }
+        
+        // If disabling, clear any pending suggestions
+        if (!smartComposeEnabled) {
+            setSuggestion('');
         }
     }, [smartComposeEnabled, editor]);
+
+    useEffect(() => {
+        if (!editor) return;
+        
+        const updateListener = ({ editor, transaction }: { editor: any; transaction: any }) => {
+            // Check if transaction has smart compose meta
+            const extension = editor.extensionManager.extensions.find((ext: any) => ext.name === 'smartCompose');
+            if (extension) {
+                console.log('updateListener', extension.storage.suggestion)
+                setSuggestion(extension.storage.suggestion);
+            }
+        };
+        
+        // Add listener
+        // Set up interval to check for suggestions every 1 second
+        const intervalId = setInterval(() => {
+            if (editor) {
+                const extension = editor.extensionManager.extensions.find((ext: any) => ext.name === 'smartCompose');
+                if (extension) {
+                    if (extension.storage.suggestion.trim() !== '') {
+                        setSuggestion(extension.storage.suggestion);
+                        extension.storage.suggestion = '';
+                    }
+                }
+            }
+        }, 1000);
+        
+        // Cleanup
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [editor])
 
     // Track editor focus state for proper tab key behavior
     useEffect(() => {
@@ -2519,7 +2549,6 @@ function example() {
             setDocumentName(doc.name);
         }
     }, [activeDocument, documents]);
-
     return (
         <div className={`w-full max-w-6xl mx-auto bg-white rounded-xl shadow-stripe-lg overflow-hidden flex flex-col border border-gray-200 ${readingMode ? 'reading-mode' : ''}`}>
             {readingMode && (
@@ -2600,10 +2629,40 @@ function example() {
             <EditorToolbar editor={editor} isLoading={isLoading} />
 
             <div className="flex-1 overflow-auto relative editor-content-container">
-                <EditorContent
-                    editor={editor}
-                    className={`h-full ${smartComposeEnabled ? 'smart-compose-active' : ''}`}
-                />
+                <div className='relative'>
+                    <EditorContent
+                        editor={editor}
+                        className={`h-full ${smartComposeEnabled ? 'smart-compose-active' : ''}`}
+                    />
+                    
+                    {smartComposeEnabled && suggestion && editor && (
+                        <div className="fixed smart-compose-suggestion" 
+                             style={{ 
+                                position: 'fixed',
+                                left: (() => {
+                                    try {
+                                        const coords = editor.view.coordsAtPos(editor.state.selection.$head.pos);
+                                        return coords.left;
+                                    } catch (e) {
+                                        return 0;
+                                    }
+                                })() as number,
+                                top: (() => {
+                                    try {
+                                        const coords = editor.view.coordsAtPos(editor.state.selection.$head.pos);
+                                        return coords.bottom;
+                                    } catch (e) {
+                                        return 0;
+                                    }
+                                })() as number,
+                                zIndex: 9999,
+                                pointerEvents: 'none',
+                                whiteSpace: 'pre',
+                             }}>
+                            {suggestion}
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div ref={aiFooterRef}>
@@ -2775,8 +2834,15 @@ function example() {
                 
                 /* Original styles below */
                 .smart-compose-suggestion {
-                    color: #9CA3AF;
-                    opacity: 0.75;
+                    color: #6b7280;
+                    opacity: 0.8;
+                    font-family: inherit;
+                    font-size: inherit;
+                    font-weight: 400;
+                    display: inline-block;
+                    background-color: rgba(124, 58, 237, 0.05);
+                    border-radius: 2px;
+                    padding: 0 2px;
                 }
                 
                 /* Custom CSS for smart compose mode */
