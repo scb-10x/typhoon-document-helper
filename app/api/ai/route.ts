@@ -9,7 +9,7 @@ type ActionType =
     | 'proofread' | 'professional' | 'casual' | 'clarity' | 'concise' 
     | 'extend' | 'summarize' | 'bulletize' | 'action-items' | 'outline' 
     | 'brainstorm' | 'brainstorm-empty' | 'academic' | 'technical' 
-    | 'marketing' | 'storytelling'
+    | 'marketing' | 'storytelling' | 'creative' | 'ideas'
     | 'format-shorten' | 'format-lengthen' | 'format-professional' | 'format-casual';
 
 // Centralized prompt templates for all AI actions
@@ -30,6 +30,8 @@ const PROMPT_TEMPLATES: Record<ActionType, string> = {
     'technical': 'Rewrite the following HTML text in a technical style, suitable for documentation or technical papers, with clear, precise language while maintaining all HTML formatting:',
     'marketing': 'Rewrite the following HTML text in a persuasive marketing style that engages readers and highlights benefits while preserving all HTML formatting:',
     'storytelling': 'Rewrite the following HTML text in a narrative, storytelling style that engages readers while maintaining all HTML formatting:',
+    'creative': 'Rewrite the following HTML text with creative flair and originality, adding unique perspectives and expressive language while maintaining all HTML formatting:',
+    'ideas': 'Brainstorm related concepts and thoughts based on the following HTML text. Generate innovative and relevant ideas, maintaining all HTML formatting:',
     // Format action templates
     'format-shorten': 'Make this HTML text more concise while preserving key points and maintaining all HTML formatting tags:',
     'format-lengthen': 'Expand on this HTML text while maintaining the same style, tone, and HTML formatting:',
@@ -52,7 +54,13 @@ const LANGUAGE_MAP: Record<string, string> = {
 };
 
 // Formatting instructions to append to every prompt
-const FORMATTING_INSTRUCTIONS = "\n\nIMPORTANT: Your response MUST preserve all HTML formatting exactly as it appears in the input. Do not add markdown, code blocks, or any other syntax. Return valid HTML with the same tag structure as the original content. Do NOT add any additional HTML elements or tags that were not in the original content. Maintain exactly the same HTML structure - only modify the text content inside the existing tags. Output only the response, do not include any other text or comments.\n\n";
+const FORMATTING_INSTRUCTIONS = "\n\nIMPORTANT: Your response MUST preserve all HTML formatting exactly as it appears in the input. Do not add markdown, code blocks, or any other syntax. Return valid HTML with the same tag structure as the original content. Do NOT add any additional HTML elements or tags that were not in the original content. Maintain exactly the same HTML structure - only modify the text content inside the existing tags. Always respond in the same language as the input text. Output only the response, do not include any other text or comments.\n\n";
+
+const TRANSLATION_FORMATTING_INSTRUCTIONS = "\n\nIMPORTANT: Your response MUST preserve all HTML formatting exactly as it appears in the input. Do not add markdown, code blocks, or any other syntax. Return valid HTML with the same tag structure as the original content. Do NOT add any additional HTML elements or tags that were not in the original content. Maintain exactly the same HTML structure - only modify the text content inside the existing tags. Output only the response, do not include any other text or comments.\n\n";
+
+const SYSTEM_PROMPT = "You are a specialized text processor that preserves HTML formatting, a very important part of a important and complex system. You work in the situation where the user is editing a document, and you are given a section of the document that the user has selected and request for a edit. When modifying text, you MUST keep all HTML tags intact and in the same structure as the input. DO NOT add markdown code blocks, backticks, or additional formatting. DO NOT add any HTML elements that were not in the original content. Return ONLY single HTML with the exact same tag structure as the input even it might not be a valid HTML, only modifying the text content within existing tags. ALWAYS respond in the same language as the input text.";
+
+const TRANSLATION_SYSTEM_PROMPT = "You are a specialized text translator that preserves HTML formatting, a very important part of a important and complex system. You work in the situation where the user is editing a document, and you are given a section of the document that the user has selected and request for translation. When translating text, you MUST keep all HTML tags intact and in the same structure as the input. DO NOT add markdown code blocks, backticks, or additional formatting. DO NOT add any HTML elements that were not in the original content. Return ONLY single HTML with the exact same tag structure as the input even it might not be a valid HTML, only translating the text content within existing tags to the requested target language.";
 
 interface AIRequestBody {
     content: string;
@@ -84,6 +92,8 @@ export async function POST(request: Request) {
         }: AIRequestBody = await request.json();
         content = '<html>' +content.trim() +'</html>'
         
+        // Check if this is a translation request
+        const isTranslation = action.startsWith('translate-');
 
         if (!TYPHOON_API_URL || !TYPHOON_API_KEY) {
             return NextResponse.json(
@@ -105,7 +115,7 @@ export async function POST(request: Request) {
 
         // Add formatting instructions to all prompts
         if (preserveFormatting) {
-            prompt += FORMATTING_INSTRUCTIONS;
+            prompt += isTranslation ? TRANSLATION_FORMATTING_INSTRUCTIONS : FORMATTING_INSTRUCTIONS;
         }
         
         // Handle special case for brainstorm with empty content
@@ -113,13 +123,13 @@ export async function POST(request: Request) {
             prompt = PROMPT_TEMPLATES['brainstorm-empty'];
         }
         // Handle translation actions
-        else if (action.startsWith('translate-')) {
+        else if (isTranslation) {
             const languageCode = action.split('-')[1];
             
             if (languageCode === 'other' && customLanguage) {
-                prompt = `Translate the following HTML text to ${customLanguage} while preserving all HTML tags and structure:\n\n${content}`;
+                prompt = `Translate the following HTML text to ${customLanguage} while preserving all HTML tags and structure. The output should be entirely in ${customLanguage}:\n\n${content}`;
             } else if (LANGUAGE_MAP[languageCode]) {
-                prompt = `Translate the following HTML text to ${LANGUAGE_MAP[languageCode]} while preserving all HTML tags and structure:\n\n${content}`;
+                prompt = `Translate the following HTML text to ${LANGUAGE_MAP[languageCode]} while preserving all HTML tags and structure. The output should be entirely in ${LANGUAGE_MAP[languageCode]}:\n\n${content}`;
             } else {
                 return NextResponse.json(
                     { error: 'Invalid language for translation' },
@@ -143,7 +153,7 @@ export async function POST(request: Request) {
         if (preserveFormatting) {
             messages.push({
                 role: "system",
-                content: "You are a specialized text processor that preserves HTML formatting, a very important part of a important and complex system. You work in the situation where the user is editing a document, and you are given a section of the document that the user has selected and request for a edit. When modifying text, you MUST keep all HTML tags intact and in the same structure as the input. DO NOT add markdown code blocks, backticks, or additional formatting. DO NOT add any HTML elements that were not in the original content. Return ONLY single HTML with the exact same tag structure as the input even it might not be a valid HTML, only modifying the text content within existing tags."
+                content: isTranslation ? TRANSLATION_SYSTEM_PROMPT : SYSTEM_PROMPT
             });
         }
 
