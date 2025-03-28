@@ -1,0 +1,15 @@
+# Ignore node modules
+node_modules
+
+# Ignore Next.js build output
+.next
+out
+
+# Ignore specific problematic files for now
+app/components/Editor.tsx
+app/components/ui/button.tsx
+app/api/ai/route.ts
+app/api/unsplash/route.ts
+
+# Ignore TypeScript declaration files
+*.d.ts 

@@ -1,8 +1,39 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+
+  /* Stripe-inspired Purple Theme */
+  --primary-purple: 103, 58, 183;
+  --primary-purple-light: 149, 117, 205;
+  --primary-purple-dark: 81, 45, 168;
+  --primary-purple-50: 243, 240, 255;
+  --primary-purple-100: 230, 223, 255;
+  --primary-purple-200: 202, 190, 245;
+  --primary-purple-600: 103, 58, 183;
+  --primary-purple-700: 81, 45, 168;
+  --primary-purple-800: 69, 39, 143;
+
+  --neutral-50: 250, 250, 250;
+  --neutral-100: 245, 245, 245;
+  --neutral-200: 229, 229, 229;
+  --neutral-300: 212, 212, 212;
+  --neutral-400: 163, 163, 163;
+  --neutral-500: 115, 115, 115;
+  --neutral-600: 82, 82, 82;
+  --neutral-700: 64, 64, 64;
+  --neutral-800: 38, 38, 38;
+  --neutral-900: 23, 23, 23;
+
+  --success: 0, 200, 83;
+  --warning: 255, 152, 0;
+  --error: 244, 67, 54;
+  --info: 33, 150, 243;
+  
+  --background: 255, 255, 255;
+  --foreground: 0, 0, 0;
 }
 
 @theme inline {
@@ -12,15 +43,89 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom component styles */
+@layer components {
+  .btn-primary {
+    @apply bg-purple-600 hover:bg-purple-700 text-white rounded-lg px-4 py-2 font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-50 text-purple-700 border border-gray-300 rounded-lg px-4 py-2 font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2;
+  }
+  
+  .btn-tertiary {
+    @apply text-purple-700 hover:bg-purple-50 rounded-lg px-3 py-1.5 font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2;
+  }
+  
+  .input-field {
+    @apply bg-white border border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:outline-none transition-colors duration-200;
+  }
+  
+  .card {
+    @apply bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden;
+  }
+  
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .badge-purple {
+    @apply bg-purple-100 text-purple-800;
+  }
+  
+  .badge-gray {
+    @apply bg-gray-100 text-gray-800;
+  }
+}
+
+/* Tiptap editor styling */
+.ProseMirror {
+  @apply p-4 min-h-[400px] outline-none;
+}
+
+.ProseMirror p {
+  @apply my-2;
+}
+
+.ProseMirror h1 {
+  @apply text-2xl font-bold my-4 text-gray-900;
+}
+
+.ProseMirror h2 {
+  @apply text-xl font-bold my-3 text-gray-900;
+}
+
+.ProseMirror h3 {
+  @apply text-lg font-bold my-2 text-gray-900;
+}
+
+.ProseMirror ul {
+  @apply list-disc pl-5 my-3;
+}
+
+.ProseMirror ol {
+  @apply list-decimal pl-5 my-3;
+}
+
+.ProseMirror blockquote {
+  @apply border-l-4 border-purple-400 pl-4 italic my-4 text-gray-700;
+}
+
+.ProseMirror hr {
+  @apply border-t border-gray-300 my-4;
+}
+
+.ProseMirror a {
+  @apply text-purple-600 hover:text-purple-800 underline;
+}
+
+.ProseMirror .is-empty::before {
+  @apply text-gray-400 float-left h-0 pointer-events-none;
+  content: attr(data-placeholder);
 }

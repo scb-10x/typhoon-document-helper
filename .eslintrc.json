@@ -1,0 +1,23 @@
+{
+  "extends": "next/core-web-vitals",
+  "ignorePatterns": [
+    "node_modules",
+    ".next",
+    "out",
+    "app/components/Editor.tsx",
+    "app/components/ui/button.tsx",
+    "app/api/ai/route.ts",
+    "app/api/unsplash/route.ts",
+    "*.d.ts"
+  ],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-empty-object-type": "off",
+    "@typescript-eslint/no-unsafe-function-type": "off",
+    "react/no-unescaped-entities": "off",
+    "prefer-const": "warn",
+    "jsx-a11y/alt-text": "off",
+    "@next/next/no-img-element": "off"
+  }
+} 

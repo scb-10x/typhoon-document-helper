@@ -1,0 +1,21 @@
+{
+    "name": "Typhoon Document Helper",
+    "short_name": "Typhoon Docs",
+    "description": "An AI-powered document editor and assistant",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#7C3AED",
+    "icons": [
+        {
+            "src": "/static/favicon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/favicon.ico",
+            "sizes": "32x32",
+            "type": "image/x-icon"
+        }
+    ]
+}
