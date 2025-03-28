@@ -501,6 +501,12 @@ const AIFooter = ({ editor, onAIAction, isLoading, smartComposeEnabled, isExpand
         ],
         translate: [
             {
+                label: "Thai",
+                value: "translate-th",
+                icon: <LanguageIcon className="w-4 h-4" />,
+                description: "Translate selected text to Thai"
+            },
+            {
                 label: "Spanish",
                 value: "translate-es",
                 icon: <LanguageIcon className="w-4 h-4" />,
@@ -1468,6 +1474,70 @@ const HeadingSelector = ({ editor }: { editor: any }) => {
     );
 };
 
+// Document Switcher component
+const DocumentSwitcher = ({ 
+    documents, 
+    activeDocument, 
+    setActiveDocument 
+}: { 
+    documents: Document[], 
+    activeDocument: number, 
+    setActiveDocument: (id: number) => void 
+}) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    const handleDocumentChange = (id: number) => {
+        setActiveDocument(id);
+        setIsOpen(false);
+    };
+
+    const activeDocName = documents.find(doc => doc.id === activeDocument)?.name || 'Select Document';
+
+    return (
+        <div className="relative" ref={dropdownRef}>
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center gap-1 p-1.5 text-gray-500 hover:text-purple-600 rounded-full hover:bg-purple-50 transition-colors"
+                title="Switch document"
+            >
+                <DocumentTextIcon className="w-5 h-5" />
+                <ChevronDownIcon className="w-3 h-3" />
+            </button>
+            
+            {isOpen && (
+                <div className="absolute right-0 mt-1 w-56 bg-white rounded-md shadow-lg border border-gray-200 z-50 py-1">
+                    <div className="px-3 py-2 text-xs font-medium text-gray-500 border-b border-gray-100">
+                        Documents
+                    </div>
+                    {documents.map(doc => (
+                        <button
+                            key={doc.id}
+                            onClick={() => handleDocumentChange(doc.id)}
+                            className={`w-full text-left px-3 py-2 text-sm ${doc.id === activeDocument ? 'bg-purple-50 text-purple-600 font-medium' : 'text-gray-700 hover:bg-gray-50'}`}
+                        >
+                            {doc.name}
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+
 // Selection Context Menu component for AI actions on selected text
 const SelectionContextMenu = ({ editor, onAIAction, position, onClose }: {
     editor: any;
@@ -2407,6 +2477,42 @@ function example() {
         }
     }, [editor]);
 
+    // Function to switch between documents
+    const switchDocument = (id: number) => {
+        // Save current document content before switching
+        if (editor) {
+            const updatedDocuments = documents.map(doc =>
+                doc.id === activeDocument
+                    ? { ...doc, content: editor.getHTML() }
+                    : doc
+            );
+            setDocuments(updatedDocuments);
+        }
+        // Update active document
+        setActiveDocument(id);
+        // Update document name
+        const newDoc = documents.find(doc => doc.id === id);
+        if (newDoc) {
+            setDocumentName(newDoc.name);
+        }
+    };
+
+    // Update editor content when activeDocument changes
+    useEffect(() => {
+        if (editor && activeDocument) {
+            const docContent = documents.find(doc => doc.id === activeDocument)?.content || '';
+            editor.commands.setContent(docContent);
+        }
+    }, [activeDocument, editor]);
+
+    // Update documentName when activeDocument changes
+    useEffect(() => {
+        const doc = documents.find(doc => doc.id === activeDocument);
+        if (doc) {
+            setDocumentName(doc.name);
+        }
+    }, [activeDocument, documents]);
+
     return (
         <div className={`w-full max-w-6xl mx-auto bg-white rounded-xl shadow-stripe-lg overflow-hidden flex flex-col border border-gray-200 ${readingMode ? 'reading-mode' : ''}`}>
             {readingMode && (
@@ -2462,6 +2568,11 @@ function example() {
                     >
                         <DocumentDuplicateIcon className="w-5 h-5" />
                     </button>
+                    <DocumentSwitcher 
+                        documents={documents}
+                        activeDocument={activeDocument}
+                        setActiveDocument={switchDocument}
+                    />
                     <ExportMenu
                         documentName={documentName}
                         documentContent={editor?.getHTML() || ''}
