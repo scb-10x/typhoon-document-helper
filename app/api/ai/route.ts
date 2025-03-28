@@ -61,6 +61,18 @@ interface AIRequestBody {
     preserveFormatting?: boolean;
 }
 
+
+const cleanedCodeBlock = (text: string) => {
+    // This will match any opening code fence with optional language specification
+  // For example: ```javascript, ```python, ```mdx, etc.
+  text = text.replace(/^```(?:[a-zA-Z0-9]+)?/gm, '');
+  
+  // Remove closing code fences
+  text = text.replace(/```$/gm, '');
+  // Trim extra whitespace
+  return text.trim();
+}
+
 export async function POST(request: Request) {
     try {
         let { 
@@ -158,7 +170,7 @@ export async function POST(request: Request) {
             }
         );
 
-        const aiResponse = response.data.choices[0].message.content.replace(/^<html>|<\/html>$/g, '');
+        const aiResponse = cleanedCodeBlock(response.data.choices[0].message.content).replace(/^<html>|<\/html>$/g, '');
 
         return NextResponse.json({
             response: aiResponse
