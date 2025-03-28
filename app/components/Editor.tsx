@@ -744,14 +744,6 @@ interface Document {
     content: string;
 }
 
-interface AIHistoryItem {
-    id: number;
-    action: string;
-    input: string;
-    output: string;
-    timestamp: number;
-}
-
 // Function to convert HTML to Markdown
 const htmlToMarkdown = (html: string): string => {
     // Create a temporary element to parse HTML
@@ -1769,8 +1761,6 @@ function example() {
     const [showShortcuts, setShowShortcuts] = useState(false);
     const [smartComposeEnabled, setSmartComposeEnabled] = useState(false);
     const [suggestion, setSuggestion] = useState('');
-    const [aiHistory, setAIHistory] = useState<AIHistoryItem[]>([]);
-    const [isAIhistoryVisible, setIsAIHistoryVisible] = useState(false);
     
     // Font size and line height for readability
     const [fontSize, setFontSize] = useState(16);
@@ -2108,7 +2098,6 @@ function example() {
                 output: aiResponse,
                 timestamp: Date.now()
             };
-            setAIHistory(prev => [historyItem, ...prev]);
 
             // Apply the changes
             if (shouldReplaceSelection && isTextSelected) {
