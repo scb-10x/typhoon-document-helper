@@ -27,6 +27,7 @@ import {
     BeakerIcon, MegaphoneIcon, XMarkIcon
 } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
+import { DOMSerializer } from '@tiptap/pm/model';
 
 interface ActionButtonProps {
     icon: React.ReactNode;
@@ -1764,7 +1765,49 @@ const HighlightPicker = ({ editor }: { editor: any }) => {
 export default function Editor() {
     const [isLoading, setIsLoading] = useState(false);
     const [documents, setDocuments] = useState<Document[]>([
-        { id: 1, name: 'Getting Started', content: '<h1>Welcome to the Document Editor</h1><p>This is a sample document showing different formatting options available in the editor.</p><p>Try out various formatting options from the toolbar above!</p>' },
+        { id: 1, name: 'Getting Started', content: `<h1>Sample Document</h1>
+            <p>This is a sample document showing different formatting options available in the editor.</p>
+            
+            <h2>Text Formatting</h2>
+            <p>You can make text <strong>bold</strong>, <em>italic</em>, or <u>underlined</u>. You can also use <code>inline code</code> for technical terms.</p>
+            
+            <h2>Lists</h2>
+            <p>Here's an unordered list:</p>
+            <ul>
+                <li>Item two</li>
+                <li>Item three with <strong>formatting</strong></li>
+            </ul>
+            
+            <p>And here's an ordered list:</p>
+            <ol>
+                <li>First item</li>
+                <li>Second item</li>
+                <li>Third item</li>
+            </ol>
+            
+            <h2>Links and Quotes</h2>
+            <p>You can add <a href="https://example.com">links to websites</a> easily.</p>
+            
+            <blockquote>
+                <p>This is a blockquote that can be used for quotes or important notes.</p>
+            </blockquote>
+            
+            <h2>Code Blocks</h2>
+            <pre><code>// This is a code block
+function example() {
+  console.log("Hello, world!");
+}
+            </code></pre>
+            
+            <h2>Export Features</h2>
+            <p>Try exporting this document to different formats using the export button in the toolbar:</p>
+            <ul>
+                <li>PDF - for sharing documents that shouldn't be edited</li>
+                <li>Word - for further editing in Microsoft Word</li>
+                <li>Markdown - for technical documentation and GitHub</li>
+                <li>HTML - for web publishing and blogs</li>
+                <li>Text - for simple, formatting-free text</li>
+            </ul>` },
         { id: 2, name: 'Meeting Notes', content: '<h2>Project Kickoff Meeting</h2><p>Date: January 15, 2023</p><p>Attendees:</p><ul><li>John Smith (Project Manager)</li><li>Jane Doe (Designer)</li><li>Bob Johnson (Developer)</li></ul><p>Key discussion points:</p><ol><li>Project timeline review</li><li>Resource allocation</li><li>Initial design concepts</li></ol>' },
         { id: 3, name: 'Ideas', content: '<h2>Product Feature Ideas</h2><p>Here are some ideas for our upcoming product release:</p><ul><li>Integration with third-party services</li><li>Improved user onboarding flow</li><li>Advanced analytics dashboard</li></ul><blockquote>Remember to prioritize features based on user feedback and strategic goals.</blockquote>' }
     ]);
@@ -2081,16 +2124,19 @@ export default function Editor() {
         // Get selected text or all content if nothing is selected
         const { from, to } = editor.state.selection;
         const isTextSelected = from !== to;
-
-        // Save the current cursor position
-        const currentSelection = { from, to };
-
         // Get plain text selection
         const selectedText = isTextSelected ? editor.state.doc.textBetween(from, to, ' ') : '';
         // Get HTML content properly
         let htmlContent = '';
         if (isTextSelected) {
-            htmlContent = selectedText;
+            const slice = editor.state.doc.slice(from, to);
+            const fragment = DOMSerializer
+              .fromSchema(editor.state.schema)
+              .serializeFragment(slice.content);
+          
+            const container = document.createElement('div');
+            container.appendChild(fragment);
+            htmlContent = container.innerHTML;
         } else {
             htmlContent = editor.getHTML();
         }
