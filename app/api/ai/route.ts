@@ -68,7 +68,7 @@ export async function POST(request: Request) {
                 messages: messages,
                 model: "typhoon-v2-70b-instruct",
                 temperature: 0.7,
-                max_tokens: 1000,
+                max_tokens: 2048,
             },
             {
                 headers: {

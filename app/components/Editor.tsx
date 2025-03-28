@@ -17,7 +17,8 @@ import {
     AlignLeft, AlignCenter, AlignRight, Code, Quote, Highlighter,
     Minus, PanelLeftClose, RotateCcw, RotateCw, Eye as EyeIcon,
     FileText, AlignJustify as AlignJustifyIcon, Maximize2, Minimize2,
-    BookOpen, Palette, Eraser, Strikethrough, BrainCircuit
+    BookOpen, Palette, Eraser, Strikethrough, BrainCircuit, Image, Focus,
+    Plus, Briefcase, MessageSquare, ChevronDown
 } from 'lucide-react';
 import {
     DocumentDuplicateIcon, PencilIcon, CheckIcon, ChevronDownIcon,
@@ -59,10 +60,16 @@ const FormatButton = ({ icon, title, isActive = false, onClick, disabled = false
     <button
         onClick={onClick}
         disabled={disabled}
-        className={`p-1.5 rounded hover:bg-gray-100 ${isActive ? 'text-purple-600 bg-purple-50' : 'text-gray-700'} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        className={`w-8 h-8 flex items-center justify-center rounded transition-all duration-200 relative ${isActive
+            ? 'bg-purple-100 text-purple-600 shadow-sm'
+            : 'text-gray-500 hover:text-purple-600 hover:bg-purple-50'
+            } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         title={title}
     >
         {icon}
+        {isActive && (
+            <span className="absolute bottom-0.5 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-purple-600 rounded-full"></span>
+        )}
     </button>
 );
 
@@ -70,6 +77,7 @@ interface MenuBarProps {
     editor: any;
     onAIAction: (action: string) => void;
     isLoading: boolean;
+    smartComposeEnabled?: boolean;
 }
 
 const EditorToolbar = ({ editor }: { editor: any }) => {
@@ -212,6 +220,17 @@ const EditorToolbar = ({ editor }: { editor: any }) => {
                     title="Horizontal Rule"
                     onClick={() => editor.chain().focus().setHorizontalRule().run()}
                 />
+                <FormatButton
+                    icon={<Image className="w-4 h-4" />}
+                    title="Insert Image"
+                    onClick={() => {
+                        const url = window.prompt('Enter image URL:');
+                        if (url) {
+                            const alt = window.prompt('Enter alt text (for accessibility):', '');
+                            handleInsertImage(url, alt || '');
+                        }
+                    }}
+                />
             </div>
 
             {/* History */}
@@ -353,7 +372,7 @@ const AIMenu = ({ title, icon, options, onAction, disabled = false }: AIMenuProp
             >
                 {icon}
                 <span>{title}</span>
-                <ChevronDownIcon className={`w-3.5 h-3.5 transform transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-3.5 h-3.5 transform transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {isOpen && (
@@ -385,12 +404,10 @@ const AIMenu = ({ title, icon, options, onAction, disabled = false }: AIMenuProp
 };
 
 // Consolidated AI Footer for all AI features
-const AIFooter = ({ editor, onAIAction, isLoading }: MenuBarProps) => {
+const AIFooter = ({ editor, onAIAction, isLoading, smartComposeEnabled = false }: MenuBarProps) => {
     const [activeTab, setActiveTab] = useState('improve');
     const [isExpanded, setIsExpanded] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
-    // Get smartComposeEnabled from the parent component via a new prop
-    const smartComposeEnabled = editor?.storage?.smartCompose?.enabled || false;
 
     if (!editor) {
         return null;
@@ -585,26 +602,26 @@ const AIFooter = ({ editor, onAIAction, isLoading }: MenuBarProps) => {
         : options;
 
     return (
-        <div className="ai-feature-bar fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
-            <div className="max-w-6xl mx-auto">
-                <div className={`flex items-center p-2 ${isExpanded ? 'border-b border-gray-100' : ''}`}>
-                    <button
-                        onClick={() => setIsExpanded(!isExpanded)}
-                        className="flex items-center gap-2 px-2 py-1 rounded hover:bg-gray-100"
-                    >
-                        <BrainCircuit className="w-4 h-4 text-purple-600" />
-                        AI Assistant
-                        <ChevronUpIcon className={`w-4 h-4 transition-transform ${isExpanded ? '' : 'rotate-180'}`} />
-                    </button>
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+            <div className="bg-white rounded-full shadow-lg border border-gray-200 p-2 flex items-center gap-2">
+                <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-purple-50 transition-colors"
+                >
+                    <BrainCircuit className="w-4 h-4 text-purple-600" />
+                    AI Assistant
+                    <ChevronUpIcon className={`w-4 h-4 transition-transform ${isExpanded ? '' : 'rotate-180'}`} />
+                </button>
 
-                    {isExpanded && (
-                        <div className="ml-4 relative flex-1">
+                {isExpanded && (
+                    <>
+                        <div className="relative">
                             <input
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search AI features..."
-                                className="w-full px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-purple-500"
+                                className="w-64 px-3 py-1 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-purple-500"
                             />
                             {searchQuery && (
                                 <button
@@ -615,12 +632,10 @@ const AIFooter = ({ editor, onAIAction, isLoading }: MenuBarProps) => {
                                 </button>
                             )}
                         </div>
-                    )}
 
-                    {isExpanded && (
                         <button
-                            className={`ml-4 px-3 py-1.5 rounded-md text-sm transition-all duration-200 ${smartComposeEnabled
-                                ? 'bg-purple-600 text-white shadow-md border border-purple-400 font-medium ring-2 ring-purple-200'
+                            className={`px-3 py-1.5 rounded-full text-sm transition-all duration-200 ${smartComposeEnabled
+                                ? 'bg-green-600 text-white shadow-md border border-green-400 font-medium ring-2 ring-green-200'
                                 : 'hover:bg-gray-100 border border-transparent'
                                 }`}
                             onClick={() => onAIAction('smart-compose')}
@@ -638,64 +653,64 @@ const AIFooter = ({ editor, onAIAction, isLoading }: MenuBarProps) => {
                                 )}
                             </div>
                         </button>
-                    )}
-                </div>
-
-                {isExpanded && (
-                    <div className="p-2">
-                        {/* Tab buttons */}
-                        <div className="flex overflow-x-auto mb-2 pb-1 scrollbar-hide">
-                            {tabOptions.map(tab => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center gap-1 px-3 py-1.5 mx-1 rounded-md text-sm whitespace-nowrap transition-colors ${activeTab === tab.id
-                                        ? 'bg-purple-100 text-purple-800'
-                                        : 'hover:bg-gray-100 text-gray-700'
-                                        }`}
-                                >
-                                    {tab.icon}
-                                    {tab.label}
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Selected tab content */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
-                            {filteredOptions.length === 0 && searchQuery && (
-                                <div className="col-span-full p-4 text-center text-gray-500">
-                                    <p>No AI features match &quot;{searchQuery}&quot;</p>
-                                </div>
-                            )}
-
-                            {filteredOptions.map((option, index) => (
-                                <button
-                                    key={`${option.value}-${index}`}
-                                    disabled={isLoading}
-                                    className={`text-left px-3 py-2 rounded-md transition hover:bg-gray-50 border border-transparent hover:border-gray-200 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''
-                                        }`}
-                                    onClick={() => onAIAction(option.value)}
-                                >
-                                    <div className="flex items-center gap-2">
-                                        {option.icon}
-                                        <div>
-                                            <div className="font-medium text-sm">{option.label}</div>
-                                            {option.description && (
-                                                <div className="text-xs text-gray-500 mt-0.5">{option.description}</div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Footer tip */}
-                        <div className="text-xs text-center text-gray-500 mt-2 pb-1">
-                            <span>Tip: Select text first for more precise AI actions</span>
-                        </div>
-                    </div>
+                    </>
                 )}
             </div>
+
+            {isExpanded && (
+                <div className="absolute bottom-full mb-2 bg-white rounded-lg shadow-lg border border-gray-200 p-4 w-[800px] left-1/2 transform -translate-x-1/2">
+                    {/* Tab buttons */}
+                    <div className="flex overflow-x-auto mb-4 pb-1 scrollbar-hide">
+                        {tabOptions.map(tab => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`flex items-center gap-1 px-3 py-1.5 mx-1 rounded-full text-sm whitespace-nowrap transition-colors ${activeTab === tab.id
+                                    ? 'bg-purple-100 text-purple-800'
+                                    : 'hover:bg-gray-100 text-gray-700'
+                                    }`}
+                            >
+                                {tab.icon}
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Selected tab content */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                        {filteredOptions.length === 0 && searchQuery && (
+                            <div className="col-span-full p-4 text-center text-gray-500">
+                                <p>No AI features match &quot;{searchQuery}&quot;</p>
+                            </div>
+                        )}
+
+                        {filteredOptions.map((option, index) => (
+                            <button
+                                key={`${option.value}-${index}`}
+                                disabled={isLoading}
+                                className={`text-left px-3 py-2 rounded-md transition hover:bg-gray-50 border border-transparent hover:border-gray-200 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                                    }`}
+                                onClick={() => onAIAction(option.value)}
+                            >
+                                <div className="flex items-center gap-2">
+                                    {option.icon}
+                                    <div>
+                                        <div className="font-medium text-sm">{option.label}</div>
+                                        {option.description && (
+                                            <div className="text-xs text-gray-500 mt-0.5">{option.description}</div>
+                                        )}
+                                    </div>
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Footer tip */}
+                    <div className="text-xs text-center text-gray-500 mt-4">
+                        <span>Tip: Select text first for more precise AI actions</span>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
@@ -706,36 +721,74 @@ interface FloatingActionBarProps {
 }
 
 const FloatingActionBar = ({ onFormat, isLoading }: FloatingActionBarProps) => {
+    const [showFormatOptions, setShowFormatOptions] = useState(false);
+    const formatRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (formatRef.current && !formatRef.current.contains(event.target as Node)) {
+                setShowFormatOptions(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    const formatOptions = [
+        { label: 'Make it shorter', value: 'shorten', icon: <Minus className="w-4 h-4" /> },
+        { label: 'Make it longer', value: 'lengthen', icon: <Plus className="w-4 h-4" /> },
+        { label: 'More professional', value: 'professional', icon: <Briefcase className="w-4 h-4" /> },
+        { label: 'More casual', value: 'casual', icon: <MessageSquare className="w-4 h-4" /> },
+    ];
+
     return (
-        <div className="fixed bottom-6 right-6 bg-white rounded-full shadow-stripe-lg p-1.5 flex gap-1.5 border border-gray-200">
-            <button
-                onClick={() => onFormat('shorten')}
-                disabled={isLoading}
-                className="p-2 text-xs bg-gray-50 hover:bg-purple-50 rounded-full text-gray-700 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                Make shorter
-            </button>
-            <button
-                onClick={() => onFormat('lengthen')}
-                disabled={isLoading}
-                className="p-2 text-xs bg-gray-50 hover:bg-purple-50 rounded-full text-gray-700 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                Make longer
-            </button>
-            <button
-                onClick={() => onFormat('professional')}
-                disabled={isLoading}
-                className="p-2 text-xs bg-gray-50 hover:bg-purple-50 rounded-full text-gray-700 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                Professional tone
-            </button>
-            <button
-                onClick={() => onFormat('casual')}
-                disabled={isLoading}
-                className="p-2 text-xs bg-gray-50 hover:bg-purple-50 rounded-full text-gray-700 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                Casual tone
-            </button>
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50" ref={formatRef}>
+            <div className="flex items-center justify-center">
+                <div className={`bg-white rounded-full shadow-lg border border-gray-200 p-1.5 flex items-center gap-2 transition-all duration-300 ${showFormatOptions ? 'px-3' : ''}`}>
+                    <button
+                        onClick={() => setShowFormatOptions(!showFormatOptions)}
+                        disabled={isLoading}
+                        className={`p-2 rounded-full transition-all duration-200 relative flex items-center justify-center ${isLoading
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            : showFormatOptions
+                                ? 'bg-purple-100 text-purple-700 shadow-sm'
+                                : 'bg-purple-50 text-purple-600 hover:bg-purple-100 hover:text-purple-700'
+                            }`}
+                        title="AI formatting options"
+                    >
+                        {isLoading ? (
+                            <ArrowPathIcon className="w-5 h-5 animate-spin" />
+                        ) : (
+                            <BrainCircuit className="w-5 h-5" />
+                        )}
+                    </button>
+
+                    {showFormatOptions && (
+                        <div className="flex items-center gap-2 animate-slideUp">
+                            {formatOptions.map((option) => (
+                                <button
+                                    key={option.value}
+                                    onClick={() => {
+                                        onFormat(option.value);
+                                        setShowFormatOptions(false);
+                                    }}
+                                    disabled={isLoading}
+                                    className="flex items-center gap-1.5 bg-white text-gray-700 px-3 py-1.5 text-sm font-medium rounded-full hover:bg-purple-50 hover:text-purple-700 border border-gray-100 shadow-sm transition-all duration-150 group disabled:opacity-50 disabled:cursor-not-allowed"
+                                    title={option.label}
+                                >
+                                    <span className="text-gray-500 group-hover:text-purple-600 transition-colors">
+                                        {option.icon}
+                                    </span>
+                                    {option.label}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };
@@ -767,96 +820,78 @@ const htmlToMarkdown = (html: string): string => {
 
         const element = node as HTMLElement;
         const tagName = element.tagName.toLowerCase();
-        const result = '';
 
-        // Check for spans with style attributes (colors or highlights)
-        if (tagName === 'span' && element.hasAttribute('style')) {
-            const style = element.getAttribute('style') || '';
-            if (style.includes('color:') || style.includes('background-color:')) {
-                hasColorsOrHighlights = true;
-            }
-        }
-
-        // Process the element based on its tag
+        // Handle special tags
         switch (tagName) {
-            case 'h1':
-                return `# ${processChildNodes(element)}\n\n`;
-            case 'h2':
-                return `## ${processChildNodes(element)}\n\n`;
-            case 'h3':
-                return `### ${processChildNodes(element)}\n\n`;
-            case 'p':
-                return `${processChildNodes(element)}\n\n`;
+            case 'h1': return `# ${processChildNodes(element)}\n\n`;
+            case 'h2': return `## ${processChildNodes(element)}\n\n`;
+            case 'h3': return `### ${processChildNodes(element)}\n\n`;
+            case 'h4': return `#### ${processChildNodes(element)}\n\n`;
+            case 'h5': return `##### ${processChildNodes(element)}\n\n`;
+            case 'h6': return `###### ${processChildNodes(element)}\n\n`;
+            case 'p': return `${processChildNodes(element)}\n\n`;
             case 'strong':
-            case 'b':
-                return `**${processChildNodes(element)}**`;
+            case 'b': return `**${processChildNodes(element)}**`;
             case 'em':
-            case 'i':
-                return `*${processChildNodes(element)}*`;
-            case 'u':
-                return `_${processChildNodes(element)}_`;
-            case 'code':
-                if (element.parentElement?.tagName.toLowerCase() === 'pre') {
-                    // For code blocks inside pre tags, handled by the pre case
-                    return processChildNodes(element);
+            case 'i': return `*${processChildNodes(element)}*`;
+            case 'u': return `<u>${processChildNodes(element)}</u>`;
+            case 's':
+            case 'strike':
+            case 'del': return `~~${processChildNodes(element)}~~`;
+            case 'code': return element.parentElement?.tagName.toLowerCase() === 'pre'
+                ? processChildNodes(element)
+                : `\`${processChildNodes(element)}\``;
+            case 'pre': return `\`\`\`\n${processChildNodes(element)}\n\`\`\`\n\n`;
+            case 'a': return `[${processChildNodes(element)}](${element.getAttribute('href') || '#'})`;
+            case 'img': {
+                const src = element.getAttribute('src') || '';
+                const alt = element.getAttribute('alt') || '';
+                return `![${alt}](${src})`;
+            }
+            case 'figure': {
+                // For figures with images and captions
+                const img = element.querySelector('img');
+                const figcaption = element.querySelector('figcaption');
+
+                if (img) {
+                    const src = img.getAttribute('src') || '';
+                    const alt = img.getAttribute('alt') || '';
+                    const caption = figcaption ? figcaption.textContent : '';
+
+                    return caption
+                        ? `![${alt}](${src})\n*${caption}*\n\n`
+                        : `![${alt}](${src})\n\n`;
                 }
-                return `\`${processChildNodes(element)}\``;
-            case 'pre':
-                return `\`\`\`\n${processChildNodes(element)}\n\`\`\`\n\n`;
-            case 'a':
-                return `[${processChildNodes(element)}](${element.getAttribute('href') || ''})`;
-            case 'img':
-                return `![${element.getAttribute('alt') || ''}](${element.getAttribute('src') || ''})`;
-            case 'blockquote':
-                // Process blockquote content, ensuring each line starts with >
-                const bqContent = processChildNodes(element).split('\n').map(line =>
-                    line ? `> ${line}` : '>'
-                ).join('\n');
-                return `${bqContent}\n\n`;
-            case 'ul':
-                // Process unordered list items
-                return `${processListItems(element, '*')}\n`;
-            case 'ol':
-                // Process ordered list items with numbers
-                return `${processListItems(element, '#')}\n`;
-            case 'li':
-                // Individual list items will be handled by the ul/ol processor
                 return processChildNodes(element);
-            case 'hr':
-                return `---\n\n`;
-            case 'br':
-                return `\n`;
-            case 'span':
-                // For spans, just process their content (colors won't be preserved in markdown)
-                return processChildNodes(element);
-            case 'div':
-                // For divs, just process their children
-                return `${processChildNodes(element)}`;
-            default:
-                // For other elements, just process their children
-                return processChildNodes(element);
+            }
+            case 'blockquote': return `> ${processChildNodes(element).replace(/\n/g, '\n> ')}\n\n`;
+            case 'br': return '\n';
+            case 'hr': return '---\n\n';
+            case 'ul': return `${processListItems(element, '- ')}\n`;
+            case 'ol': return `${processListItems(element, (i: number) => `${i + 1}. `)}\n`;
+            case 'li': return processChildNodes(element);
+            default: return processChildNodes(element);
         }
     };
 
     // Process list items with proper indentation and markers
-    const processListItems = (listElement: HTMLElement, marker: string): string => {
+    const processListItems = (listElement: HTMLElement, marker: string | ((index: number) => string)): string => {
         let result = '';
-        let counter = 1;
-
-        Array.from(listElement.children).forEach(item => {
-            if (item.tagName.toLowerCase() === 'li') {
-                const content = processChildNodes(item as HTMLElement).trim();
-                if (marker === '#') {
-                    // Ordered list with numbers
-                    result += `${counter}. ${content}\n`;
-                    counter++;
-                } else {
-                    // Unordered list with bullets
-                    result += `${marker} ${content}\n`;
+        const items = listElement.querySelectorAll('li');
+        items.forEach((item, index) => {
+            let depth = 0;
+            let parent = item.parentElement;
+            while (parent && parent !== listElement) {
+                if (parent.tagName.toLowerCase() === 'ul' || parent.tagName.toLowerCase() === 'ol') {
+                    depth++;
                 }
+                parent = parent.parentElement;
             }
-        });
 
+            const indent = '  '.repeat(depth);
+            const markerText = typeof marker === 'function' ? marker(index) : marker;
+            result += `${indent}${markerText} ${processChildNodes(item)}\n`;
+        });
         return result;
     };
 
@@ -992,6 +1027,23 @@ const ExportMenu = ({ documentName, documentContent, isLoading }: ExportMenuProp
             font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
             font-size: 0.9em;
         }
+        /* Image styling */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 1em auto;
+            border-radius: 4px;
+        }
+        figure {
+            margin: 1em 0;
+            text-align: center;
+        }
+        figcaption {
+            font-size: 0.9em;
+            color: #6b7280;
+            margin-top: 0.5em;
+        }
     </style>
 </head>
 <body>
@@ -1037,8 +1089,15 @@ const ExportMenu = ({ documentName, documentContent, isLoading }: ExportMenuProp
             // Clean up URL object to avoid memory leaks
             setTimeout(() => URL.revokeObjectURL(url), 100);
 
-            // Check if the document has color or highlighting
-            if (documentContent.includes('style="color:') || documentContent.includes('style="background-color:')) {
+            // Check if the document has images, colors, or highlighting
+            const hasImages = documentContent.includes('<img');
+            const hasFormatting = documentContent.includes('style="color:') || documentContent.includes('style="background-color:');
+
+            if (hasImages && hasFormatting) {
+                toast.success(`Document exported as Markdown. Images are included as links, and some formatting like colors may be lost. Use HTML or PDF for full formatting.`, { duration: 6000 });
+            } else if (hasImages) {
+                toast.success(`Document exported as Markdown. Images are included as Markdown image links.`, { duration: 5000 });
+            } else if (hasFormatting) {
                 toast.success(`Document exported as Markdown, but some formatting like colors and highlights may be lost. Use HTML export to preserve all formatting.`, { duration: 5000 });
             } else {
                 toast.success(`Document exported as Markdown`);
@@ -1127,27 +1186,36 @@ const ExportMenu = ({ documentName, documentContent, isLoading }: ExportMenuProp
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 disabled={isLoading}
-                className="p-1.5 text-gray-500 hover:text-purple-600 rounded-full hover:bg-purple-50 transition-colors"
-                title="Export document"
+                className={`p-1.5 rounded-full transition-all duration-200 ${isLoading
+                    ? 'bg-purple-50 text-purple-400 cursor-not-allowed'
+                    : 'text-gray-500 hover:text-purple-600 hover:bg-purple-50 active:bg-purple-100'
+                    }`}
+                title={isLoading ? "Export in progress..." : "Export document"}
             >
-                <ArrowDownTrayIcon className="w-5 h-5" />
+                {isLoading ? (
+                    <ArrowPathIcon className="w-5 h-5 animate-spin" />
+                ) : (
+                    <ArrowDownTrayIcon className="w-5 h-5" />
+                )}
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 top-full mt-1 w-64 bg-white rounded-lg shadow-stripe-md border border-gray-200 z-50 py-1.5">
+                <div className="absolute right-0 top-full mt-1 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-50 py-1.5 animate-fadeIn">
                     {exportOptions.map((option) => (
                         <button
                             key={option.value}
                             onClick={option.action}
-                            className="w-full flex items-start gap-2 px-3 py-2 text-sm text-left text-gray-700 hover:bg-purple-50 transition-colors duration-150"
+                            className="w-full flex items-start gap-2 px-3 py-2.5 text-sm text-left text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors duration-150 group"
                         >
-                            <div className="mt-0.5 flex-shrink-0">
+                            <div className="mt-0.5 flex-shrink-0 text-gray-500 group-hover:text-purple-600 transition-colors duration-150">
                                 {option.icon}
                             </div>
                             <div>
                                 <div className="font-medium">{option.label}</div>
                                 {option.description && (
-                                    <div className="text-xs text-gray-500 mt-0.5">{option.description}</div>
+                                    <div className="text-xs text-gray-500 mt-0.5 group-hover:text-gray-600 transition-colors duration-150">
+                                        {option.description}
+                                    </div>
                                 )}
                             </div>
                         </button>
@@ -1173,8 +1241,6 @@ interface ComfortSettingsProps {
     setLineHeight: (height: number) => void;
     readingMode: boolean;
     setReadingMode: (mode: boolean) => void;
-    focusMode: boolean;
-    setFocusMode: (mode: boolean) => void;
     isLoading: boolean;
 }
 
@@ -1185,10 +1251,8 @@ const ComfortSettings = ({
     setLineHeight,
     readingMode,
     setReadingMode,
-    focusMode,
-    setFocusMode,
     isLoading
-}: Omit<ComfortSettingsProps, 'darkMode' | 'setDarkMode'>) => {
+}: Omit<ComfortSettingsProps, 'darkMode' | 'setDarkMode' | 'focusMode' | 'setFocusMode'>) => {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -1210,27 +1274,35 @@ const ComfortSettings = ({
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 disabled={isLoading}
-                className="p-1.5 text-gray-500 hover:text-purple-600 rounded-full hover:bg-purple-50 transition-colors"
+                className={`p-1.5 rounded-full transition-all duration-200 ${isOpen
+                    ? 'bg-purple-100 text-purple-600'
+                    : isLoading
+                        ? 'text-gray-400 cursor-not-allowed'
+                        : 'text-gray-500 hover:text-purple-600 hover:bg-purple-50 active:bg-purple-100'
+                    }`}
                 title="Eye comfort settings"
             >
                 <EyeIcon className="w-5 h-5" />
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 top-full mt-1 w-80 bg-white rounded-lg shadow-stripe-md border border-gray-200 z-50 p-4">
-                    <h3 className="text-sm font-medium text-gray-700 mb-3">Eye Comfort Settings</h3>
+                <div className="absolute right-0 top-full mt-1 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50 p-5 animate-fadeIn">
+                    <h3 className="text-sm font-medium text-gray-800 mb-4 flex items-center gap-2">
+                        <EyeIcon className="w-4 h-4 text-purple-600" />
+                        Eye Comfort Settings
+                    </h3>
 
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                         {/* Font Size */}
                         <div>
-                            <div className="flex justify-between items-center mb-1">
-                                <label className="text-xs text-gray-500">Font Size</label>
-                                <span className="text-xs text-gray-700">{fontSize}px</span>
+                            <div className="flex justify-between items-center mb-2">
+                                <label className="text-xs font-medium text-gray-700">Font Size</label>
+                                <span className="text-xs bg-purple-50 text-purple-700 font-medium px-2 py-0.5 rounded-full">{fontSize}px</span>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => setFontSize(Math.max(12, fontSize - 1))}
-                                    className="text-gray-500 hover:text-purple-600"
+                                    className="text-gray-500 hover:text-purple-600 hover:bg-purple-50 p-1 rounded transition-colors"
                                 >
                                     <Minimize2 className="w-4 h-4" />
                                 </button>
@@ -1244,7 +1316,7 @@ const ComfortSettings = ({
                                 />
                                 <button
                                     onClick={() => setFontSize(Math.min(24, fontSize + 1))}
-                                    className="text-gray-500 hover:text-purple-600"
+                                    className="text-gray-500 hover:text-purple-600 hover:bg-purple-50 p-1 rounded transition-colors"
                                 >
                                     <Maximize2 className="w-4 h-4" />
                                 </button>
@@ -1253,14 +1325,14 @@ const ComfortSettings = ({
 
                         {/* Line Height */}
                         <div>
-                            <div className="flex justify-between items-center mb-1">
-                                <label className="text-xs text-gray-500">Line Spacing</label>
-                                <span className="text-xs text-gray-700">{lineHeight.toFixed(1)}</span>
+                            <div className="flex justify-between items-center mb-2">
+                                <label className="text-xs font-medium text-gray-700">Line Spacing</label>
+                                <span className="text-xs bg-purple-50 text-purple-700 font-medium px-2 py-0.5 rounded-full">{lineHeight.toFixed(1)}</span>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => setLineHeight(Math.max(1.2, lineHeight - 0.1))}
-                                    className="text-gray-500 hover:text-purple-600"
+                                    className="text-gray-500 hover:text-purple-600 hover:bg-purple-50 p-1 rounded transition-colors"
                                 >
                                     <AlignJustifyIcon className="w-4 h-4 transform rotate-90 scale-75" />
                                 </button>
@@ -1275,47 +1347,28 @@ const ComfortSettings = ({
                                 />
                                 <button
                                     onClick={() => setLineHeight(Math.min(2.0, lineHeight + 0.1))}
-                                    className="text-gray-500 hover:text-purple-600"
+                                    className="text-gray-500 hover:text-purple-600 hover:bg-purple-50 p-1 rounded transition-colors"
                                 >
                                     <AlignJustifyIcon className="w-4 h-4 transform rotate-90" />
                                 </button>
                             </div>
                         </div>
 
-                        <div className="pt-2 border-t border-gray-200">
-                            <div className="flex flex-col gap-3">
-                                {/* Reading Mode Toggle */}
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center">
-                                        <BookOpen className="w-4 h-4 mr-2 text-gray-500" />
-                                        <span className="text-sm text-gray-700">Reading Mode</span>
-                                    </div>
-                                    <button
-                                        onClick={() => setReadingMode(!readingMode)}
-                                        className={`relative inline-flex h-6 w-11 items-center rounded-full ${readingMode ? 'bg-purple-600' : 'bg-gray-300'}`}
-                                    >
-                                        <span
-                                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${readingMode ? 'translate-x-6' : 'translate-x-1'}`}
-                                        />
-                                    </button>
-                                </div>
-
-                                {/* Focus Mode Toggle */}
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center">
-                                        <ArrowsPointingInIcon className="w-4 h-4 mr-2 text-gray-500" />
-                                        <span className="text-sm text-gray-700">Focus Mode</span>
-                                    </div>
-                                    <button
-                                        onClick={() => setFocusMode(!focusMode)}
-                                        className={`relative inline-flex h-6 w-11 items-center rounded-full ${focusMode ? 'bg-purple-600' : 'bg-gray-300'}`}
-                                    >
-                                        <span
-                                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${focusMode ? 'translate-x-6' : 'translate-x-1'}`}
-                                        />
-                                    </button>
-                                </div>
-                            </div>
+                        {/* Special Modes */}
+                        <div className="grid grid-cols-1 gap-3 pt-4 border-t border-gray-200">
+                            <button
+                                onClick={() => setReadingMode(!readingMode)}
+                                className={`flex items-center justify-center gap-1.5 px-3 py-2 border rounded-md text-sm font-medium transition-all duration-200 ${readingMode
+                                    ? 'border-purple-300 bg-purple-50 text-purple-700 shadow-sm'
+                                    : 'border-gray-300 hover:border-gray-400 text-gray-700 hover:bg-gray-50'
+                                    }`}
+                            >
+                                <BookOpen className="w-4 h-4" />
+                                <span>{readingMode ? "Exit Reading Mode" : "Reading Mode"}</span>
+                                {readingMode && (
+                                    <span className="ml-1 h-1.5 w-1.5 rounded-full bg-purple-600"></span>
+                                )}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1378,16 +1431,20 @@ const HeadingSelector = ({ editor }: { editor: any }) => {
     const currentHeading = getCurrentHeading();
 
     return (
-        <div className="relative mr-2" ref={dropdownRef}>
+        <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md transition-all duration-200 ${
+                    isOpen
+                        ? 'bg-purple-100 text-purple-700 shadow-sm'
+                        : currentHeading.value !== 'paragraph'
+                            ? 'bg-purple-50 text-purple-700'
+                            : 'text-gray-700 hover:bg-gray-100 border border-gray-300'
+                }"
                 title="Text style"
             >
                 <span className="font-medium">{currentHeading.label}</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
             </button>
 
             {isOpen && (
@@ -1712,62 +1769,17 @@ const HighlightPicker = ({ editor }: { editor: any }) => {
 
 export default function Editor() {
     const [isLoading, setIsLoading] = useState(false);
-    const [documents, setDocuments] = useState<Document[]>([{
-        id: 1,
-        name: 'Sample Document',
-        content: `
-            <h1>Sample Document</h1>
-            <p>This is a sample document showing different formatting options available in the editor.</p>
-            
-            <h2>Text Formatting</h2>
-            <p>You can make text <strong>bold</strong>, <em>italic</em>, or <u>underlined</u>. You can also use <code>inline code</code> for technical terms.</p>
-            
-            <h2>Lists</h2>
-            <p>Here's an unordered list:</p>
-            <ul>
-                <li>Item two</li>
-                <li>Item three with <strong>formatting</strong></li>
-            </ul>
-            
-            <p>And here's an ordered list:</p>
-            <ol>
-                <li>First item</li>
-                <li>Second item</li>
-                <li>Third item</li>
-            </ol>
-            
-            <h2>Links and Quotes</h2>
-            <p>You can add <a href="https://example.com">links to websites</a> easily.</p>
-            
-            <blockquote>
-                <p>This is a blockquote that can be used for quotes or important notes.</p>
-            </blockquote>
-            
-            <h2>Code Blocks</h2>
-            <pre><code>// This is a code block
-function example() {
-  console.log("Hello, world!");
-}
-            </code></pre>
-            
-            <h2>Export Features</h2>
-            <p>Try exporting this document to different formats using the export button in the toolbar:</p>
-            <ul>
-                <li>PDF - for sharing documents that shouldn't be edited</li>
-                <li>Word - for further editing in Microsoft Word</li>
-                <li>Markdown - for technical documentation and GitHub</li>
-                <li>HTML - for web publishing and blogs</li>
-                <li>Text - for simple, formatting-free text</li>
-            </ul>
-        `
-    }]);
+    const [documents, setDocuments] = useState<Document[]>([
+        { id: 1, name: 'Getting Started', content: '<h1>Welcome to the Document Editor</h1><p>This is a sample document showing different formatting options available in the editor.</p><p>Try out various formatting options from the toolbar above!</p>' },
+        { id: 2, name: 'Meeting Notes', content: '<h2>Project Kickoff Meeting</h2><p>Date: January 15, 2023</p><p>Attendees:</p><ul><li>John Smith (Project Manager)</li><li>Jane Doe (Designer)</li><li>Bob Johnson (Developer)</li></ul><p>Key discussion points:</p><ol><li>Project timeline review</li><li>Resource allocation</li><li>Initial design concepts</li></ol>' },
+        { id: 3, name: 'Ideas', content: '<h2>Product Feature Ideas</h2><p>Here are some ideas for our upcoming product release:</p><ul><li>Integration with third-party services</li><li>Improved user onboarding flow</li><li>Advanced analytics dashboard</li></ul><blockquote>Remember to prioritize features based on user feedback and strategic goals.</blockquote>' }
+    ]);
     const [activeDocument, setActiveDocument] = useState(1);
+    const [documentName, setDocumentName] = useState('Getting Started');
     const [isEditing, setIsEditing] = useState(false);
-    const [documentName, setDocumentName] = useState('Untitled Document');
     const titleRef = useRef<HTMLInputElement>(null);
     const documentContentRef = useRef<{ id: number; content: string } | null>(null);
     const shouldUpdateDocumentRef = useRef(true);
-    const [showAISidebar, setShowAISidebar] = useState(false);
     const [aiHistory, setAIHistory] = useState<{
         id: number;
         action: string;
@@ -1778,15 +1790,10 @@ function example() {
     const [smartComposeEnabled, setSmartComposeEnabled] = useState(false);
     const [suggestion, setSuggestion] = useState('');
     const smartComposeDebounceRef = useRef<NodeJS.Timeout | null>(null);
-    const previousTextRef = useRef('');
-    const [showSettingsModal, setShowSettingsModal] = useState(false);
     const [fontSize, setFontSize] = useState(16);
-    const [lineHeight, setLineHeight] = useState(1.6);
+    const [lineHeight, setLineHeight] = useState(1.5);
     const [readingMode, setReadingMode] = useState(false);
-    const [focusMode, setFocusMode] = useState(false);
     const [showShortcuts, setShowShortcuts] = useState(false);
-
-    // Context menu state
     const [contextMenu, setContextMenu] = useState<{
         visible: boolean;
         position: { x: number; y: number };
@@ -1802,6 +1809,8 @@ function example() {
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
+                // Disable the Strike extension from StarterKit to avoid duplicate
+                strike: false,
                 paragraph: {
                     HTMLAttributes: {
                         class: 'editor-paragraph',
@@ -1831,10 +1840,10 @@ function example() {
             Color,
             // Add Strike extension for strikethrough
             Strike,
-            // We're using mock versions because we don't have the actual extensions
-            // In a real app, you would use the actual extensions
         ],
         content: activeDocumentContent,
+        // Add immediatelyRender: false to fix SSR hydration issue
+        immediatelyRender: false,
         onUpdate: ({ editor }) => {
             // Debounce content changes - don't save immediately on every keystroke
             if (smartComposeDebounceRef.current) {
@@ -1850,6 +1859,51 @@ function example() {
             // Override default handling of spaces and line breaks
             handleDOMEvents: {
                 keydown: (view, event) => {
+                    // Handle Tab key to prevent focus switching
+                    if (event.key === 'Tab') {
+                        // Check if editor is focused before handling tab
+                        const isEditorFocused = document.activeElement === view.dom ||
+                            view.dom.contains(document.activeElement);
+
+                        // Allow default tab behavior if editor is not focused
+                        if (!isEditorFocused) {
+                            return false;
+                        }
+
+                        // If smart compose has a suggestion, don't handle the tab here
+                        // It will be handled by the smart compose handler
+                        if (suggestion && smartComposeEnabled) {
+                            return false; // Let the other handler take care of it
+                        }
+
+                        // Prevent default tab behavior (focus switching)
+                        event.preventDefault();
+
+                        const { state } = view;
+                        const { selection } = state;
+
+                        // Check if we're in a list - if so, handle indentation differently
+                        if (editor && (editor.isActive('bulletList') || editor.isActive('orderedList'))) {
+                            if (event.shiftKey) {
+                                // Shift+Tab lifts the list item (outdent)
+                                editor.chain().focus().liftListItem('listItem').run();
+                            } else {
+                                // Tab sinks the list item (indent)
+                                editor.chain().focus().sinkListItem('listItem').run();
+                            }
+                            return true;
+                        } else {
+                            // For regular text, insert spaces for indentation
+                            if (event.shiftKey) {
+                                // Shift+Tab for outdent - Currently just inserts spaces
+                                return view.dispatch(view.state.tr.insertText('    '));
+                            } else {
+                                // Regular tab for indent - using 4 spaces for consistent formatting
+                                return view.dispatch(view.state.tr.insertText('    '));
+                            }
+                        }
+                    }
+
                     // Handle multiple spaces correctly
                     if (event.key === ' ' && event.repeat) {
                         const { state, dispatch } = view;
@@ -1966,7 +2020,7 @@ function example() {
             editor.setOptions({
                 editorProps: {
                     handleKeyDown: (view, event) => {
-                        // Accept suggestion with Tab key
+                        // Accept suggestion with Tab key - this needs to take precedence over tab indent
                         if (event.key === 'Tab' && suggestion && smartComposeEnabled) {
                             event.preventDefault();
                             editor.commands.insertContent(suggestion);
@@ -1995,24 +2049,42 @@ function example() {
                 setSuggestion('');
             }
 
+            // Store the smartComposeEnabled state in editor storage for other components to access
+            if (!editor.storage.smartCompose) {
+                editor.storage.smartCompose = {};
+            }
+            editor.storage.smartCompose.enabled = smartComposeEnabled;
+
             // Force a state update to refresh decorations
             editor.view.updateState(editor.view.state);
         }
     }, [smartComposeEnabled, editor]);
 
+    // Track editor focus state for proper tab key behavior
     useEffect(() => {
-        if (editor && documents.find(doc => doc.id === activeDocument)) {
-            const currentDoc = documents.find(doc => doc.id === activeDocument);
-            if (currentDoc) {
-                // Only update the editor content if we're switching documents
-                // or if the content has changed externally (not from typing)
-                if (shouldUpdateDocumentRef.current) {
-                    editor.commands.setContent(currentDoc.content);
-                }
-                setDocumentName(currentDoc.name);
-            }
+        if (editor) {
+            const editorElement = editor.view.dom;
+
+            // Add a class to help with styling when editor is focused
+            const handleEditorFocus = () => {
+                editorElement.classList.add('editor-has-focus');
+            };
+
+            const handleEditorBlur = () => {
+                editorElement.classList.remove('editor-has-focus');
+            };
+
+            // Add the event listeners
+            editorElement.addEventListener('focus', handleEditorFocus);
+            editorElement.addEventListener('blur', handleEditorBlur);
+
+            // Clean up
+            return () => {
+                editorElement.removeEventListener('focus', handleEditorFocus);
+                editorElement.removeEventListener('blur', handleEditorBlur);
+            };
         }
-    }, [activeDocument, editor, documents]);
+    }, [editor]);
 
     useEffect(() => {
         if (isEditing && titleRef.current) {
@@ -2054,7 +2126,7 @@ function example() {
             // Configure the prompt based on the action
             switch (action) {
                 case 'proofread':
-                    prompt = `Proofread the following HTML text, fixing spelling, grammar, and punctuation errors while preserving the original meaning and HTML formatting:\n\n${htmlContent}`;
+                    prompt = `Proofread the following HTML text, fixing spelling, grammar, and punctuation errors while preserving the original meaning and HTML formatting. Return ONLY the corrected HTML without any additional formatting or markdown:\n\n${htmlContent}`;
                     break;
                 case 'professional':
                     prompt = `Rewrite the following HTML text in a professional, formal tone suitable for business documents, while maintaining all HTML tags and formatting:\n\n${htmlContent}`;
@@ -2103,10 +2175,11 @@ function example() {
                     prompt = `Rewrite the following HTML text in a narrative, storytelling style that engages readers while maintaining all HTML formatting:\n\n${htmlContent}`;
                     break;
                 case 'smart-compose':
-                    setSmartComposeEnabled(!smartComposeEnabled);
-                    toast.success(smartComposeEnabled
-                        ? 'Smart Compose disabled'
-                        : 'Smart Compose enabled');
+                    const newState = !smartComposeEnabled;
+                    setSmartComposeEnabled(newState);
+                    toast.success(newState
+                        ? 'Smart Compose enabled'
+                        : 'Smart Compose disabled');
                     setIsLoading(false);
                     return;
                 default:
@@ -2175,7 +2248,13 @@ function example() {
             aiResponse = aiResponse
                 .replace(/```html/g, '')
                 .replace(/```/g, '')
+                .replace(/^<t>|<\/t>$/g, '') // Remove any <t> tags that might be added
                 .trim();
+
+            // Ensure the response is valid HTML
+            if (!aiResponse.startsWith('<')) {
+                aiResponse = `<p>${aiResponse}</p>`;
+            }
 
             // Update AI History
             const historyItem = {
@@ -2448,7 +2527,16 @@ function example() {
     }, [editor]);
 
     return (
-        <div className={`w-full max-w-6xl mx-auto bg-white rounded-xl shadow-stripe-lg overflow-hidden flex flex-col h-[800px] border border-gray-200 ${readingMode ? 'reading-mode' : ''} ${focusMode ? 'focus-mode' : ''}`}>
+        <div className={`w-full max-w-6xl mx-auto bg-white rounded-xl shadow-stripe-lg overflow-hidden flex flex-col h-[800px] border border-gray-200 ${readingMode ? 'reading-mode' : ''}`}>
+            {readingMode && (
+                <button
+                    className="exit-reading-mode"
+                    onClick={() => setReadingMode(false)}
+                >
+                    Exit Reading Mode
+                </button>
+            )}
+
             <div className="flex items-center p-3 bg-white border-b border-gray-200">
                 {/* Original header content */}
                 <div className="flex-1 flex">
@@ -2505,8 +2593,6 @@ function example() {
                         setLineHeight={setLineHeight}
                         readingMode={readingMode}
                         setReadingMode={setReadingMode}
-                        focusMode={focusMode}
-                        setFocusMode={setFocusMode}
                         isLoading={isLoading}
                     />
                 </div>
@@ -2521,7 +2607,7 @@ function example() {
                 />
             </div>
 
-            <AIFooter editor={editor} onAIAction={handleAIAction} isLoading={isLoading} />
+            <AIFooter editor={editor} onAIAction={handleAIAction} isLoading={isLoading} smartComposeEnabled={smartComposeEnabled} />
 
             {/* Selection Context Menu - Shown when right-clicking on selected text */}
             {contextMenu.visible && (
@@ -2764,12 +2850,112 @@ function example() {
 
                 /* AI feature bar styles */
                 .ai-feature-bar {
-                    transition: transform 0.3s ease;
-                    position: fixed;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
+                    transition: all 0.3s ease;
                     z-index: 50;
+                }
+
+                /* Add smooth animation for expanding/collapsing */
+                .ai-feature-bar > div:last-child {
+                    transition: all 0.3s ease;
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+
+                .ai-feature-bar:not(:has(button[aria-expanded="true"])) > div:last-child {
+                    opacity: 0;
+                    transform: translateY(10px);
+                    pointer-events: none;
+                }
+
+                /* Ensure the editor container has proper positioning for the AI bar */
+                .ProseMirror {
+                    position: relative;
+                    padding-bottom: 80px !important; /* Space for the AI bar */
+                }
+
+                /* Reading Mode Styles */
+                .reading-mode .ProseMirror {
+                    max-width: 700px;
+                    margin: 0 auto;
+                    padding: 2rem 3rem !important;
+                    background-color: #FFFDF7;
+                    color: #3B3B3B;
+                    font-family: 'Georgia', serif;
+                }
+
+                .reading-mode .ProseMirror p {
+                    font-size: 1.1rem;
+                    line-height: 1.8;
+                    margin-bottom: 1.2rem;
+                }
+
+                .reading-mode .ProseMirror h1,
+                .reading-mode .ProseMirror h2,
+                .reading-mode .ProseMirror h3 {
+                    font-family: 'Georgia', serif;
+                    margin-top: 1.8rem;
+                    margin-bottom: 1rem;
+                }
+
+                .reading-mode .border-b.border-gray-200 {
+                    display: none;
+                }
+
+                .reading-mode .ai-feature-bar {
+                    opacity: 0.6;
+                    transform: translate(-50%, 20px);
+                    transition: all 0.3s ease;
+                }
+                
+                .reading-mode .ai-feature-bar:hover {
+                    opacity: 1;
+                    transform: translate(-50%, 0);
+                }
+
+                /* Hide toolbar in Reading Mode */
+                .reading-mode .border-b {
+                    height: 0;
+                    overflow: hidden;
+                    opacity: 0;
+                    transition: all 0.3s ease;
+                }
+
+                /* Make toolbar reappear on hover in reading mode */
+                .reading-mode:hover .border-b {
+                    height: auto;
+                    opacity: 0.7;
+                }
+                
+                /* Additional UI adjustments for reading mode */
+                .reading-mode .EditorContent {
+                    background-color: #FFFDF7;
+                }
+
+                /* Exit reading mode button */
+                .reading-mode .exit-reading-mode {
+                    position: fixed;
+                    top: 1rem;
+                    right: 1rem;
+                    z-index: 100;
+                    background-color: rgba(124, 58, 237, 0.8);
+                    color: white;
+                    border: none;
+                    border-radius: 20px;
+                    padding: 0.5rem 1rem;
+                    font-size: 0.875rem;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                    transition: all 0.2s ease;
+                }
+
+                .reading-mode .exit-reading-mode:hover {
+                    background-color: rgb(124, 58, 237);
+                    transform: translateY(-1px);
+                }
+                
+                /* Style for when editor has focus */
+                .editor-has-focus {
+                    /* Subtle indicator that editor has focus */
+                    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.1);
                 }
             `}</style>
         </div>
