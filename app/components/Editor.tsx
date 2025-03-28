@@ -1,16 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useEditor, EditorContent, } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
 import TextAlign from '@tiptap/extension-text-align';
 import TextStyle from '@tiptap/extension-text-style';
 import Highlight from '@tiptap/extension-highlight';
 import Color from '@tiptap/extension-color';
-import Strike from '@tiptap/extension-strike';
 import { PDFSettingsDialog, exportToPDF, type PDFExportSettings } from './PDFExport';
 import {
     Bold, Italic, Underline as UnderlineIcon, Link as LinkIcon, List, ListOrdered,
@@ -36,6 +34,7 @@ interface ActionButtonProps {
     disabled?: boolean;
 }
 
+  
 const ActionButton = ({ icon, label, onClick, disabled = false }: ActionButtonProps) => (
     <button
         onClick={onClick}
@@ -1822,10 +1821,6 @@ function example() {
             // Add TextStyle and Color extensions for text coloring
             TextStyle,
             Color,
-            // Add Strike extension for strikethrough
-            Strike,
-            // We're using mock versions because we don't have the actual extensions
-            // In a real app, you would use the actual extensions
         ],
         content: activeDocumentContent,
         onUpdate: ({ editor }) => {
@@ -2026,29 +2021,10 @@ function example() {
 
         // Get plain text selection
         const selectedText = isTextSelected ? editor.state.doc.textBetween(from, to, ' ') : '';
-        
         // Get HTML content properly
         let htmlContent = '';
         if (isTextSelected) {
-            try {
-                // Get current selection
-                const selection = window.getSelection();
-                if (selection && selection.rangeCount > 0) {
-                    // Create a temporary container
-                    const container = document.createElement('div');
-                    // Clone the selection contents into the container
-                    const range = selection.getRangeAt(0);
-                    container.appendChild(range.cloneContents());
-                    // Get the HTML from the container
-                    htmlContent = container.innerHTML;
-                } else {
-                    // Fallback to full content if selection API fails
-                    htmlContent = editor.getHTML();
-                }
-            } catch (e) {
-                console.error('Error getting selected HTML:', e);
-                htmlContent = editor.getHTML(); // Fallback to full content
-            }
+            htmlContent = selectedText;
         } else {
             htmlContent = editor.getHTML();
         }
@@ -2154,68 +2130,6 @@ function example() {
             });
 
             toast.success(`AI action completed!`);
-        } catch (error: any) {
-            console.error('Error:', error);
-            toast.error(error.message || 'An error occurred while processing your request.');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleFormatAction = async (format: string) => {
-        if (!editor) return;
-
-        setIsLoading(true);
-        // Use HTML content to preserve formatting
-        const htmlContent = editor.getHTML();
-        const plainContent = editor.getText();
-
-        try {
-            // Call the backend API with the format action
-            const response = await fetch('/api/ai', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    content: htmlContent,
-                    plainText: plainContent,
-                    action: `format-${format}`,
-                    preserveFormatting: true
-                }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to process AI request');
-            }
-
-            let aiResponse = data.response
-
-            if (!aiResponse) {
-                throw new Error('Invalid response from AI service');
-            }
-
-            // Clean up any markdown or code formatting the AI might have added
-            aiResponse = aiResponse
-                .replace(/```html/g, '')
-                .replace(/```/g, '')
-                .trim();
-
-            editor.commands.setContent(aiResponse);
-
-            // Update document content in state
-            preserveCursorPosition(() => {
-                const updatedDocuments = documents.map(doc =>
-                    doc.id === activeDocument
-                        ? { ...doc, content: editor.getHTML() }
-                        : doc
-                );
-                setDocuments(updatedDocuments);
-            });
-
-            toast.success(`Format action completed!`);
         } catch (error: any) {
             console.error('Error:', error);
             toast.error(error.message || 'An error occurred while processing your request.');
