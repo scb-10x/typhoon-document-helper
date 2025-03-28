@@ -87,7 +87,6 @@ export default function EditorPage() {
           >
             Built with Typhoon
           </a>{" "}
-          · © {new Date().getFullYear()} Docs
         </div>
       </footer>
 

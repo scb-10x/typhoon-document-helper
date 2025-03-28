@@ -39,6 +39,7 @@ const PROMPT_TEMPLATES: Record<ActionType, string> = {
 
 // Translation language mapping
 const LANGUAGE_MAP: Record<string, string> = {
+    'th': 'Thai',
     'es': 'Spanish',
     'fr': 'French',
     'de': 'German',
@@ -59,6 +60,18 @@ interface AIRequestBody {
     action: string;
     customLanguage?: string;
     preserveFormatting?: boolean;
+}
+
+
+const cleanedCodeBlock = (text: string) => {
+    // This will match any opening code fence with optional language specification
+  // For example: ```javascript, ```python, ```mdx, etc.
+  text = text.replace(/^```(?:[a-zA-Z0-9]+)?/gm, '');
+  
+  // Remove closing code fences
+  text = text.replace(/```$/gm, '');
+  // Trim extra whitespace
+  return text.trim();
 }
 
 export async function POST(request: Request) {
@@ -130,7 +143,7 @@ export async function POST(request: Request) {
         if (preserveFormatting) {
             messages.push({
                 role: "system",
-                content: "You are a specialized text processor that preserves HTML formatting. When modifying text, you MUST keep all HTML tags intact and in the same structure as the input. DO NOT add markdown code blocks, backticks, or additional formatting. DO NOT add any HTML elements that were not in the original content. Return ONLY single HTML with the exact same tag structure as the input even it might not be a valid HTML, only modifying the text content within existing tags."
+                content: "You are a specialized text processor that preserves HTML formatting, a very important part of a important and complex system. You work in the situation where the user is editing a document, and you are given a section of the document that the user has selected and request for a edit. When modifying text, you MUST keep all HTML tags intact and in the same structure as the input. DO NOT add markdown code blocks, backticks, or additional formatting. DO NOT add any HTML elements that were not in the original content. Return ONLY single HTML with the exact same tag structure as the input even it might not be a valid HTML, only modifying the text content within existing tags."
             });
         }
 
@@ -158,7 +171,7 @@ export async function POST(request: Request) {
             }
         );
 
-        const aiResponse = response.data.choices[0].message.content.replace(/^<html>|<\/html>$/g, '');
+        const aiResponse = cleanedCodeBlock(response.data.choices[0].message.content).replace(/^<html>|<\/html>$/g, '');
 
         return NextResponse.json({
             response: aiResponse

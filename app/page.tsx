@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { FiArrowRight, FiEdit, FiCpu, FiDownload } from 'react-icons/fi';
+import { useLanguage } from './contexts/LanguageContext';
+import { LanguageSwitcher } from './components/LanguageSwitcher';
 
 // Animated background elements
 const BackgroundElements = () => (
@@ -43,6 +45,8 @@ const BackgroundElements = () => (
 );
 
 export default function Home() {
+  const { t } = useLanguage();
+  
   return (
     <div className="min-h-screen bg-white text-gray-900">
       {/* Header */}
@@ -59,10 +63,11 @@ export default function Home() {
               />
             </div>
             <h1 className="text-xl font-semibold text-gradient-subtle">
-              Typhoon Docs
+              {t('appName')}
             </h1>
           </div>
           <div className="flex items-center space-x-4">
+            <LanguageSwitcher />
             <a
               href="https://github.com/scb-10x/typhoon-document-helper"
               target="_blank"
@@ -72,13 +77,13 @@ export default function Home() {
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 .333A9.911 9.911 0 0 0 6.866 19.65c.5.092.678-.215.678-.477 0-.237-.01-1.017-.014-1.845-2.757.6-3.338-1.169-3.338-1.169a2.627 2.627 0 0 0-1.1-1.451c-.9-.615.07-.6.07-.6a2.084 2.084 0 0 1 1.518 1.021 2.11 2.11 0 0 0 2.884.823c.044-.503.268-.973.63-1.325-2.2-.25-4.516-1.1-4.516-4.9A3.832 3.832 0 0 1 4.7 7.068a3.56 3.56 0 0 1 .095-2.623s.832-.266 2.726 1.016a9.409 9.409 0 0 1 4.962 0c1.89-1.282 2.717-1.016 2.717-1.016.366.83.402 1.768.1 2.623a3.827 3.827 0 0 1 1.02 2.659c0 3.807-2.319 4.644-4.525 4.889a2.366 2.366 0 0 1 .673 1.834c0 1.326-.012 2.394-.012 2.72 0 .263.18.572.681.475A9.911 9.911 0 0 0 10 .333Z" clipRule="evenodd" />
               </svg>
-              GitHub
+              {t('github')}
             </a>
             <Link 
               href="/editor" 
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-md transition-all button-shine"
             >
-              Open App <FiArrowRight />
+              {t('openApp')} <FiArrowRight />
             </Link>
           </div>
         </div>
@@ -95,7 +100,7 @@ export default function Home() {
               transition={{ duration: 0.6 }}
               className="inline-block mb-4 px-4 py-1 rounded-full bg-indigo-50 text-indigo-600 text-sm font-medium"
             >
-              ✨ Built with Typhoon
+              {t('builtWithTyphoon')}
             </motion.div>
             
             <motion.h1 
@@ -104,7 +109,7 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-5xl sm:text-6xl font-bold mb-6 text-gradient"
             >
-              Create beautiful documents with AI
+              {t('heroTitle')}
             </motion.h1>
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
@@ -112,8 +117,7 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-xl text-gray-600 mb-8"
             >
-              Transform your writing workflow with intelligent suggestions and powerful editing tools. 
-              Create, edit, and collaborate with ease.
+              {t('heroSubtitle')}
             </motion.p>
             
             <motion.div
@@ -126,7 +130,7 @@ export default function Home() {
                 href="/editor"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 text-lg font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg hover:shadow-md transition-all button-shine"
               >
-                Try the Editor <FiArrowRight />
+                {t('tryEditor')} <FiArrowRight />
               </Link>
             </motion.div>
           </div>
@@ -142,7 +146,7 @@ export default function Home() {
                 href="/editor" 
                 className="px-8 py-3 rounded-lg bg-white text-indigo-600 text-lg font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 button-shine"
               >
-                Try Typhoon Docs <FiArrowRight />
+                {t('tryTyphoonDocs')} <FiArrowRight />
               </Link>
             </div>
             <div className="w-full aspect-video bg-gradient-to-r from-purple-100 to-indigo-100 flex items-center justify-center">
@@ -170,8 +174,8 @@ export default function Home() {
         <div className="bg-noise"></div>
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4 text-gradient-subtle">Feature-Rich Document Editor</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Everything you need to create professional documents with AI assistance</p>
+            <h2 className="text-3xl font-bold mb-4 text-gradient-subtle">{t('featuresTitle')}</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">{t('featuresSubtitle')}</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-6">
@@ -186,11 +190,11 @@ export default function Home() {
                 <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600 mb-4">
                   <FiEdit size={24} />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Rich Text Editing</h3>
-                <p className="text-gray-600">Create beautiful documents with our advanced rich text editor that supports formatting, tables, images, and more.</p>
+                <h3 className="text-lg font-semibold mb-2">{t('richTextTitle')}</h3>
+                <p className="text-gray-600">{t('richTextDescription')}</p>
                 <div className="mt-4 mt-auto pt-4">
                   <Link href="/features/rich-text" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
-                    Learn more <FiArrowRight className="ml-1" />
+                    {t('learnMore')} <FiArrowRight className="ml-1" />
                   </Link>
                 </div>
               </div>
@@ -207,11 +211,11 @@ export default function Home() {
                 <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600 mb-4">
                   <FiCpu size={24} />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">AI-Powered Suggestions</h3>
-                <p className="text-gray-600">Get intelligent writing suggestions and assistance powered by Typhoon. Automatically improve your text quality and grammar.</p>
+                <h3 className="text-lg font-semibold mb-2">{t('aiSuggestionsTitle')}</h3>
+                <p className="text-gray-600">{t('aiSuggestionsDescription')}</p>
                 <div className="mt-4 mt-auto pt-4">
                   <Link href="/features/ai-suggestions" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
-                    Learn more <FiArrowRight className="ml-1" />
+                    {t('learnMore')} <FiArrowRight className="ml-1" />
                   </Link>
                 </div>
               </div>
@@ -228,11 +232,11 @@ export default function Home() {
                 <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600 mb-4">
                   <FiDownload size={24} />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Export Options</h3>
-                <p className="text-gray-600">Export your documents in multiple formats including PDF, Word, and HTML. Share your work with others easily.</p>
+                <h3 className="text-lg font-semibold mb-2">{t('exportOptionsTitle')}</h3>
+                <p className="text-gray-600">{t('exportOptionsDescription')}</p>
                 <div className="mt-4 mt-auto pt-4">
                   <Link href="/features/export" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
-                    Learn more <FiArrowRight className="ml-1" />
+                    {t('learnMore')} <FiArrowRight className="ml-1" />
                   </Link>
                 </div>
               </div>
@@ -256,12 +260,17 @@ export default function Home() {
                 />
               </div>
               <span className="text-sm text-gray-500">
-                <a href="https://opentyphoon.ai/" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-600 transition-colors">
-                  Built with Typhoon
-                </a> · © {new Date().getFullYear()} Docs
+                © {new Date().getFullYear()} Typhoon. {t('copyright')}
               </span>
             </div>
-            
+            <div className="flex mt-4 md:mt-0 space-x-6">
+              <a href="#" className="text-sm text-gray-500 hover:text-indigo-600">
+                {t('privacyPolicy')}
+              </a>
+              <a href="#" className="text-sm text-gray-500 hover:text-indigo-600">
+                {t('termsOfService')}
+              </a>
+            </div>
           </div>
         </div>
       </footer>
@@ -350,3 +359,4 @@ export default function Home() {
     </div>
   );
 }
+

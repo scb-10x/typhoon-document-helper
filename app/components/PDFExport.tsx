@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, DocumentTextIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon } from '@heroicons/react/24/solid';
 
 // Define the types
 export interface PDFExportSettings {
@@ -51,6 +52,9 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
         setSettings(prev => ({ ...prev, fileName: documentName }));
     }, [documentName]);
 
+    // Add state for loading indicator
+    const [isExporting, setIsExporting] = useState(false);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
 
@@ -64,26 +68,33 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setIsExporting(true);
+        // We'll update the exportToPDF function to handle the loading state
         onExport(settings);
     };
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]">
-            <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">PDF Export Settings</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000] backdrop-blur-sm transition-opacity duration-300">
+            <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full transition-all duration-300 transform scale-100 animate-fadeIn">
+                <div className="flex justify-between items-center mb-6">
+                    <div className="flex items-center gap-2">
+                        <DocumentTextIcon className="h-6 w-6 text-purple-600" />
+                        <h3 className="text-lg font-semibold text-gray-900">PDF Export Settings</h3>
+                    </div>
                     <button
                         onClick={onClose}
-                        className="text-gray-500 hover:text-gray-700"
+                        disabled={isExporting}
+                        className="text-gray-500 hover:text-gray-700 transition-colors p-1 rounded-full hover:bg-gray-100"
+                        aria-label="Close"
                     >
                         <XMarkIcon className="h-5 w-5" />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit}>
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 File Name
@@ -93,41 +104,47 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                                 name="fileName"
                                 value={settings.fileName}
                                 onChange={handleChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                disabled={isExporting}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
+                                placeholder="Enter file name..."
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Paper Size
-                            </label>
-                            <select
-                                name="format"
-                                value={settings.format}
-                                onChange={handleChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white cursor-pointer bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236B7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%20%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10"
-                            >
-                                <option value="a4">A4</option>
-                                <option value="letter">US Letter</option>
-                                <option value="legal">Legal</option>
-                                <option value="a3">A3</option>
-                                <option value="a5">A5</option>
-                            </select>
-                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Paper Size
+                                </label>
+                                <select
+                                    name="format"
+                                    value={settings.format}
+                                    onChange={handleChange}
+                                    disabled={isExporting}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white cursor-pointer bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236B7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%20%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
+                                >
+                                    <option value="a4">A4</option>
+                                    <option value="letter">US Letter</option>
+                                    <option value="legal">Legal</option>
+                                    <option value="a3">A3</option>
+                                    <option value="a5">A5</option>
+                                </select>
+                            </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Orientation
-                            </label>
-                            <select
-                                name="orientation"
-                                value={settings.orientation}
-                                onChange={handleChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white cursor-pointer bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236B7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%20%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10"
-                            >
-                                <option value="portrait">Portrait</option>
-                                <option value="landscape">Landscape</option>
-                            </select>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Orientation
+                                </label>
+                                <select
+                                    name="orientation"
+                                    value={settings.orientation}
+                                    onChange={handleChange}
+                                    disabled={isExporting}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white cursor-pointer bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236B7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%20%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
+                                >
+                                    <option value="portrait">Portrait</option>
+                                    <option value="landscape">Landscape</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div className="mt-6 mb-4">
@@ -136,7 +153,7 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                             </label>
                             <div className="flex justify-center">
                                 <div
-                                    className="border-2 border-gray-300 rounded-md bg-white shadow-sm relative"
+                                    className="border-2 border-gray-300 rounded-md bg-white shadow-sm relative transition-all duration-300"
                                     style={{
                                         width: settings.orientation === 'portrait'
                                             ? `${getPaperDimensions(settings.format).width / 5}px`
@@ -149,11 +166,10 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                                 >
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         <div
-                                            className="bg-gray-100 border border-dashed border-gray-400"
+                                            className="border border-dashed border-gray-400 transition-all duration-300"
                                             style={{
                                                 width: `calc(100% - ${settings.margin * 2 / 5}px)`,
                                                 height: `calc(100% - ${settings.margin * 2 / 5}px)`,
-                                                transition: 'all 0.3s ease',
                                                 backgroundColor: settings.pageColor
                                             }}
                                         >
@@ -172,40 +188,45 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Margin (mm)
-                            </label>
-                            <input
-                                type="number"
-                                name="margin"
-                                min="0"
-                                max="50"
-                                value={settings.margin}
-                                onChange={handleChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            />
-                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Margin (mm)
+                                </label>
+                                <input
+                                    type="number"
+                                    name="margin"
+                                    min="0"
+                                    max="50"
+                                    value={settings.margin}
+                                    onChange={handleChange}
+                                    disabled={isExporting}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
+                                />
+                            </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Page Color
-                            </label>
-                            <div className="flex items-center space-x-2">
-                                <input
-                                    type="color"
-                                    name="pageColor"
-                                    value={settings.pageColor}
-                                    onChange={handleChange}
-                                    className="p-0 w-10 h-10 border-0"
-                                />
-                                <input
-                                    type="text"
-                                    name="pageColor"
-                                    value={settings.pageColor}
-                                    onChange={handleChange}
-                                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                />
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Page Color
+                                </label>
+                                <div className="flex items-center space-x-2">
+                                    <input
+                                        type="color"
+                                        name="pageColor"
+                                        value={settings.pageColor}
+                                        onChange={handleChange}
+                                        disabled={isExporting}
+                                        className="p-0 w-10 h-10 border-0 rounded transition-all duration-200 disabled:opacity-50"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="pageColor"
+                                        value={settings.pageColor}
+                                        onChange={handleChange}
+                                        disabled={isExporting}
+                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -216,7 +237,8 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                                 name="includeBackground"
                                 checked={settings.includeBackground}
                                 onChange={handleChange}
-                                className="h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                                disabled={isExporting}
+                                className="h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 transition-all duration-200 disabled:opacity-50"
                             />
                             <label htmlFor="includeBackground" className="ml-2 block text-sm text-gray-700">
                                 Include Background Colors
@@ -228,15 +250,27 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                            disabled={isExporting}
+                            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1"
+                            disabled={isExporting}
+                            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            Export PDF
+                            {isExporting ? (
+                                <>
+                                    <ArrowPathIcon className="h-4 w-4 animate-spin" />
+                                    Generating PDF...
+                                </>
+                            ) : (
+                                <>
+                                    <CheckIcon className="h-4 w-4" />
+                                    Export PDF
+                                </>
+                            )}
                         </button>
                     </div>
                 </form>
@@ -247,6 +281,9 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
 
 // PDF export function
 export function exportToPDF(settings: PDFExportSettings, documentContent: string) {
+    // Show a toast notification when starting the export
+    toast.loading('Creating your PDF...', { id: 'pdf-export' });
+
     // Import html2pdf dynamically to avoid SSR issues
     return import('html2pdf.js')
         .then((html2pdfModule) => {
@@ -413,6 +450,22 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
                 item.setAttribute('style', `display: list-item; ${existingStyle}`);
             });
 
+            // Process images to ensure they load properly
+            const images = container.querySelectorAll('img');
+            images.forEach(img => {
+                // Add crossOrigin attribute to help with CORS issues
+                img.crossOrigin = 'anonymous';
+
+                // Ensure images have max-width for better PDF layout
+                const existingStyle = img.getAttribute('style') || '';
+                img.setAttribute('style', `max-width: 100%; height: auto; ${existingStyle}`);
+
+                // If an image doesn't have alt text, add an empty one for accessibility
+                if (!img.hasAttribute('alt')) {
+                    img.setAttribute('alt', '');
+                }
+            });
+
             // Create a wrapper for proper page breaks
             const wrapper = document.createElement('div');
             wrapper.appendChild(container);
@@ -422,12 +475,17 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
             const opt = {
                 margin: settings.margin,
                 filename: `${settings.fileName}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
+                image: {
+                    type: 'jpeg',
+                    quality: 0.98
+                },
                 html2canvas: {
                     scale: 2,
                     useCORS: true,
+                    allowTaint: true, // Allow loading of cross-origin images
                     backgroundColor: settings.pageColor,
                     removeContainer: true,
+                    logging: false, // Set to true for debugging image loading issues
                 },
                 jsPDF: {
                     unit: 'mm',
@@ -441,13 +499,13 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
                 .then(() => {
                     // Remove the temporary elements
                     document.body.removeChild(wrapper);
-                    toast.success(`Document exported as PDF`);
+                    toast.success(`PDF created successfully!`, { id: 'pdf-export' });
                     return true;
                 });
         })
         .catch(error => {
             console.error('Error exporting to PDF:', error);
-            toast.error('Failed to export as PDF. Please try again.');
+            toast.error('Failed to export as PDF. Please try again.', { id: 'pdf-export' });
             return false;
         });
 } 
