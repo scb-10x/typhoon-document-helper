@@ -3,20 +3,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useEditor, EditorContent, } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import Link from '@tiptap/extension-link';
-import TextAlign from '@tiptap/extension-text-align';
-import TextStyle from '@tiptap/extension-text-style';
-import Highlight from '@tiptap/extension-highlight';
-import Color from '@tiptap/extension-color';
-import { PDFSettingsDialog, exportToPDF, type PDFExportSettings } from './PDFExport';
+import { Highlight } from '@tiptap/extension-highlight';
+import { Link } from '@tiptap/extension-link';
+import { TextAlign } from '@tiptap/extension-text-align';
+import { Underline } from '@tiptap/extension-underline';
+import { TextStyle } from '@tiptap/extension-text-style';
+import { Color } from '@tiptap/extension-color';
+import { DOMSerializer } from '@tiptap/pm/model';
+import { toast } from 'react-hot-toast';
 import {
-    Bold, Italic, Underline as UnderlineIcon, Link as LinkIcon, List, ListOrdered,
-    AlignLeft, AlignCenter, AlignRight, Code, Quote, Highlighter,
-    Minus, PanelLeftClose, RotateCcw, RotateCw, Eye as EyeIcon,
-    FileText, AlignJustify as AlignJustifyIcon, Maximize2, Minimize2,
-    BookOpen, Palette, Eraser, Strikethrough, BrainCircuit, Image, Focus,
-    Plus, Briefcase, MessageSquare, ChevronDown
+Bold, Italic, Underline as UnderlineIcon, Link as LinkIcon, List, ListOrdered,
+AlignLeft, AlignCenter, AlignRight, Code, Quote, Highlighter,
+Minus, PanelLeftClose, RotateCcw, RotateCw, Eye as EyeIcon,
+FileText, AlignJustify as AlignJustifyIcon, Maximize2, Minimize2,
+BookOpen, Palette, Eraser, Strikethrough, BrainCircuit, Image, Focus,
+Plus, Briefcase, MessageSquare, ChevronDown
 } from 'lucide-react';
 import {
     DocumentDuplicateIcon, PencilIcon, CheckIcon, ChevronDownIcon,
@@ -25,9 +26,8 @@ import {
     ListBulletIcon as ListIcon, LanguageIcon, PaintBrushIcon, ArrowDownTrayIcon,
     DocumentArrowDownIcon, CodeBracketIcon as CodeIcon,
     BeakerIcon, MegaphoneIcon, XMarkIcon
-} from '@heroicons/react/24/outline';
-import toast from 'react-hot-toast';
-import { DOMSerializer } from '@tiptap/pm/model';
+} from '@heroicons/react/24/outline';   
+import { PDFSettingsDialog, exportToPDF, type PDFExportSettings } from './PDFExport';
 
 interface ActionButtonProps {
     icon: React.ReactNode;
@@ -82,7 +82,7 @@ interface MenuBarProps {
     setIsExpanded: (expanded: boolean) => void;
 }
 
-const EditorToolbar = ({ editor }: { editor: any }) => {
+const EditorToolbar = ({ editor, isLoading }: { editor: any, isLoading?: boolean }) => {
     const [showShortcuts, setShowShortcuts] = useState(false);
     const [showUnsplashModal, setShowUnsplashModal] = useState(false);
 
@@ -106,7 +106,7 @@ const EditorToolbar = ({ editor }: { editor: any }) => {
     };
 
     return (
-        <div className="border-b border-gray-200 bg-white p-2 flex flex-wrap items-center sticky top-0 z-10 overflow-y-visible shadow-sm editor-toolbar">
+        <div className="border-b border-gray-200 bg-white p-2 flex flex-wrap items-center sticky top-0 z-10 overflow-y-visible shadow-sm editor-toolbar relative">
             {/* Modern heading selector - NEW */}
             <HeadingSelector editor={editor} />
 
@@ -262,6 +262,13 @@ const EditorToolbar = ({ editor }: { editor: any }) => {
                     <span>Shortcuts</span>
                 </button>
             </div>
+
+            {/* Loading indicator bar */}
+            {isLoading && (
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-blue-500 to-purple-500 z-50">
+                    <div className="h-full w-1/3 bg-white opacity-30 animate-[loading_1.5s_ease-in-out_infinite]"></div>
+                </div>
+            )}
 
             {/* Shortcuts modal */}
             {showShortcuts && (
@@ -2590,7 +2597,7 @@ function example() {
                 </div>
             </div>
 
-            <EditorToolbar editor={editor} />
+            <EditorToolbar editor={editor} isLoading={isLoading} />
 
             <div className="flex-1 overflow-auto relative editor-content-container">
                 <EditorContent
@@ -2711,6 +2718,16 @@ function example() {
                     background-color: white;
                     width: 100%;
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                }
+                
+                /* New animation for loading bar */
+                @keyframes loading {
+                    0% {
+                        transform: translateX(-100%);
+                    }
+                    100% {
+                        transform: translateX(300%);
+                    }
                 }
                 
                 /* AI feature bar styles */
@@ -3014,4 +3031,4 @@ function example() {
             `}</style>
         </div>
     );
-} 
+}
