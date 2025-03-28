@@ -25,7 +25,7 @@ import {
     ArrowsPointingOutIcon, ArrowsPointingInIcon, ArrowPathIcon, DocumentTextIcon,
     ListBulletIcon as ListIcon, LanguageIcon, PaintBrushIcon, ArrowDownTrayIcon,
     DocumentArrowDownIcon, CodeBracketIcon as CodeIcon,
-    BeakerIcon, MegaphoneIcon, ChevronUpIcon, XMarkIcon
+    BeakerIcon, MegaphoneIcon, XMarkIcon
 } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
@@ -96,7 +96,7 @@ const EditorToolbar = ({ editor }: { editor: any }) => {
     };
 
     return (
-        <div className="border-b border-gray-200 bg-white p-2 flex flex-wrap items-center">
+        <div className="border-b border-gray-200 bg-white p-2 flex flex-wrap items-center sticky top-0 z-10 overflow-y-visible shadow-sm editor-toolbar">
             {/* Modern heading selector - NEW */}
             <HeadingSelector editor={editor} />
 
@@ -385,9 +385,8 @@ const AIMenu = ({ title, icon, options, onAction, disabled = false }: AIMenuProp
 };
 
 // Consolidated AI Footer for all AI features
-const AIFooter = ({ editor, onAIAction, isLoading }: MenuBarProps) => {
+const AIFooter = ({ editor, onAIAction, isLoading, isExpanded, setIsExpanded }: MenuBarProps & { isExpanded: boolean, setIsExpanded: (value: boolean) => void }) => {
     const [activeTab, setActiveTab] = useState('improve');
-    const [isExpanded, setIsExpanded] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     // Get smartComposeEnabled from the parent component via a new prop
     const smartComposeEnabled = editor?.storage?.smartCompose?.enabled || false;
@@ -585,7 +584,7 @@ const AIFooter = ({ editor, onAIAction, isLoading }: MenuBarProps) => {
         : options;
 
     return (
-        <div className="ai-feature-bar fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+        <div className="ai-feature-bar bg-white border-t border-gray-200 shadow-lg">
             <div className="max-w-6xl mx-auto">
                 <div className={`flex items-center p-2 ${isExpanded ? 'border-b border-gray-100' : ''}`}>
                     <button
@@ -594,7 +593,7 @@ const AIFooter = ({ editor, onAIAction, isLoading }: MenuBarProps) => {
                     >
                         <BrainCircuit className="w-4 h-4 text-purple-600" />
                         AI Assistant
-                        <ChevronUpIcon className={`w-4 h-4 transition-transform ${isExpanded ? '' : 'rotate-180'}`} />
+                        <ChevronDownIcon className={`w-4 h-4 transition-transform ${isExpanded ? '' : 'rotate-180'}`} />
                     </button>
 
                     {isExpanded && (
@@ -744,6 +743,14 @@ interface Document {
     id: number;
     name: string;
     content: string;
+}
+
+interface AIHistoryItem {
+    id: number;
+    action: string;
+    input: string;
+    output: string;
+    timestamp: number;
 }
 
 // Function to convert HTML to Markdown
@@ -1381,23 +1388,20 @@ const HeadingSelector = ({ editor }: { editor: any }) => {
         <div className="relative mr-2" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-1.5 px-2 py-1.5 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-                title="Text style"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded text-sm font-medium hover:bg-gray-100 text-gray-700 transition-colors"
             >
-                <span className="font-medium">{currentHeading.label}</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                <span>{currentHeading.label}</span>
+                <ChevronDownIcon className="w-4 h-4" />
             </button>
 
             {isOpen && (
-                <div className="absolute left-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10 py-1">
+                <div className="absolute left-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-30 py-1 editor-toolbar-dropdown">
                     {headingOptions.map((option) => (
                         <button
                             key={option.value}
                             onClick={() => handleHeadingChange(option.value)}
                             className={`w-full text-left px-3 py-2 ${option.value === currentHeading.value ? 'bg-purple-50 text-purple-600' : 'text-gray-700 hover:bg-gray-50'
-                                }`}
+                            }`}
                         >
                             {option.value === 'paragraph' ? (
                                 <span className="text-sm">Paragraph</span>
@@ -1712,10 +1716,9 @@ const HighlightPicker = ({ editor }: { editor: any }) => {
 
 export default function Editor() {
     const [isLoading, setIsLoading] = useState(false);
-    const [documents, setDocuments] = useState<Document[]>([{
-        id: 1,
-        name: 'Sample Document',
-        content: `
+    const [activeDocument, setActiveDocument] = useState(1);
+    const [documents, setDocuments] = useState<Document[]>([
+        { id: 1, name: 'Welcome Document', content: `
             <h1>Sample Document</h1>
             <p>This is a sample document showing different formatting options available in the editor.</p>
             
@@ -1759,45 +1762,39 @@ function example() {
                 <li>HTML - for web publishing and blogs</li>
                 <li>Text - for simple, formatting-free text</li>
             </ul>
-        `
-    }]);
-    const [activeDocument, setActiveDocument] = useState(1);
+        ` }
+    ]);
+    const [documentName, setDocumentName] = useState('Welcome Document');
     const [isEditing, setIsEditing] = useState(false);
-    const [documentName, setDocumentName] = useState('Untitled Document');
-    const titleRef = useRef<HTMLInputElement>(null);
-    const documentContentRef = useRef<{ id: number; content: string } | null>(null);
-    const shouldUpdateDocumentRef = useRef(true);
-    const [showAISidebar, setShowAISidebar] = useState(false);
-    const [aiHistory, setAIHistory] = useState<{
-        id: number;
-        action: string;
-        input: string;
-        output: string;
-        timestamp: number;
-    }[]>([]);
+    const [contextMenu, setContextMenu] = useState({ visible: false, position: { x: 0, y: 0 } });
+    const [showShortcuts, setShowShortcuts] = useState(false);
     const [smartComposeEnabled, setSmartComposeEnabled] = useState(false);
     const [suggestion, setSuggestion] = useState('');
-    const smartComposeDebounceRef = useRef<NodeJS.Timeout | null>(null);
-    const previousTextRef = useRef('');
-    const [showSettingsModal, setShowSettingsModal] = useState(false);
+    const [aiHistory, setAIHistory] = useState<AIHistoryItem[]>([]);
+    const [isAIhistoryVisible, setIsAIHistoryVisible] = useState(false);
+    
+    // Font size and line height for readability
     const [fontSize, setFontSize] = useState(16);
     const [lineHeight, setLineHeight] = useState(1.6);
     const [readingMode, setReadingMode] = useState(false);
     const [focusMode, setFocusMode] = useState(false);
-    const [showShortcuts, setShowShortcuts] = useState(false);
-
-    // Context menu state
-    const [contextMenu, setContextMenu] = useState<{
-        visible: boolean;
-        position: { x: number; y: number };
-    }>({
-        visible: false,
-        position: { x: 0, y: 0 }
-    });
-
+    
+    // Reference to track if we should update document on activeDocument change
+    const shouldUpdateDocumentRef = useRef(true);
+    // Reference to track current document content
+    const documentContentRef = useRef<{ id: number, content: string } | null>(null);
+    // Reference for auto-save debounce
+    const smartComposeDebounceRef = useRef<NodeJS.Timeout | null>(null);
+    // Reference for title input
+    const titleRef = useRef<HTMLInputElement>(null);
+    
+    // AI Assistant bar expanded state and ref
+    const aiFooterRef = useRef<HTMLDivElement>(null);
+    const [isAIBarExpanded, setIsAIBarExpanded] = useState(true);
+    
     // Get the content of the active document
     const activeDocumentContent = documents.find(doc => doc.id === activeDocument)?.content || '';
-
+    
     // Initialize the editor with basic extensions
     const editor = useEditor({
         extensions: [
@@ -1807,10 +1804,6 @@ function example() {
                         class: 'editor-paragraph',
                     },
                 },
-            }),
-            Placeholder.configure({
-                placeholder: 'Start writing or type &quot;/&quot; for commands...',
-                emptyEditorClass: 'is-editor-empty',
             }),
             Link.configure({
                 openOnClick: false,
@@ -2008,6 +2001,7 @@ function example() {
                 // or if the content has changed externally (not from typing)
                 if (shouldUpdateDocumentRef.current) {
                     editor.commands.setContent(currentDoc.content);
+                    shouldUpdateDocumentRef.current = false;
                 }
                 setDocumentName(currentDoc.name);
             }
@@ -2030,12 +2024,35 @@ function example() {
         // Save the current cursor position
         const currentSelection = { from, to };
 
-        // Get both HTML content (for formatting) and plain text (for fallback)
-        const selectedHtml = isTextSelected ? editor.getHTML().substring(from, to) : '';
+        // Get plain text selection
         const selectedText = isTextSelected ? editor.state.doc.textBetween(from, to, ' ') : '';
-
-        // Use HTML for content to preserve formatting
-        const htmlContent = selectedHtml || editor.getHTML();
+        
+        // Get HTML content properly
+        let htmlContent = '';
+        if (isTextSelected) {
+            try {
+                // Get current selection
+                const selection = window.getSelection();
+                if (selection && selection.rangeCount > 0) {
+                    // Create a temporary container
+                    const container = document.createElement('div');
+                    // Clone the selection contents into the container
+                    const range = selection.getRangeAt(0);
+                    container.appendChild(range.cloneContents());
+                    // Get the HTML from the container
+                    htmlContent = container.innerHTML;
+                } else {
+                    // Fallback to full content if selection API fails
+                    htmlContent = editor.getHTML();
+                }
+            } catch (e) {
+                console.error('Error getting selected HTML:', e);
+                htmlContent = editor.getHTML(); // Fallback to full content
+            }
+        } else {
+            htmlContent = editor.getHTML();
+        }
+        
         const plainContent = selectedText || editor.getText();
 
         if (!plainContent.trim() && action !== 'brainstorm') {
@@ -2046,105 +2063,35 @@ function example() {
         setIsLoading(true);
 
         try {
-            let prompt = '';
-            let shouldReplaceSelection = true;
-            let shouldInsertBelow = false;
-            let actionLabel = action;
-
-            // Configure the prompt based on the action
-            switch (action) {
-                case 'proofread':
-                    prompt = `Proofread the following HTML text, fixing spelling, grammar, and punctuation errors while preserving the original meaning and HTML formatting:\n\n${htmlContent}`;
-                    break;
-                case 'professional':
-                    prompt = `Rewrite the following HTML text in a professional, formal tone suitable for business documents, while maintaining all HTML tags and formatting:\n\n${htmlContent}`;
-                    break;
-                case 'casual':
-                    prompt = `Rewrite the following HTML text in a casual, conversational tone while preserving all HTML formatting tags:\n\n${htmlContent}`;
-                    break;
-                case 'clarity':
-                    prompt = `Improve the clarity of the following HTML text, making it easier to understand while preserving its meaning and HTML formatting:\n\n${htmlContent}`;
-                    break;
-                case 'concise':
-                    prompt = `Make the following HTML text more concise without losing important information and preserve all HTML tags and structure:\n\n${htmlContent}`;
-                    break;
-                case 'extend':
-                    prompt = `Elaborate and expand on the following HTML text, adding more details and explanation while maintaining the HTML formatting:\n\n${htmlContent}`;
-                    break;
-                case 'summarize':
-                    prompt = `Summarize the key points of the following HTML text in a concise way, keeping essential HTML formatting:\n\n${htmlContent}`;
-                    break;
-                case 'bulletize':
-                    prompt = `Convert the following HTML text into a bulleted list using proper HTML <ul> and <li> tags, organizing the information into clear, distinct points:\n\n${htmlContent}`;
-                    break;
-                case 'action-items':
-                    prompt = `Convert the following HTML text into a list of actionable tasks or action items using proper HTML <ul> and <li> tags:\n\n${htmlContent}`;
-                    break;
-                case 'outline':
-                    prompt = `Create a structured outline from the following HTML text, using hierarchical organization and preserve with proper HTML heading tags:\n\n${htmlContent}`;
-                    break;
-                case 'brainstorm':
-                    prompt = htmlContent ?
-                        `Generate creative ideas related to the following HTML text. Return your response in proper HTML format with appropriate tags:\n\n${htmlContent}` :
-                        `Brainstorm creative ideas for a document. Generate 5-7 interesting topics that could be developed into full content. Format your response with proper HTML tags for structure.`;
-                    shouldReplaceSelection = false;
-                    shouldInsertBelow = true;
-                    break;
-                case 'academic':
-                    prompt = `Rewrite the following HTML text in an academic style, with formal language, precise terminology, and a scholarly tone while preserving all HTML formatting:\n\n${htmlContent}`;
-                    break;
-                case 'technical':
-                    prompt = `Rewrite the following HTML text in a technical style, suitable for documentation or technical papers, with clear, precise language while maintaining all HTML formatting:\n\n${htmlContent}`;
-                    break;
-                case 'marketing':
-                    prompt = `Rewrite the following HTML text in a persuasive marketing style that engages readers and highlights benefits while preserving all HTML formatting:\n\n${htmlContent}`;
-                    break;
-                case 'storytelling':
-                    prompt = `Rewrite the following HTML text in a narrative, storytelling style that engages readers while maintaining all HTML formatting:\n\n${htmlContent}`;
-                    break;
-                case 'smart-compose':
-                    setSmartComposeEnabled(!smartComposeEnabled);
-                    toast.success(smartComposeEnabled
-                        ? 'Smart Compose disabled'
-                        : 'Smart Compose enabled');
-                    setIsLoading(false);
-                    return;
-                default:
-                    // Handle translations
-                    if (action.startsWith('translate-')) {
-                        const language = action.split('-')[1];
-                        const languageMap: Record<string, string> = {
-                            'es': 'Spanish',
-                            'fr': 'French',
-                            'de': 'German',
-                            'zh': 'Chinese',
-                            'ja': 'Japanese',
-                            'ru': 'Russian',
-                            'ar': 'Arabic',
-                            'pt': 'Portuguese',
-                            'it': 'Italian',
-                            'other': ''
-                        };
-
-                        if (language === 'other') {
-                            const customLanguage = window.prompt('Enter the language to translate to:');
-                            if (!customLanguage) {
-                                setIsLoading(false);
-                                return;
-                            }
-                            prompt = `Translate the following HTML text to ${customLanguage} while preserving all HTML tags and structure:\n\n${htmlContent}`;
-                            actionLabel = `translate-${customLanguage}`;
-                        } else {
-                            prompt = `Translate the following HTML text to ${languageMap[language]} while preserving all HTML tags and structure:\n\n${htmlContent}`;
-                        }
-                    } else {
-                        prompt = `${action} the following HTML text while preserving all formatting tags:\n\n${htmlContent}`;
-                    }
+            // Special handling for UI state only
+            if (action === 'smart-compose') {
+                setSmartComposeEnabled(!smartComposeEnabled);
+                toast.success(smartComposeEnabled
+                    ? 'Smart Compose disabled'
+                    : 'Smart Compose enabled');
+                setIsLoading(false);
+                return;
             }
 
-            // Add specific instructions for formatting preservation
-            prompt += "\n\nIMPORTANT: Your response MUST preserve all HTML formatting exactly as it appears in the input. Do not add markdown, code blocks, or any other syntax. Return valid HTML with the same tag structure as the original content.";
+            // For custom language translations
+            let customLanguage = null;
+            let actionLabel = action;
+            
+            // Handle custom language translations
+            if (action === 'translate-other') {
+                customLanguage = window.prompt('Enter the language to translate to:');
+                if (!customLanguage) {
+                    setIsLoading(false);
+                    return;
+                }
+                actionLabel = `translate-${customLanguage}`;
+            }
+            
+            // Determine insertion behavior
+            const shouldReplaceSelection = action !== 'brainstorm';
+            const shouldInsertBelow = action === 'brainstorm';
 
+            // Call the backend API with the action and content
             const response = await fetch('/api/ai', {
                 method: 'POST',
                 headers: {
@@ -2153,8 +2100,8 @@ function example() {
                 body: JSON.stringify({
                     content: htmlContent,
                     plainText: plainContent,
-                    action: 'custom',
-                    prompt,
+                    action: action,
+                    customLanguage: customLanguage,
                     preserveFormatting: true
                 }),
             });
@@ -2165,7 +2112,7 @@ function example() {
                 throw new Error(data.error || 'Failed to process AI request');
             }
 
-            let aiResponse = data.choices?.[0]?.message?.content;
+            let aiResponse = data.response
 
             if (!aiResponse) {
                 throw new Error('Invalid response from AI service');
@@ -2224,16 +2171,7 @@ function example() {
         const plainContent = editor.getText();
 
         try {
-            const formatPrompts: Record<string, string> = {
-                shorten: `Make this HTML text more concise while preserving key points and maintaining all HTML formatting tags:\n\n${htmlContent}`,
-                lengthen: `Expand on this HTML text while maintaining the same style, tone, and HTML formatting:\n\n${htmlContent}`,
-                professional: `Rewrite this HTML text in a more professional tone, preserving all HTML tags and structure:\n\n${htmlContent}`,
-                casual: `Rewrite this HTML text in a more casual, conversational tone while maintaining all HTML formatting:\n\n${htmlContent}`
-            };
-
-            // Add specific instructions for formatting preservation
-            const prompt = formatPrompts[format] + "\n\nIMPORTANT: Your response MUST preserve all HTML formatting exactly as it appears in the input. Do not add markdown, code blocks, or any other syntax. Return valid HTML with the same tag structure as the original content.";
-
+            // Call the backend API with the format action
             const response = await fetch('/api/ai', {
                 method: 'POST',
                 headers: {
@@ -2242,8 +2180,7 @@ function example() {
                 body: JSON.stringify({
                     content: htmlContent,
                     plainText: plainContent,
-                    action: 'custom',
-                    prompt: prompt,
+                    action: `format-${format}`,
                     preserveFormatting: true
                 }),
             });
@@ -2254,7 +2191,7 @@ function example() {
                 throw new Error(data.error || 'Failed to process AI request');
             }
 
-            let aiResponse = data.choices?.[0]?.message?.content;
+            let aiResponse = data.response
 
             if (!aiResponse) {
                 throw new Error('Invalid response from AI service');
@@ -2324,9 +2261,6 @@ function example() {
 
     const handleContentChange = () => {
         if (editor) {
-            // Set flag to prevent content update in the useEffect
-            shouldUpdateDocumentRef.current = false;
-
             // Store current document content for reference
             documentContentRef.current = {
                 id: activeDocument,
@@ -2341,11 +2275,6 @@ function example() {
                 );
                 setDocuments(updatedDocuments);
             });
-
-            // Reset flag after a short delay to allow for other operations
-            setTimeout(() => {
-                shouldUpdateDocumentRef.current = true;
-            }, 10);
         }
     };
 
@@ -2448,8 +2377,8 @@ function example() {
     }, [editor]);
 
     return (
-        <div className={`w-full max-w-6xl mx-auto bg-white rounded-xl shadow-stripe-lg overflow-hidden flex flex-col h-[800px] border border-gray-200 ${readingMode ? 'reading-mode' : ''} ${focusMode ? 'focus-mode' : ''}`}>
-            <div className="flex items-center p-3 bg-white border-b border-gray-200">
+        <div className={`w-full max-w-6xl mx-auto bg-white rounded-xl shadow-stripe-lg overflow-hidden flex flex-col border border-gray-200 ${readingMode ? 'reading-mode' : ''} ${focusMode ? 'focus-mode' : ''}`}>
+            <div className="flex items-center p-3 bg-white border-b border-gray-200 editor-header">
                 {/* Original header content */}
                 <div className="flex-1 flex">
                     {isEditing ? (
@@ -2514,14 +2443,22 @@ function example() {
 
             <EditorToolbar editor={editor} />
 
-            <div className="flex-1 overflow-auto pb-[60px]">
+            <div className="flex-1 overflow-auto relative editor-content-container">
                 <EditorContent
                     editor={editor}
                     className={`h-full ${smartComposeEnabled ? 'smart-compose-active' : ''}`}
                 />
             </div>
 
-            <AIFooter editor={editor} onAIAction={handleAIAction} isLoading={isLoading} />
+            <div ref={aiFooterRef}>
+                <AIFooter 
+                    editor={editor} 
+                    onAIAction={handleAIAction} 
+                    isLoading={isLoading} 
+                    isExpanded={isAIBarExpanded}
+                    setIsExpanded={setIsAIBarExpanded}
+                />
+            </div>
 
             {/* Selection Context Menu - Shown when right-clicking on selected text */}
             {contextMenu.visible && (
@@ -2608,6 +2545,68 @@ function example() {
             )}
 
             <style jsx global>{`
+                /* Layout fixes for toolbar and headers */
+                .editor-header {
+                    position: sticky;
+                    top: 0;
+                    z-index: 20;
+                    background-color: white;
+                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+                }
+                
+                .editor-toolbar {
+                    position: sticky;
+                    top: 48px; /* Height of the header */
+                    z-index: 20;
+                    background-color: white;
+                    width: 100%;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                }
+                
+                /* AI feature bar styles */
+                .ai-feature-bar {
+                    width: 100%;
+                    transition: all 0.3s ease;
+                    z-index: 20;
+                    border-top: 1px solid #e5e7eb;
+                    background-color: #fcfcfd;
+                }
+                
+                /* Editor content container that adjusts based on AI bar */
+                .editor-content-container {
+                    display: flex;
+                    flex-direction: column;
+                    height: 100%;
+                    overflow: auto;
+                }
+                
+                /* Automatic padding for editor content based on AI bar visibility */
+                .editor-content-container .ProseMirror {
+                    padding-bottom: 1rem;
+                }
+                
+                /* Toolbar dropdown positioning fixes */
+                .editor-toolbar-dropdown {
+                    z-index: 50 !important;
+                }
+                
+                /* Ensure color pickers and dropdown menus appear above other content */
+                .format-dropdown {
+                    z-index: 50 !important;
+                }
+                
+                /* Ensure content is properly scrollable */
+                .ProseMirror {
+                    padding-top: 16px; /* Add space at the top for better visual separation from toolbar */
+                    padding-left: 16px;
+                    padding-right: 16px;
+                    padding-bottom: 16px;
+                    flex: 1;
+                    min-height: 200px;
+                    overflow-wrap: break-word;
+                }
+                
+                /* Original styles below */
                 .smart-compose-suggestion {
                     color: #9CA3AF;
                     opacity: 0.75;
@@ -2621,7 +2620,7 @@ function example() {
                     border-radius: 4px;
                 }
                 
-                /* When Smart Compose is active, add a subtle indicator to the editor */
+                /* Remaining original styles... */
                 .smart-compose-active::before {
                     content: '';
                     position: absolute;
@@ -2670,10 +2669,8 @@ function example() {
                     white-space: pre-wrap !important; /* Preserve whitespace and line breaks */
                     word-wrap: break-word;
                     word-break: normal;
-                    padding: 1rem;
                     outline: none !important;
                     position: relative; /* Needed for positioning the pulse indicator */
-                    padding-bottom: 80px !important; /* Ensure there's space at the bottom for AI bar */
                 }
                 
                 /* Fix whitespace issues */
@@ -2700,7 +2697,6 @@ function example() {
                 .format-dropdown {
                     border-radius: 0.375rem;
                     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-                    z-index: 50;
                 }
                 
                 /* Context menu styling */
@@ -2760,16 +2756,6 @@ function example() {
                     width: 16px;
                     height: 16px;
                     flex-shrink: 0;
-                }
-
-                /* AI feature bar styles */
-                .ai-feature-bar {
-                    transition: transform 0.3s ease;
-                    position: fixed;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
-                    z-index: 50;
                 }
             `}</style>
         </div>
