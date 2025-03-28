@@ -2460,7 +2460,7 @@ function example() {
                 .editor-toolbar {
                     position: sticky;
                     top: 48px; /* Height of the header */
-                    z-index: 20;
+                    z-index: 15;
                     background-color: white;
                     width: 100%;
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
