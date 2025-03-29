@@ -2765,7 +2765,7 @@ function example() {
                 .editor-header {
                     position: sticky;
                     top: 0;
-                    z-index: 20;
+                    z-index: 10;
                     background-color: white;
                     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
                 }
@@ -2773,7 +2773,7 @@ function example() {
                 .editor-toolbar {
                     position: sticky;
                     top: 48px; /* Height of the header */
-                    z-index: 15;
+                    z-index: 10;
                     background-color: white;
                     width: 100%;
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
