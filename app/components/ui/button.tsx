@@ -20,6 +20,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             className,
             variant = "default",
             size = "default",
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             asChild: _asChild = false,
             ...props
         },

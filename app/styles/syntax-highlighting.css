@@ -1,0 +1,150 @@
+/* Based on highlight.js's VS2015 dark theme */
+pre {
+  color: #d4d4d4;
+  background: #1e1e1e;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+/* General styling for code blocks */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em;
+  background: #1e1e1e;
+  color: #d4d4d4;
+}
+
+/* Base styling for code */
+code {
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9em;
+}
+
+.ProseMirror pre {
+  background: #1e1e1e;
+  border-radius: 0.5rem;
+  color: #d4d4d4;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  padding: 0.75em 1em;
+  margin: 1em 0;
+}
+
+.ProseMirror pre code {
+  color: inherit;
+  padding: 0;
+  background: none;
+  font-size: 0.9em;
+}
+
+/* Keywords */
+.hljs-keyword,
+.hljs-literal,
+.hljs-symbol,
+.hljs-name {
+  color: #569cd6;
+}
+
+/* Punctuation */
+.hljs-punctuation,
+.hljs-tag {
+  color: #808080;
+}
+
+/* Names */
+.hljs-attr,
+.hljs-attribute,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-id {
+  color: #9cdcfe;
+}
+
+/* Strings */
+.hljs-string,
+.hljs-title,
+.hljs-title.class_,
+.hljs-title.class_.inherited__,
+.hljs-title.function_ {
+  color: #ce9178;
+}
+
+/* Numbers */
+.hljs-number,
+.hljs-regexp,
+.hljs-meta {
+  color: #b5cea8;
+}
+
+/* Built-in constants */
+.hljs-built_in,
+.hljs-doctag {
+  color: #4ec9b0;
+}
+
+/* Variables */
+.hljs-variable,
+.hljs-template-variable {
+  color: #9cdcfe;
+}
+
+/* Comments */
+.hljs-comment,
+.hljs-quote {
+  color: #6a9955;
+  font-style: italic;
+}
+
+/* Attributes */
+.hljs-attribute,
+.hljs-attr {
+  color: #9cdcfe;
+}
+
+/* Entities */
+.hljs-entity,
+.hljs-property {
+  color: #4ec9b0;
+}
+
+/* Function names */
+.hljs-function,
+.hljs-function .hljs-title,
+.hljs-title.function_ {
+  color: #dcdcaa;
+}
+
+/* Section */
+.hljs-section {
+  color: #dcdcaa;
+}
+
+/* Operators */
+.hljs-operator {
+  color: #d4d4d4;
+}
+
+/* Deleted */
+.hljs-deletion {
+  color: #ce9178;
+  background-color: #3c0a0a;
+}
+
+/* Inserted */
+.hljs-addition {
+  background-color: #144212;
+}
+
+/* Generic styling */
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+} 

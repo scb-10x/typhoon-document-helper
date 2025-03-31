@@ -1,0 +1,227 @@
+/* Task List Styling */
+ul.task-list {
+    list-style-type: none !important;
+    padding-left: 1rem;
+}
+
+li.task-item {
+    display: flex !important;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+li.task-item > div {
+    margin-left: 0.5rem;
+    flex: 1;
+}
+
+li.task-item > label {
+    display: flex;
+    align-items: center;
+    margin-right: 0.5rem;
+}
+
+li.task-item > label > input[type="checkbox"] {
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+/* Subscript and Superscript Styles */
+sub {
+    vertical-align: sub;
+    font-size: 0.75em;
+}
+
+sup {
+    vertical-align: super;
+    font-size: 0.75em;
+}
+
+/* Document Stats Bar Styling */
+.document-stats {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    color: #6b7280;
+    border-top: 1px solid #e5e7eb;
+    background-color: #f9fafb;
+}
+
+.document-stats > div {
+    margin-right: 1rem;
+}
+
+.document-stats .separator {
+    margin: 0 0.5rem;
+    color: #d1d5db;
+}
+
+.document-stats .count {
+    font-weight: 600;
+    color: #4b5563;
+}
+
+/* Table editor styling */
+.tableWrapper {
+    padding: 8px;
+    overflow-x: auto;
+}
+
+table.ProseMirror-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin: 0;
+    overflow: hidden;
+}
+
+.ProseMirror-table th, 
+.ProseMirror-table td {
+    position: relative;
+    min-width: 60px;
+    border: 1px solid #d1d5db;
+    padding: 8px;
+    vertical-align: top;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.ProseMirror-table th {
+    background-color: #f1f5f9;
+    font-weight: 600;
+}
+
+.ProseMirror-table tr {
+    min-height: 36px;
+}
+
+.selectedCell:after {
+    z-index: 2;
+    position: absolute;
+    content: "";
+    left: 0; right: 0; top: 0; bottom: 0;
+    background: rgba(200, 200, 255, 0.1);
+    pointer-events: none;
+}
+
+.column-resize-handle {
+    position: absolute;
+    right: -2px; top: 0; bottom: 0;
+    width: 4px;
+    background-color: #adf;
+    cursor: col-resize;
+    z-index: 20;
+}
+
+/* Row controls */
+.rowControlButton {
+    position: absolute;
+    left: -24px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background-color: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    cursor: pointer;
+}
+
+tr:hover .rowControlButton {
+    opacity: 1;
+}
+
+/* Column controls */
+.columnControlButton {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background-color: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    cursor: pointer;
+}
+
+th:hover .columnControlButton {
+    opacity: 1;
+}
+
+/* LaTeX Math Formula Styling - Removed */
+/* Math formula support has been removed from the editor */
+
+/* Remove LaTeX Math Formula Styling */
+/* 
+.math-inline {
+    display: inline-flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    padding: 2px 4px;
+    margin: 0 2px;
+    border: 1px solid #e9ecef;
+    cursor: pointer;
+    line-height: 1.4;
+    user-select: none;
+    min-height: 1.5em;
+}
+
+.math-inline:hover {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+}
+
+.math-block {
+    display: block;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    padding: 8px 16px;
+    margin: 1em 0;
+    border: 1px solid #e9ecef;
+    cursor: pointer;
+    text-align: center;
+    user-select: none;
+}
+
+.math-block:hover {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+}
+
+.math-source {
+    font-family: monospace;
+    color: #495057;
+}
+
+/* When KaTeX is rendered */
+.math-block .katex-display,
+.math-inline .katex {
+    margin: 0;
+}
+
+/* PDF Export styles for math */
+.pdf-container .math-inline,
+.pdf-container .math-block {
+    background-color: transparent;
+    border: none;
+    cursor: default;
+}
+
+.pdf-container .math-block {
+    page-break-inside: avoid;
+    text-align: center;
+}
+*/ 

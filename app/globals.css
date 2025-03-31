@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./styles/syntax-highlighting.css";
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -87,15 +88,19 @@ body {
 /* Add animation styles */
 @layer utilities {
   .animate-fadeIn {
-    animation: fadeIn 0.3s ease-in-out;
+    animation: fadeIn 0.2s ease-out;
   }
   
   .animate-slideUp {
-    animation: slideUp 0.3s ease-in-out;
+    animation: slideUp 0.3s ease-out;
   }
   
   .animate-slideDown {
-    animation: slideDown 0.3s ease-in-out;
+    animation: slideDown 0.3s ease-out;
+  }
+  
+  .animate-slideIn {
+    animation: slideIn 0.2s ease-out;
   }
   
   .animate-pulse {
@@ -123,6 +128,17 @@ body {
   }
   
   @keyframes slideDown {
+    from {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideIn {
     from {
       transform: translateY(-10px);
       opacity: 0;
@@ -172,47 +188,220 @@ body {
 }
 
 /* Tiptap editor styling */
+.editor-content-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
 .ProseMirror {
-  @apply p-4 min-h-[400px] outline-none;
-}
-
-.ProseMirror p {
-  @apply my-2;
-}
-
-.ProseMirror h1 {
-  @apply text-2xl font-bold my-4 text-gray-900;
-}
-
-.ProseMirror h2 {
-  @apply text-xl font-bold my-3 text-gray-900;
-}
-
-.ProseMirror h3 {
-  @apply text-lg font-bold my-2 text-gray-900;
-}
-
-.ProseMirror ul {
-  @apply list-disc pl-5 my-3;
-}
-
-.ProseMirror ol {
-  @apply list-decimal pl-5 my-3;
-}
-
-.ProseMirror blockquote {
-  @apply border-l-4 border-purple-400 pl-4 italic my-4 text-gray-700;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  outline: none;
+  padding: 1.25rem;
 }
 
 .ProseMirror hr {
-  @apply border-t border-gray-300 my-4;
+  height: 0;
+  border: none;
+  border-top: 2px solid #e5e7eb;
+  margin: 2rem 0;
 }
 
-.ProseMirror a {
-  @apply text-purple-600 hover:text-purple-800 underline;
+/* Starter heading styles for consistency */
+.ProseMirror h1 {
+  @apply text-3xl font-bold mb-4;
 }
 
-.ProseMirror .is-empty::before {
-  @apply text-gray-400 float-left h-0 pointer-events-none;
-  content: attr(data-placeholder);
+.ProseMirror h2 {
+  @apply text-2xl font-bold mb-3;
+}
+
+.ProseMirror h3 {
+  @apply text-xl font-semibold mb-2;
+}
+
+.ProseMirror p {
+  @apply leading-6 mb-4;
+}
+
+.ProseMirror ul {
+  @apply list-disc pl-6 mb-4;
+}
+
+.ProseMirror ol {
+  @apply list-decimal pl-6 mb-4;
+}
+
+.ProseMirror blockquote {
+  @apply border-l-4 border-gray-300 pl-4 italic my-4 text-gray-700;
+}
+
+/* Code styling is now in syntax-highlighting.css */
+.ProseMirror code:not([class*="language-"]) {
+  @apply font-mono bg-gray-100 text-sm px-1 py-0.5 rounded text-gray-800;
+}
+
+/* Pre styling is now in syntax-highlighting.css */
+/* .ProseMirror pre {
+  @apply bg-gray-800 text-white p-4 rounded-md my-4 overflow-x-auto;
+}
+
+.ProseMirror pre code {
+  @apply bg-transparent text-white p-0 block;
+} */
+
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  @apply my-4 rounded-md;
+}
+
+/* Editor toolbar and document styling */
+.editor-toolbar {
+  @apply bg-white border-b border-gray-200 p-2 flex flex-wrap items-center sticky top-0 z-10;
+}
+
+.editor-container {
+  @apply w-full max-w-6xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden flex flex-col;
+  @apply border border-gray-200;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Animation for loading indicator in AI processing */
+@keyframes loading {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.editor-loading .ProseMirror {
+  @apply opacity-70;
+  pointer-events: none; /* Technically redundant with setEditable(false), but good fallback */
+}
+
+.ai-processing {
+  position: relative;
+}
+
+.ai-footer {
+  @apply fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-lg px-2 py-1.5 z-50;
+  @apply flex items-center gap-1 w-auto;
+}
+
+.ai-expanded {
+  @apply w-auto;
+}
+
+/* Task list styles */
+.ProseMirror ul[data-type="taskList"] {
+  list-style: none;
+  padding: 0;
+}
+
+.ProseMirror ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.5em;
+  gap: 0.5em;
+}
+
+.ProseMirror ul[data-type="taskList"] li > label {
+  margin-right: 0.5em;
+  user-select: none;
+}
+
+.ProseMirror ul[data-type="taskList"] li > div {
+  flex: 1;
+}
+
+.ProseMirror ul[data-type="taskList"] li > label input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.task-list-item.checked > div > p {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+/* Editor image styling */
+.editor-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1rem auto;
+  border-radius: 4px;
+}
+
+/* Add a subtle border/shadow for better visibility */
+.editor-image:not([src*=".svg"]) {
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* REMOVED Reading Mode styles */
+/*
+.reading-mode .editor-toolbar,
+.reading-mode .ai-footer {
+  display: none;
+}
+
+.reading-mode .editor-content-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.reading-mode .ProseMirror {
+  min-height: auto;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.exit-reading-mode {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10001; 
+  background-color: rgba(124, 58, 237, 0.9); 
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px; 
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease-out;
+}
+
+.exit-reading-mode:hover {
+  background-color: rgba(109, 40, 217, 1); 
+}
+*/
+
+.ProseMirror p,
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4,
+.ProseMirror h5,
+.ProseMirror h6,
+.ProseMirror li,
+.ProseMirror blockquote {
+  line-height: inherit !important;
 }

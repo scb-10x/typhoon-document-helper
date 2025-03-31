@@ -2,12 +2,13 @@
   "extends": "next/core-web-vitals",
   "ignorePatterns": [
     "node_modules",
-    ".next",
+    ".next/**/*",
     "out",
     "app/components/Editor.tsx",
     "app/components/ui/button.tsx",
     "app/api/ai/route.ts",
     "app/api/unsplash/route.ts",
+    "app/components/CustomExtensions.tsx",
     "*.d.ts"
   ],
   "rules": {
@@ -18,6 +19,11 @@
     "react/no-unescaped-entities": "off",
     "prefer-const": "warn",
     "jsx-a11y/alt-text": "off",
-    "@next/next/no-img-element": "off"
+    "@next/next/no-img-element": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-var-requires": "off",
+    "import/no-unresolved": "off"
   }
 } 

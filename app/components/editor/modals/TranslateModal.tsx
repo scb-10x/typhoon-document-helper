@@ -1,0 +1,137 @@
+'use client';
+
+import React, { useState } from 'react';
+import { LanguageIcon } from '@heroicons/react/24/outline';
+import Modal from '../Modal';
+
+interface TranslateModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onSubmit: (language: string) => void;
+    customLanguage: string;
+    setCustomLanguage: (lang: string) => void;
+}
+
+function TranslateModal({
+    isOpen,
+    onClose,
+    onSubmit,
+    customLanguage,
+    setCustomLanguage
+}: TranslateModalProps) {
+    const [selected, setSelected] = useState('english');
+
+    // Common languages to translate to
+    const languages = [
+        { id: 'thai', name: 'Thai' },
+        { id: 'english', name: 'English' },
+        { id: 'spanish', name: 'Spanish' },
+        { id: 'french', name: 'French' },
+        { id: 'german', name: 'German' },
+        { id: 'chinese', name: 'Chinese' },
+        { id: 'japanese', name: 'Japanese' },
+        { id: 'russian', name: 'Russian' },
+        { id: 'arabic', name: 'Arabic' },
+        { id: 'portuguese', name: 'Portuguese' },
+        { id: 'italian', name: 'Italian' },
+        { id: 'hindi', name: 'Hindi' },
+        { id: 'korean', name: 'Korean' },
+        { id: 'dutch', name: 'Dutch' },
+        { id: 'custom', name: 'Other Language' },
+    ];
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (selected === 'custom') {
+            if (customLanguage.trim()) {
+                onSubmit(customLanguage);
+            }
+        } else {
+            onSubmit(selected);
+        }
+    };
+
+    return (
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            title="Translate Text"
+        >
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Select Target Language
+                    </label>
+
+                    <div className="grid grid-cols-2 gap-2">
+                        {languages.slice(0, languages.length - 1).map((language) => (
+                            <div key={language.id} className="flex items-center">
+                                <input
+                                    type="radio"
+                                    id={language.id}
+                                    name="language"
+                                    value={language.id}
+                                    checked={selected === language.id}
+                                    onChange={() => setSelected(language.id)}
+                                    className="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                                />
+                                <label htmlFor={language.id} className="ml-2 text-sm text-gray-700">
+                                    {language.name}
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="mt-3 flex items-center">
+                        <input
+                            type="radio"
+                            id="custom"
+                            name="language"
+                            value="custom"
+                            checked={selected === 'custom'}
+                            onChange={() => setSelected('custom')}
+                            className="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                        />
+                        <label htmlFor="custom" className="ml-2 text-sm text-gray-700">
+                            Other:
+                        </label>
+                        <input
+                            type="text"
+                            value={customLanguage}
+                            onChange={(e) => setCustomLanguage(e.target.value)}
+                            placeholder="Specify language"
+                            className="ml-2 text-sm px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-purple-500"
+                            onClick={() => setSelected('custom')}
+                        />
+                    </div>
+                </div>
+
+                <div className="bg-gray-50 p-3 rounded-md flex items-start">
+                    <LanguageIcon className="w-5 h-5 text-gray-500 mt-0.5 mr-2 flex-shrink-0" />
+                    <p className="text-xs text-gray-600">
+                        The text will be translated into the selected language. For best results, ensure your text is clear and grammatically correct in the source language.
+                    </p>
+                </div>
+
+                <div className="flex justify-end gap-2 mt-6">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+                    >
+                        Translate
+                    </button>
+                </div>
+            </form>
+        </Modal>
+    );
+}
+
+export default TranslateModal; 

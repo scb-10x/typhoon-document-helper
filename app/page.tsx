@@ -12,29 +12,29 @@ const BackgroundElements = () => (
   <div className="absolute inset-0 overflow-hidden -z-10">
     <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-purple-600 to-indigo-600 opacity-5"></div>
     <div className="bg-noise"></div>
-    
+
     {/* Gradient blobs */}
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0.6 }}
-      animate={{ 
+      animate={{
         opacity: [0.6, 0.8, 0.6],
         scale: [1, 1.05, 1],
       }}
       transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       className="absolute top-1/4 -left-24 w-96 h-96 rounded-full bg-indigo-500/20 blur-[80px]"
     />
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0.6 }}
-      animate={{ 
+      animate={{
         opacity: [0.6, 0.8, 0.6],
         scale: [1, 1.05, 1],
       }}
       transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
       className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-purple-500/20 blur-[80px]"
     />
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0.3 }}
-      animate={{ 
+      animate={{
         opacity: [0.3, 0.5, 0.3],
         scale: [1, 1.03, 1],
       }}
@@ -46,7 +46,7 @@ const BackgroundElements = () => (
 
 export default function Home() {
   const { t } = useLanguage();
-  
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
       {/* Header */}
@@ -79,8 +79,8 @@ export default function Home() {
               </svg>
               {t('github')}
             </a>
-            <Link 
-              href="/editor" 
+            <Link
+              href="/editor"
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-md transition-all button-shine"
             >
               {t('openApp')} <FiArrowRight />
@@ -102,8 +102,8 @@ export default function Home() {
             >
               {t('builtWithTyphoon')}
             </motion.div>
-            
-            <motion.h1 
+
+            <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
@@ -111,7 +111,7 @@ export default function Home() {
             >
               {t('heroTitle')}
             </motion.h1>
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -119,7 +119,7 @@ export default function Home() {
             >
               {t('heroSubtitle')}
             </motion.p>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -134,16 +134,16 @@ export default function Home() {
               </Link>
             </motion.div>
           </div>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
             className="relative max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-xl border border-gray-100"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-[2px] z-10 flex items-center justify-center">
-              <Link 
-                href="/editor" 
+              <Link
+                href="/editor"
                 className="px-8 py-3 rounded-lg bg-white text-indigo-600 text-lg font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 button-shine"
               >
                 {t('tryTyphoonDocs')} <FiArrowRight />
@@ -177,9 +177,9 @@ export default function Home() {
             <h2 className="text-3xl font-bold mb-4 text-gradient-subtle">{t('featuresTitle')}</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">{t('featuresSubtitle')}</p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-6">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -192,15 +192,15 @@ export default function Home() {
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{t('richTextTitle')}</h3>
                 <p className="text-gray-600">{t('richTextDescription')}</p>
-                <div className="mt-4 mt-auto pt-4">
+                <div className="mt-auto pt-4">
                   <Link href="/features/rich-text" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
                     {t('learnMore')} <FiArrowRight className="ml-1" />
                   </Link>
                 </div>
               </div>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -213,15 +213,15 @@ export default function Home() {
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{t('aiSuggestionsTitle')}</h3>
                 <p className="text-gray-600">{t('aiSuggestionsDescription')}</p>
-                <div className="mt-4 mt-auto pt-4">
+                <div className="mt-auto pt-4">
                   <Link href="/features/ai-suggestions" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
                     {t('learnMore')} <FiArrowRight className="ml-1" />
                   </Link>
                 </div>
               </div>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
@@ -234,7 +234,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{t('exportOptionsTitle')}</h3>
                 <p className="text-gray-600">{t('exportOptionsDescription')}</p>
-                <div className="mt-4 mt-auto pt-4">
+                <div className="mt-auto pt-4">
                   <Link href="/features/export" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
                     {t('learnMore')} <FiArrowRight className="ml-1" />
                   </Link>

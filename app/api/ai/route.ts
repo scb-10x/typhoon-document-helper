@@ -5,10 +5,10 @@ const TYPHOON_API_URL = process.env.TYPHOON_API_URL || 'https://api.opentyphoon.
 const TYPHOON_API_KEY = process.env.TYPHOON_API_KEY;
 
 // Define valid action types to improve type safety
-type ActionType = 
-    | 'proofread' | 'professional' | 'casual' | 'clarity' | 'concise' 
-    | 'extend' | 'summarize' | 'bulletize' | 'action-items' | 'outline' 
-    | 'brainstorm' | 'brainstorm-empty' | 'academic' | 'technical' 
+type ActionType =
+    | 'proofread' | 'professional' | 'casual' | 'clarity' | 'concise'
+    | 'extend' | 'summarize' | 'bulletize' | 'action-items' | 'outline'
+    | 'brainstorm' | 'brainstorm-empty' | 'academic' | 'technical'
     | 'marketing' | 'storytelling' | 'creative' | 'ideas'
     | 'format-shorten' | 'format-lengthen' | 'format-professional' | 'format-casual';
 
@@ -64,8 +64,8 @@ const TRANSLATION_SYSTEM_PROMPT = "You are a specialized text translator that pr
 
 interface AIRequestBody {
     content: string;
-    plainText: string;
     action: string;
+    plainText?: string;
     customLanguage?: string;
     preserveFormatting?: boolean;
 }
@@ -73,25 +73,30 @@ interface AIRequestBody {
 
 const cleanedCodeBlock = (text: string) => {
     // This will match any opening code fence with optional language specification
-  // For example: ```javascript, ```python, ```mdx, etc.
-  text = text.replace(/^```(?:[a-zA-Z0-9]+)?/gm, '');
-  
-  // Remove closing code fences
-  text = text.replace(/```$/gm, '');
-  // Trim extra whitespace
-  return text.trim();
+    // For example: ```javascript, ```python, ```mdx, etc.
+    text = text.replace(/^```(?:[a-zA-Z0-9]+)?/gm, '');
+
+    // Remove closing code fences
+    text = text.replace(/```$/gm, '');
+    // Trim extra whitespace
+    return text.trim();
 }
 
 export async function POST(request: Request) {
     try {
-        let { 
-            content, 
-            action, 
+        const {
+            content,
+            action,
+            plainText,
             customLanguage,
-            preserveFormatting = true 
+            preserveFormatting = true
         }: AIRequestBody = await request.json();
-        content = '<html>' +content.trim() +'</html>'
-        
+
+        // If plainText is provided and different from content, use it
+        // This is likely a selection the user wants to process
+        const textToProcess = (plainText && plainText !== content) ? plainText : content;
+        const htmlContent = '<html>' + textToProcess.trim() + '</html>';
+
         // Check if this is a translation request
         const isTranslation = action.startsWith('translate-');
 
@@ -103,7 +108,7 @@ export async function POST(request: Request) {
         }
 
         // Ensure content is available for most actions
-        if (!content && action !== 'brainstorm') {
+        if (!htmlContent && action !== 'brainstorm') {
             return NextResponse.json(
                 { error: 'Content is required for this action' },
                 { status: 400 }
@@ -117,19 +122,19 @@ export async function POST(request: Request) {
         if (preserveFormatting) {
             prompt += isTranslation ? TRANSLATION_FORMATTING_INSTRUCTIONS : FORMATTING_INSTRUCTIONS;
         }
-        
+
         // Handle special case for brainstorm with empty content
-        if (action === 'brainstorm' && !content) {
+        if (action === 'brainstorm' && !htmlContent) {
             prompt = PROMPT_TEMPLATES['brainstorm-empty'];
         }
         // Handle translation actions
         else if (isTranslation) {
             const languageCode = action.split('-')[1];
-            
+
             if (languageCode === 'other' && customLanguage) {
-                prompt = `Translate the following HTML text to ${customLanguage} while preserving all HTML tags and structure. The output should be entirely in ${customLanguage}:\n\n${content}`;
+                prompt = `Translate the following HTML text to ${customLanguage} while preserving all HTML tags and structure. The output should be entirely in ${customLanguage}:\n\n${htmlContent}`;
             } else if (LANGUAGE_MAP[languageCode]) {
-                prompt = `Translate the following HTML text to ${LANGUAGE_MAP[languageCode]} while preserving all HTML tags and structure. The output should be entirely in ${LANGUAGE_MAP[languageCode]}:\n\n${content}`;
+                prompt = `Translate the following HTML text to ${LANGUAGE_MAP[languageCode]} while preserving all HTML tags and structure. The output should be entirely in ${LANGUAGE_MAP[languageCode]}:\n\n${htmlContent}`;
             } else {
                 return NextResponse.json(
                     { error: 'Invalid language for translation' },
@@ -139,11 +144,11 @@ export async function POST(request: Request) {
         }
         // Handle standard actions from the templates
         else if (action in PROMPT_TEMPLATES) {
-            prompt = `${PROMPT_TEMPLATES[action as ActionType]}\n\n${content}`;
+            prompt = `${PROMPT_TEMPLATES[action as ActionType]}\n\n${htmlContent}`;
         }
         // Handle custom/fallback actions
         else {
-            prompt = `${action} the following HTML text while preserving all formatting tags:\n\n${content}`;
+            prompt = `${action} the following HTML text while preserving all formatting tags:\n\n${htmlContent}`;
         }
 
         // Configure messages array with optional system message for format preservation

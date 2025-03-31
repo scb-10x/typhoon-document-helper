@@ -76,7 +76,14 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000] backdrop-blur-sm transition-opacity duration-300">
+        <div
+            className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-[10000] backdrop-blur-sm transition-opacity duration-300"
+            onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                    onClose();
+                }
+            }}
+        >
             <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full transition-all duration-300 transform scale-100 animate-fadeIn">
                 <div className="flex justify-between items-center mb-6">
                     <div className="flex items-center gap-2">
@@ -411,6 +418,54 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
                     height: auto;
                     margin: 1rem 0;
                 }
+                /* Subscript and Superscript */
+                sub {
+                    vertical-align: sub;
+                    font-size: 0.75em;
+                }
+                sup {
+                    vertical-align: super;
+                    font-size: 0.75em;
+                }
+                /* Task list styling */
+                ul.task-list {
+                    list-style-type: none;
+                    padding-left: 1rem;
+                }
+                li.task-item {
+                    display: flex !important;
+                    align-items: flex-start;
+                    margin-bottom: 0.5rem;
+                }
+                li.task-item > input[type="checkbox"] {
+                    margin-right: 0.5rem;
+                    margin-top: 0.3rem;
+                }
+                /* Table styling */
+                table {
+                    border-collapse: collapse;
+                    width: 100%;
+                    margin: 1rem 0;
+                    table-layout: fixed;
+                    max-width: 100%;
+                    border: 2px solid #e5e7eb;
+                    break-inside: avoid;
+                }
+                th, td {
+                    border: 1px solid #d1d5db;
+                    padding: 8px;
+                    text-align: left;
+                    word-wrap: break-word;
+                    min-width: 60px;
+                }
+                th {
+                    background-color: #f9fafb;
+                    font-weight: 600;
+                    border-bottom: 2px solid #9ca3af;
+                }
+                tr:nth-child(even) {
+                    background-color: #f9fafb;
+                }
             `;
             container.prepend(styleElement);
 
@@ -450,6 +505,53 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
                 item.setAttribute('style', `display: list-item; ${existingStyle}`);
             });
 
+            // Fix task lists and checkboxes
+            const taskItems = container.querySelectorAll('.task-item');
+            taskItems.forEach(item => {
+                // Add proper styling
+                const itemStyle = item.getAttribute('style') || '';
+                item.setAttribute('style', `display: flex; align-items: flex-start; ${itemStyle}`);
+
+                // Process checkbox
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                if (checkbox) {
+                    // Make sure it's not just a placeholder
+                    if (checkbox.parentElement) {
+                        // Add some spacing after the checkbox
+                        const checkStyle = checkbox.getAttribute('style') || '';
+                        checkbox.setAttribute('style', `margin-right: 8px; margin-top: 4px; ${checkStyle}`);
+                    }
+                }
+            });
+
+            // Fix table styling for PDF output
+            const tables = container.querySelectorAll('table');
+            tables.forEach(table => {
+                // Ensure tables have proper styling
+                const existingStyle = table.getAttribute('style') || '';
+                table.setAttribute('style', `border-collapse: collapse; width: 100%; margin: 1rem 0; border: 2px solid #e5e7eb; ${existingStyle}`);
+
+                // Add page-break-inside: avoid to prevent tables from breaking across pages
+                if (!existingStyle.includes('page-break-inside') && !existingStyle.includes('break-inside')) {
+                    table.style.pageBreakInside = 'avoid';
+                    table.style.breakInside = 'avoid';
+                }
+
+                // Ensure all cells have borders
+                const cells = table.querySelectorAll('th, td');
+                cells.forEach(cell => {
+                    const cellStyle = cell.getAttribute('style') || '';
+                    cell.setAttribute('style', `border: 1px solid #d1d5db; padding: 8px; word-wrap: break-word; ${cellStyle}`);
+                });
+
+                // Style header cells
+                const headerCells = table.querySelectorAll('th');
+                headerCells.forEach(cell => {
+                    const cellStyle = cell.getAttribute('style') || '';
+                    cell.setAttribute('style', `background-color: #f9fafb; font-weight: 600; border-bottom: 2px solid #9ca3af; ${cellStyle}`);
+                });
+            });
+
             // Process images to ensure they load properly
             const images = container.querySelectorAll('img');
             images.forEach(img => {
@@ -458,12 +560,55 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
 
                 // Ensure images have max-width for better PDF layout
                 const existingStyle = img.getAttribute('style') || '';
-                img.setAttribute('style', `max-width: 100%; height: auto; ${existingStyle}`);
+                img.setAttribute('style', `max-width: 100%; height: auto; display: block; margin: 1rem auto; ${existingStyle}`);
+
+                // If an image has a figure or figcaption parent, center and style it
+                const figure = img.closest('figure');
+                if (figure) {
+                    figure.style.textAlign = 'center';
+                    figure.style.margin = '1.5rem 0';
+
+                    // Style figcaption if present
+                    const figcaption = figure.querySelector('figcaption');
+                    if (figcaption) {
+                        figcaption.style.textAlign = 'center';
+                        figcaption.style.fontSize = '0.875rem';
+                        figcaption.style.fontStyle = 'italic';
+                        figcaption.style.color = '#4B5563';
+                        figcaption.style.marginTop = '0.5rem';
+                    }
+                }
 
                 // If an image doesn't have alt text, add an empty one for accessibility
                 if (!img.hasAttribute('alt')) {
                     img.setAttribute('alt', '');
                 }
+
+                // Add title as tooltip if available
+                if (img.hasAttribute('alt') && !img.hasAttribute('title')) {
+                    img.setAttribute('title', img.getAttribute('alt') || '');
+                }
+
+                // Add border to images that don't have transparent backgrounds
+                if (img.src.match(/\.(jpg|jpeg|png)$/i) && !img.src.match(/transparent/i)) {
+                    if (!existingStyle.includes('border')) {
+                        img.style.border = '1px solid #e5e7eb';
+                        img.style.borderRadius = '4px';
+                    }
+                }
+            });
+
+            // Process subscript and superscript elements
+            const subElements = container.querySelectorAll('sub');
+            subElements.forEach(element => {
+                const style = element.getAttribute('style') || '';
+                element.setAttribute('style', `vertical-align: sub; font-size: 0.75em; ${style}`);
+            });
+
+            const supElements = container.querySelectorAll('sup');
+            supElements.forEach(element => {
+                const style = element.getAttribute('style') || '';
+                element.setAttribute('style', `vertical-align: super; font-size: 0.75em; ${style}`);
             });
 
             // Create a wrapper for proper page breaks
