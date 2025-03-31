@@ -223,7 +223,7 @@ export default function EditorPage() {
           </div>
         </div>
       </header>
-      <main className="flex-1 container mx-auto px-4 py-6 overflow-hidden flex items-stretch">
+      <main className="flex-1 container mx-auto px-2 py-6 overflow-hidden flex items-stretch max-w-[95%]">
         <div className="w-full h-full relative">
           <Editor
             document={activeDocument}

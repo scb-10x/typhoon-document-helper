@@ -33,8 +33,6 @@ export type Translations = {
 
     // Footer
     copyright: string;
-    privacyPolicy: string;
-    termsOfService: string;
 
     // Editor UI
     newDocument: string;
@@ -285,8 +283,6 @@ export const translations: Translations = {
 
     // Footer
     copyright: 'All rights reserved',
-    privacyPolicy: 'Privacy Policy',
-    termsOfService: 'Terms of Service',
 
     // Editor UI
     newDocument: 'New',
@@ -534,8 +530,6 @@ export const translations: Translations = {
 
     // Footer
     copyright: 'สงวนลิขสิทธิ์',
-    privacyPolicy: 'นโยบายความเป็นส่วนตัว',
-    termsOfService: 'เงื่อนไขการให้บริการ',
 
     // Editor UI
     newDocument: 'สร้างใหม่',

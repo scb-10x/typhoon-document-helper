@@ -312,7 +312,7 @@ export default function Editor({
                 style={{ minHeight: '200px' }}
             >
                 <div
-                    className="editor-container max-w-4xl mx-auto"
+                    className="editor-container max-w-6xl mx-auto"
                     style={dynamicStyles}
                 >
                     {isMounted ? (

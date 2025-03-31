@@ -263,14 +263,6 @@ export default function Home() {
                 © {new Date().getFullYear()} Typhoon. {t('copyright')}
               </span>
             </div>
-            <div className="flex mt-4 md:mt-0 space-x-6">
-              <a href="#" className="text-sm text-gray-500 hover:text-indigo-600">
-                {t('privacyPolicy')}
-              </a>
-              <a href="#" className="text-sm text-gray-500 hover:text-indigo-600">
-                {t('termsOfService')}
-              </a>
-            </div>
           </div>
         </div>
       </footer>
