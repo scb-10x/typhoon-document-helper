@@ -2,7 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { XMarkIcon, DocumentTextIcon, CheckIcon } from '@heroicons/react/24/outline';
+import {
+    XMarkIcon,
+    DocumentTextIcon,
+    CheckIcon,
+    DocumentIcon,
+    ArrowsPointingOutIcon,
+    SwatchIcon,
+    RectangleGroupIcon,
+    Cog6ToothIcon
+} from '@heroicons/react/24/outline';
 import { ArrowPathIcon } from '@heroicons/react/24/solid';
 import { saveAs } from 'file-saver';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -49,6 +58,7 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
         pageColor: '#ffffff',
         includeBackground: true
     });
+    const [activeTab, setActiveTab] = useState<'basic' | 'advanced'>('basic');
 
     // Update fileName when documentName changes
     useEffect(() => {
@@ -80,15 +90,15 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
 
     return (
         <div
-            className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-[10000] backdrop-blur-sm transition-opacity duration-300"
+            className="fixed inset-0 bg-black/40 flex items-center justify-center z-[10000] backdrop-blur-sm transition-opacity duration-300"
             onClick={(e) => {
                 if (e.target === e.currentTarget) {
                     onClose();
                 }
             }}
         >
-            <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full transition-all duration-300 transform scale-100 animate-fadeIn">
-                <div className="flex justify-between items-center mb-6">
+            <div className="bg-white rounded-xl shadow-2xl p-0 max-w-md w-full transition-all duration-300 transform scale-100 animate-fadeIn overflow-hidden">
+                <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
                     <div className="flex items-center gap-2">
                         <DocumentTextIcon className="h-6 w-6 text-purple-600" />
                         <h3 className="text-lg font-semibold text-gray-900">{t('pdfExportSettings')}</h3>
@@ -103,150 +113,202 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                     </button>
                 </div>
 
+                <div className="border-b border-gray-200">
+                    <div className="flex">
+                        <button
+                            onClick={() => setActiveTab('basic')}
+                            className={`px-4 py-3 text-sm font-medium flex items-center gap-1.5 transition-colors ${activeTab === 'basic'
+                                    ? 'text-purple-600 border-b-2 border-purple-600'
+                                    : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
+                                }`}
+                        >
+                            <DocumentIcon className="w-4 h-4" />
+                            Basic
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('advanced')}
+                            className={`px-4 py-3 text-sm font-medium flex items-center gap-1.5 transition-colors ${activeTab === 'advanced'
+                                    ? 'text-purple-600 border-b-2 border-purple-600'
+                                    : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
+                                }`}
+                        >
+                            <Cog6ToothIcon className="w-4 h-4" />
+                            Advanced
+                        </button>
+                    </div>
+                </div>
+
                 <form onSubmit={handleSubmit}>
-                    <div className="space-y-5">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                {t('fileName')}
-                            </label>
-                            <input
-                                type="text"
-                                name="fileName"
-                                value={settings.fileName}
-                                onChange={handleChange}
-                                disabled={isExporting}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
-                                placeholder={t('fileNamePlaceholder')}
-                            />
-                        </div>
+                    <div className="px-6 py-4 max-h-[calc(100vh-250px)] overflow-y-auto">
+                        {activeTab === 'basic' ? (
+                            <div className="space-y-5">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                        <DocumentIcon className="h-4 w-4 text-gray-500" />
+                                        {t('fileName')}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="fileName"
+                                        value={settings.fileName}
+                                        onChange={handleChange}
+                                        disabled={isExporting}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
+                                        placeholder={t('fileNamePlaceholder')}
+                                    />
+                                </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    {t('paperSize')}
-                                </label>
-                                <select
-                                    name="format"
-                                    value={settings.format}
-                                    onChange={handleChange}
-                                    disabled={isExporting}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white cursor-pointer bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236B7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%20%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
-                                >
-                                    <option value="a4">A4</option>
-                                    <option value="letter">US Letter</option>
-                                    <option value="legal">Legal</option>
-                                    <option value="a3">A3</option>
-                                    <option value="a5">A5</option>
-                                </select>
-                            </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                            <RectangleGroupIcon className="h-4 w-4 text-gray-500" />
+                                            {t('paperSize')}
+                                        </label>
+                                        <select
+                                            name="format"
+                                            value={settings.format}
+                                            onChange={handleChange}
+                                            disabled={isExporting}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white cursor-pointer bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236B7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%20%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
+                                        >
+                                            <option value="a4">A4</option>
+                                            <option value="letter">US Letter</option>
+                                            <option value="legal">Legal</option>
+                                            <option value="a3">A3</option>
+                                            <option value="a5">A5</option>
+                                        </select>
+                                    </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    {t('orientation')}
-                                </label>
-                                <select
-                                    name="orientation"
-                                    value={settings.orientation}
-                                    onChange={handleChange}
-                                    disabled={isExporting}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white cursor-pointer bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236B7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%20%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
-                                >
-                                    <option value="portrait">{t('portrait')}</option>
-                                    <option value="landscape">{t('landscape')}</option>
-                                </select>
-                            </div>
-                        </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                            <ArrowsPointingOutIcon className="h-4 w-4 text-gray-500" />
+                                            {t('orientation')}
+                                        </label>
+                                        <select
+                                            name="orientation"
+                                            value={settings.orientation}
+                                            onChange={handleChange}
+                                            disabled={isExporting}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white cursor-pointer bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236B7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%20%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
+                                        >
+                                            <option value="portrait">{t('portrait')}</option>
+                                            <option value="landscape">{t('landscape')}</option>
+                                        </select>
+                                    </div>
+                                </div>
 
-                        <div className="mt-6 mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-3">
-                                {t('pageColor')}
-                            </label>
-                            <div className="flex items-center">
-                                <input
-                                    type="color"
-                                    name="pageColor"
-                                    value={settings.pageColor}
-                                    onChange={handleChange}
-                                    disabled={isExporting}
-                                    className="w-10 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent cursor-pointer transition-all duration-200 disabled:opacity-50"
-                                />
-                                <input
-                                    type="text"
-                                    name="pageColor"
-                                    value={settings.pageColor}
-                                    onChange={handleChange}
-                                    disabled={isExporting}
-                                    className="flex-1 ml-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex items-center">
-                            <div className="flex justify-between items-center mb-1">
-                                <label className="block text-sm font-medium text-gray-700">
-                                    {t('margin')}
-                                </label>
-                                <span className="text-xs text-gray-500">{settings.margin} mm</span>
-                            </div>
-                            <div className="relative h-[140px] border border-gray-200 rounded-lg p-2 bg-gray-50">
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div
-                                        className="border border-dashed border-gray-400 transition-all duration-300"
-                                        style={{
-                                            width: `calc(100% - ${settings.margin * 2 / 5}px)`,
-                                            height: `calc(100% - ${settings.margin * 2 / 5}px)`,
-                                            backgroundColor: settings.pageColor
-                                        }}
-                                    >
-                                        <div className="flex h-full items-center justify-center text-xs text-gray-500">
-                                            {t('contentArea')}
+                                <div>
+                                    <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1.5">
+                                        <DocumentIcon className="h-4 w-4 text-gray-500" />
+                                        {t('paperSize')} {t('preview')}
+                                    </h4>
+                                    <div className="bg-gray-50 p-6 rounded-lg flex justify-center border border-gray-200">
+                                        <div
+                                            className="border-2 border-purple-300 rounded shadow-sm bg-white relative transition-all duration-300 flex items-center justify-center"
+                                            style={{
+                                                width: settings.orientation === 'portrait'
+                                                    ? `${getPaperDimensions(settings.format).width / 3}px`
+                                                    : `${getPaperDimensions(settings.format).height / 3}px`,
+                                                height: settings.orientation === 'portrait'
+                                                    ? `${getPaperDimensions(settings.format).height / 3}px`
+                                                    : `${getPaperDimensions(settings.format).width / 3}px`,
+                                                backgroundColor: settings.pageColor
+                                            }}
+                                        >
+                                            <div
+                                                className="absolute border-2 border-dashed border-purple-400 transition-all duration-300 flex items-center justify-center"
+                                                style={{
+                                                    width: `calc(100% - ${settings.margin * 2 / 3}px)`,
+                                                    height: `calc(100% - ${settings.margin * 2 / 3}px)`,
+                                                }}
+                                            >
+                                                <div className="text-xs text-gray-500 text-center">
+                                                    {t('contentArea')}
+                                                </div>
+                                            </div>
                                         </div>
+                                    </div>
+                                    <div className="mt-2 text-center text-xs text-gray-500">
+                                        {settings.orientation === 'portrait'
+                                            ? `${getPaperDimensions(settings.format).width}mm × ${getPaperDimensions(settings.format).height}mm`
+                                            : `${getPaperDimensions(settings.format).height}mm × ${getPaperDimensions(settings.format).width}mm`}
+                                        {' '}- {settings.orientation === 'portrait' ? t('portrait') : t('landscape')}
                                     </div>
                                 </div>
                             </div>
-                            <div className="mt-3 text-center text-xs text-gray-500">
-                                {settings.orientation === 'portrait'
-                                    ? `${getPaperDimensions(settings.format).width}mm × ${getPaperDimensions(settings.format).height}mm`
-                                    : `${getPaperDimensions(settings.format).height}mm × ${getPaperDimensions(settings.format).width}mm`}
-                                {' '}- {settings.orientation === 'portrait' ? t('portrait') : t('landscape')}
-                            </div>
-                        </div>
+                        ) : (
+                            <div className="space-y-5">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                        <SwatchIcon className="h-4 w-4 text-gray-500" />
+                                        {t('pageColor')}
+                                    </label>
+                                    <div className="flex items-center">
+                                        <input
+                                            type="color"
+                                            name="pageColor"
+                                            value={settings.pageColor}
+                                            onChange={handleChange}
+                                            disabled={isExporting}
+                                            className="w-10 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent cursor-pointer transition-all duration-200 disabled:opacity-50"
+                                        />
+                                        <input
+                                            type="text"
+                                            name="pageColor"
+                                            value={settings.pageColor}
+                                            onChange={handleChange}
+                                            disabled={isExporting}
+                                            className="flex-1 ml-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
+                                        />
+                                    </div>
+                                </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    {t('margin')}
-                                </label>
-                                <input
-                                    type="number"
-                                    name="margin"
-                                    min="0"
-                                    max="50"
-                                    value={settings.margin}
-                                    onChange={handleChange}
-                                    disabled={isExporting}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
-                                />
-                            </div>
-                        </div>
+                                <div>
+                                    <div className="flex justify-between items-center mb-1">
+                                        <label className="block text-sm font-medium text-gray-700 flex items-center gap-1.5">
+                                            <ArrowsPointingOutIcon className="h-4 w-4 text-gray-500" />
+                                            {t('margin')}
+                                        </label>
+                                        <span className="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full font-medium">
+                                            {settings.margin} mm
+                                        </span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        name="margin"
+                                        min="0"
+                                        max="50"
+                                        value={settings.margin}
+                                        onChange={handleChange}
+                                        disabled={isExporting}
+                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600 disabled:opacity-50"
+                                    />
+                                    <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                        <span>0mm</span>
+                                        <span>25mm</span>
+                                        <span>50mm</span>
+                                    </div>
+                                </div>
 
-                        <div className="flex items-center">
-                            <input
-                                type="checkbox"
-                                id="includeBackground"
-                                name="includeBackground"
-                                checked={settings.includeBackground}
-                                onChange={handleChange}
-                                disabled={isExporting}
-                                className="h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 transition-all duration-200 disabled:opacity-50"
-                            />
-                            <label htmlFor="includeBackground" className="ml-2 block text-sm text-gray-700">
-                                {t('includeBackgroundColors')}
-                            </label>
-                        </div>
+                                <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+                                    <input
+                                        type="checkbox"
+                                        id="includeBackground"
+                                        name="includeBackground"
+                                        checked={settings.includeBackground}
+                                        onChange={handleChange}
+                                        disabled={isExporting}
+                                        className="h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 transition-all duration-200 disabled:opacity-50"
+                                    />
+                                    <label htmlFor="includeBackground" className="ml-2 block text-sm text-gray-700">
+                                        {t('includeBackgroundColors')}
+                                    </label>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
-                    <div className="mt-6 flex justify-end space-x-3">
+                    <div className="px-6 py-4 bg-gray-50 flex justify-end space-x-3 border-t border-gray-200">
                         <button
                             type="button"
                             onClick={onClose}

@@ -211,6 +211,9 @@ export type Translations = {
     altTextPlaceholder: string;
     titlePlaceholder: string;
     fileNamePlaceholder: string;
+
+    // PDF Export Modal extra
+    preview: string;
   };
 };
 
@@ -425,6 +428,9 @@ export const translations: Translations = {
     altTextPlaceholder: 'Image description for accessibility',
     titlePlaceholder: 'Tooltip when hovering over the image',
     fileNamePlaceholder: 'Enter file name...',
+
+    // PDF Export Modal extra
+    preview: 'Preview',
   },
   th: {
     // Header
@@ -636,5 +642,8 @@ export const translations: Translations = {
     altTextPlaceholder: 'คำอธิบายรูปภาพสำหรับการเข้าถึง',
     titlePlaceholder: 'ข้อความที่แสดงเมื่อวางเมาส์เหนือรูปภาพ',
     fileNamePlaceholder: 'ใส่ชื่อไฟล์...',
+
+    // PDF Export Modal extra
+    preview: 'ตัวอย่าง',
   }
 }; 
