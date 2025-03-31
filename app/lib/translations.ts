@@ -247,6 +247,12 @@ export type Translations = {
     sessionExpired: string;
     unauthorized: string;
     rateLimitExceeded: string;
+
+    // Custom Prompt
+    customPrompt: string;
+    enterPrompt: string;
+    customPromptPlaceholder: string;
+    apply: string;
   };
 };
 
@@ -497,6 +503,12 @@ export const translations: Translations = {
     sessionExpired: 'Your session has expired. Please refresh the page.',
     unauthorized: 'You are not authorized to perform this action.',
     rateLimitExceeded: 'Too many requests. Please try again later.',
+
+    // Custom Prompt
+    customPrompt: 'Custom Prompt',
+    enterPrompt: 'Enter your custom prompt',
+    customPromptPlaceholder: 'Example: Rewrite this text in a more engaging way...',
+    apply: 'Apply',
   },
   th: {
     // Header
@@ -744,6 +756,12 @@ export const translations: Translations = {
     sessionExpired: 'เซสชันหมดอายุ กรุณารีเฟรชหน้าเว็บ',
     unauthorized: 'คุณไม่มีสิทธิ์ในการดำเนินการนี้',
     rateLimitExceeded: 'มีการร้องขอมากเกินไป กรุณาลองใหม่อีกครั้ง',
+
+    // Custom Prompt
+    customPrompt: 'คำสั่งกำหนดเอง',
+    enterPrompt: 'ป้อนคำสั่งกำหนดเองของคุณ',
+    customPromptPlaceholder: 'ตัวอย่าง: เขียนข้อความนี้ใหม่ให้น่าสนใจมากขึ้น...',
+    apply: 'ใช้',
   }
 };
 

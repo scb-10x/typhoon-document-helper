@@ -48,9 +48,11 @@ function TranslateModal({
         if (selected === 'custom') {
             if (customLanguage.trim()) {
                 onSubmit(customLanguage);
+                onClose();
             }
         } else {
             onSubmit(selected);
+            onClose();
         }
     };
 

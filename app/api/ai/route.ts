@@ -65,19 +65,32 @@ const TRANSLATION_SYSTEM_PROMPT = "You are a specialized text translator that pr
 interface AIRequestBody {
     content: string;
     action: string;
-    plainText?: string;
+    selectionText?: string;
     customLanguage?: string;
     preserveFormatting?: boolean;
 }
 
-
-const cleanedCodeBlock = (text: string) => {
-    // This will match any opening code fence with optional language specification
-    // For example: ```javascript, ```python, ```mdx, etc.
+const cleanHtmlResponse = (text: string): string => {
+    // Remove code block markers
     text = text.replace(/^```(?:[a-zA-Z0-9]+)?/gm, '');
-
-    // Remove closing code fences
     text = text.replace(/```$/gm, '');
+
+    // Remove <html> wrapper tags
+    text = text.replace(/^<html>|<\/html>$/g, '');
+
+    // Remove empty tags with optional whitespace
+    // This regex matches tags that contain only whitespace or are completely empty
+    text = text.replace(/<([a-zA-Z0-9]+)(?:\s+[^>]*)?>\s*<\/\1>/g, '');
+
+    // Remove self-closing tags that might have been incorrectly closed
+    text = text.replace(/<([a-zA-Z0-9]+)(?:\s+[^>]*)?><\/\1>/g, '');
+
+    // Remove any remaining empty tags with attributes
+    text = text.replace(/<([a-zA-Z0-9]+)(?:\s+[^>]*)?>\s*<\/\1>/g, '');
+
+    // Clean up any double newlines that might have been created
+    text = text.replace(/\n\s*\n/g, '\n');
+
     // Trim extra whitespace
     return text.trim();
 }
@@ -87,14 +100,14 @@ export async function POST(request: Request) {
         const {
             content,
             action,
-            plainText,
+            selectionText,
             customLanguage,
             preserveFormatting = true
         }: AIRequestBody = await request.json();
 
-        // If plainText is provided and different from content, use it
+        // If selectionText is provided and different from content, use it
         // This is likely a selection the user wants to process
-        const textToProcess = (plainText && plainText !== content) ? plainText : content;
+        const textToProcess = (selectionText && selectionText !== content) ? selectionText : content;
         const htmlContent = '<html>' + textToProcess.trim() + '</html>';
 
         // Check if this is a translation request
@@ -132,9 +145,9 @@ export async function POST(request: Request) {
             const languageCode = action.split('-')[1];
 
             if (languageCode === 'other' && customLanguage) {
-                prompt = `Translate the following HTML text to ${customLanguage} while preserving all HTML tags and structure. The output should be entirely in ${customLanguage}:\n\n${htmlContent}`;
+                prompt = `Translate the following HTML text to ${customLanguage} while preserving all HTML tags and structure. The output should be entirely in ${customLanguage}:\n\n--\n\n${htmlContent}`;
             } else if (LANGUAGE_MAP[languageCode]) {
-                prompt = `Translate the following HTML text to ${LANGUAGE_MAP[languageCode]} while preserving all HTML tags and structure. The output should be entirely in ${LANGUAGE_MAP[languageCode]}:\n\n${htmlContent}`;
+                prompt = `Translate the following HTML text to ${LANGUAGE_MAP[languageCode]} while preserving all HTML tags and structure. The output should be entirely in ${LANGUAGE_MAP[languageCode]}:\n\n--\n\n${htmlContent}`;
             } else {
                 return NextResponse.json(
                     { error: 'Invalid language for translation' },
@@ -144,11 +157,11 @@ export async function POST(request: Request) {
         }
         // Handle standard actions from the templates
         else if (action in PROMPT_TEMPLATES) {
-            prompt = `${PROMPT_TEMPLATES[action as ActionType]}\n\n${htmlContent}`;
+            prompt = `${PROMPT_TEMPLATES[action as ActionType]}\n\n---\n\n${htmlContent}`;
         }
-        // Handle custom/fallback actions
+        // Handle custom prompts
         else {
-            prompt = `${action} the following HTML text while preserving all formatting tags:\n\n${htmlContent}`;
+            prompt = `Instruction:${action}\n\n---\n\n${htmlContent}`;
         }
 
         // Configure messages array with optional system message for format preservation
@@ -175,7 +188,7 @@ export async function POST(request: Request) {
             {
                 messages: messages,
                 model: "typhoon-v2.1-12b-instruct",
-                temperature: 0.7,
+                temperature: 1.0,
                 max_tokens: 2048,
             },
             {
@@ -186,7 +199,7 @@ export async function POST(request: Request) {
             }
         );
 
-        const aiResponse = cleanedCodeBlock(response.data.choices[0].message.content).replace(/^<html>|<\/html>$/g, '');
+        const aiResponse = cleanHtmlResponse(response.data.choices[0].message.content);
 
         return NextResponse.json({
             response: aiResponse

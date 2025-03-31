@@ -1,4 +1,5 @@
 import { Editor as TiptapEditor } from '@tiptap/react';
+import { DOMSerializer } from '@tiptap/pm/model';
 
 /**
  * Gets the current HTML content from the editor
@@ -12,9 +13,15 @@ export const getEditorContent = (editor: TiptapEditor | null): string => {
  */
 export const getSelectedText = (editor: TiptapEditor): string => {
     const { selection } = editor.state;
-    return selection.empty
-        ? editor.state.doc.textContent
-        : editor.state.doc.textBetween(selection.from, selection.to, ' ');
+    const { from, to } = selection;
+    const slice = editor.state.doc.slice(from, to);
+    const fragment = DOMSerializer
+        .fromSchema(editor.state.schema)
+        .serializeFragment(slice.content);
+    
+    const container = document.createElement('div');
+    container.appendChild(fragment);
+    return container.innerHTML;
 };
 
 /**

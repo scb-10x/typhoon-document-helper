@@ -11,14 +11,14 @@ export const aiTextService = async (
     text: string,
     action: string,
     options: {
-        plainText?: string,
+        selectionText?: string,
         customLanguage?: string,
         preserveFormatting?: boolean
     } = {}
 ): Promise<string> => {
     // Extract options with defaults
     const {
-        plainText = text,
+        selectionText = text,
         customLanguage = '',
         preserveFormatting = true
     } = options;
@@ -36,12 +36,12 @@ export const aiTextService = async (
 
     // Prepare request payload for the API
     const requestPayload = {
-        // When there's selection, use plainText as primary content for processing
+        // When there's selection, use selectionText as primary content for processing
         // Otherwise use the full HTML
-        content: isTranslation || plainText !== text ? plainText : text,
+        content: isTranslation || selectionText !== text ? selectionText : text,
         action,
         customLanguage,
-        plainText,
+        selectionText,
         preserveFormatting
     };
 

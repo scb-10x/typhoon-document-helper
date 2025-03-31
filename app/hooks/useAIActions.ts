@@ -25,10 +25,10 @@ export function useAIActions(editor: TiptapEditor | null) {
 
         // Get selected text or whole document
         const isTextSelected = hasSelection(editor);
-        const text = getSelectedText(editor);
+        const selectedText = getSelectedText(editor);
 
         // Don't process if no text or too short
-        if (!text || text.trim().length < 2) {
+        if (!selectedText || selectedText.trim().length < 2) {
             toast.error(t('selectTextOrContent'));
             return;
         }
@@ -39,7 +39,7 @@ export function useAIActions(editor: TiptapEditor | null) {
         try {
             // Process text with AI using the unified service
             const result = await aiTextService(editor.getHTML(), action, {
-                plainText: isTextSelected ? text : editor.getHTML(),
+                selectionText: isTextSelected ? selectedText : editor.getHTML(),
                 preserveFormatting: true
             });
 
@@ -90,15 +90,9 @@ export function useAIActions(editor: TiptapEditor | null) {
         try {
             // Get content to translate
             const isTextSelected = hasSelection(editor);
-            const { selection } = editor.state;
-
+            const selectedText = getSelectedText(editor);
             // Get the full HTML content
             const htmlContent = editor.getHTML();
-
-            // Get plain text (either selected portion or full document)
-            const textContent = isTextSelected
-                ? editor.state.doc.textBetween(selection.from, selection.to, ' ')
-                : editor.state.doc.textContent;
 
             // Translate the content using the unified service
             // Use customLanguage if provided, otherwise use language
@@ -106,7 +100,7 @@ export function useAIActions(editor: TiptapEditor | null) {
                 htmlContent,
                 'translate',
                 {
-                    plainText: isTextSelected ? textContent : htmlContent,
+                    selectionText: isTextSelected ? selectedText : htmlContent,
                     customLanguage: customLanguage || language || 'english',
                     preserveFormatting: true
                 }
