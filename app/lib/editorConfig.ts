@@ -12,6 +12,10 @@ import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
 import { TaskList } from '@tiptap/extension-task-list';
 import { TaskItem } from '@tiptap/extension-task-item';
+import { Table } from '@tiptap/extension-table';
+import { TableRow } from '@tiptap/extension-table-row';
+import { TableCell } from '@tiptap/extension-table-cell';
+import { TableHeader } from '@tiptap/extension-table-header';
 
 // Create a lowlight instance with common languages
 const lowlight = createLowlight(common);
@@ -61,6 +65,22 @@ export const createEditorExtensions = () => [
         nested: true,
         HTMLAttributes: {
             class: 'task-item',
+        },
+    }),
+    // Table extensions
+    Table.configure({
+        resizable: true,
+        HTMLAttributes: {
+            class: 'ProseMirror-table',
+        },
+        // Add keyboard shortcuts for table navigation and actions
+        allowTableNodeSelection: true,
+    }),
+    TableRow,
+    TableHeader,
+    TableCell.configure({
+        HTMLAttributes: {
+            class: 'table-cell',
         },
     }),
 ]; 

@@ -14,6 +14,7 @@ import LinkModal from './modals/LinkModal';
 import ImageModal from './modals/ImageModal';
 import TranslateModal from './modals/TranslateModal';
 import ContextMenu from './ContextMenu';
+import { TableMenu } from './menus/TableMenu';
 
 // Import extracted modules and hooks
 import { createEditorExtensions } from '../../lib/editorConfig';
@@ -403,6 +404,9 @@ export default function Editor({
                 onClose={closeContextMenu}
                 onAction={handleContextMenuAction}
             />
+
+            {/* Table Menu */}
+            {editor && <TableMenu editor={editor} />}
         </div>
     );
 }

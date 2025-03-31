@@ -7,6 +7,7 @@ import {
     AlignLeft, AlignCenter, AlignRight, Code as CodeIcon, Quote,
     Minus, PanelLeftClose, RotateCcw, RotateCw, Eraser, Strikethrough, Image as ImageIcon,
     Subscript as SubscriptIcon, Superscript as SuperscriptIcon, CheckSquare,
+    Table as TableIcon,
 } from 'lucide-react';
 import FormatButton from './FormatButton';
 import HeadingSelector from './HeadingSelector'
@@ -189,6 +190,12 @@ const EditorToolbar = ({
                     onClick={handleImage}
                     disabled={isLoading}
                 />
+                <FormatButton
+                    icon={<TableIcon className="w-4 h-4" />}
+                    title="Insert Table"
+                    onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+                    disabled={isLoading}
+                />
             </div>
 
             {/* History */}
@@ -334,6 +341,23 @@ const EditorToolbar = ({
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+X</div>
                                 <div>Find</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+F</div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-200">
+                                <div className="font-medium">Tables</div>
+                                <div></div>
+                                <div>Next Cell</div>
+                                <div className="font-mono bg-gray-100 px-1.5 rounded">Tab</div>
+                                <div>Previous Cell</div>
+                                <div className="font-mono bg-gray-100 px-1.5 rounded">Shift+Tab</div>
+                                <div>Move to Cell Above</div>
+                                <div className="font-mono bg-gray-100 px-1.5 rounded">Arrow Up</div>
+                                <div>Move to Cell Below</div>
+                                <div className="font-mono bg-gray-100 px-1.5 rounded">Arrow Down</div>
+                                <div>Insert New Row</div>
+                                <div className="font-mono bg-gray-100 px-1.5 rounded">Enter (at end)</div>
+                                <div>Select Table</div>
+                                <div className="font-mono bg-gray-100 px-1.5 rounded">Triple Click</div>
                             </div>
                         </div>
                         <div className="mt-5 text-right">

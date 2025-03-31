@@ -464,3 +464,92 @@ body {
 .ProseMirror blockquote {
   line-height: inherit !important;
 }
+
+/* Table styling */
+.ProseMirror table {
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  overflow: hidden;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.ProseMirror table td,
+.ProseMirror table th {
+  border: 1px solid #e2e8f0;
+  padding: 0.75em;
+  position: relative;
+  vertical-align: top;
+  min-width: 100px;
+  transition: background-color 0.2s ease;
+}
+
+.ProseMirror table th {
+  background-color: #f8fafc;
+  font-weight: 600;
+  text-align: left;
+}
+
+.ProseMirror table p {
+  margin: 0;
+}
+
+/* Hover effect for better cell identification */
+.ProseMirror table td:hover,
+.ProseMirror table th:hover {
+  background-color: rgba(124, 58, 237, 0.05);
+}
+
+/* Focus styles for active cell */
+.ProseMirror table td:focus,
+.ProseMirror table th:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px #7c3aed;
+}
+
+/* Column resize handle styling */
+.tableColumnResizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
+.columnResizeHandle {
+  position: absolute;
+  right: -0.75px;
+  top: 0;
+  bottom: 0;
+  width: 1.5px;
+  background-color: #7c3aed;
+  pointer-events: none;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.ProseMirror table th:hover .columnResizeHandle,
+.ProseMirror table td:hover .columnResizeHandle {
+  opacity: 1;
+}
+
+/* Selected cells styling */
+.selectedCell {
+  position: relative;
+}
+
+.selectedCell:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(124, 58, 237, 0.1);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Visual cue for table controls */
+.has-focus .ProseMirror table {
+  outline: 2px solid rgba(124, 58, 237, 0.3);
+  border-radius: 2px;
+}

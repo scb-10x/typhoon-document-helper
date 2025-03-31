@@ -52,6 +52,32 @@ export const createSampleDocument = (): string => {
         <li data-type="taskItem" data-checked="false"><label><input type="checkbox"></label><div><p>Share your work with others</p></div></li>
     </ul>
     
+    <h2>Table Support</h2>
+    <p>Create and format tables for structured data:</p>
+    <table class="ProseMirror-table">
+        <tr>
+            <th>Feature</th>
+            <th>Description</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>Rich Text</td>
+            <td>Format text with various styles</td>
+            <td>Available</td>
+        </tr>
+        <tr>
+            <td>Tables</td>
+            <td>Create structured data with rows and columns</td>
+            <td>Available</td>
+        </tr>
+        <tr>
+            <td>Task Lists</td>
+            <td>Create interactive checklists</td>
+            <td>Available</td>
+        </tr>
+    </table>
+    <p>You can add or delete rows and columns, and resize the table as needed.</p>
+    
     <h2>Text Styling</h2>
     <p><span style="color: #e62739;">You can change text colors</span> and <span style="background-color: #ffcc00;">highlight important information</span>.</p>
     <p>Scientific notation: H<sub>2</sub>O and E=mc<sup>2</sup> using subscript and superscript.</p>
