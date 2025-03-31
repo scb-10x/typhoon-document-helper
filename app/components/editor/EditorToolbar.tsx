@@ -7,12 +7,13 @@ import {
     AlignLeft, AlignCenter, AlignRight, Code as CodeIcon, Quote,
     Minus, PanelLeftClose, RotateCcw, RotateCw, Eraser, Strikethrough, Image as ImageIcon,
     Subscript as SubscriptIcon, Superscript as SuperscriptIcon, CheckSquare,
-    Table as TableIcon,
+    Table as TableIcon, TableProperties,
 } from 'lucide-react';
 import FormatButton from './FormatButton';
 import HeadingSelector from './HeadingSelector'
 import ColorPicker from './ColorPicker';
 import HighlightPicker from './HighlightPicker';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface EditorToolbarProps {
     editor: Editor | null;
@@ -27,6 +28,7 @@ const EditorToolbar = ({
     onLinkClick,
     onImageClick,
 }: EditorToolbarProps) => {
+    const { t } = useLanguage();
     const [showShortcuts, setShowShortcuts] = useState(false);
 
     // Add early return if editor is not defined yet
@@ -72,25 +74,25 @@ const EditorToolbar = ({
             <div className="flex items-center mr-1.5">
                 <FormatButton
                     icon={<Bold className="w-4 h-4" />}
-                    title="Bold (Ctrl+B)"
+                    title={t('bold')}
                     isActive={editor.isActive('bold')}
                     onClick={() => editor.chain().focus().toggleBold().run()}
                 />
                 <FormatButton
                     icon={<Italic className="w-4 h-4" />}
-                    title="Italic (Ctrl+I)"
+                    title={t('italic')}
                     isActive={editor.isActive('italic')}
                     onClick={() => editor.chain().focus().toggleItalic().run()}
                 />
                 <FormatButton
                     icon={<UnderlineIcon className="w-4 h-4" />}
-                    title="Underline (Ctrl+U)"
+                    title={t('underline')}
                     isActive={editor.isActive('underline')}
                     onClick={() => editor.chain().focus().toggleUnderline().run()}
                 />
                 <FormatButton
                     icon={<Strikethrough className="w-4 h-4" />}
-                    title="Strikethrough"
+                    title={t('strikethrough')}
                     isActive={editor.isActive('strike')}
                     onClick={() => editor.chain().focus().toggleStrike().run()}
                 />
@@ -125,31 +127,31 @@ const EditorToolbar = ({
             <div className="flex items-center mr-1.5">
                 <FormatButton
                     icon={<List className="w-4 h-4" />}
-                    title="Bullet List (Ctrl+Shift+8)"
+                    title={t('bulletList')}
                     isActive={editor.isActive('bulletList')}
                     onClick={() => editor.chain().focus().toggleBulletList().run()}
                 />
                 <FormatButton
                     icon={<ListOrdered className="w-4 h-4" />}
-                    title="Numbered List (Ctrl+Shift+7)"
+                    title={t('numberedList')}
                     isActive={editor.isActive('orderedList')}
                     onClick={() => editor.chain().focus().toggleOrderedList().run()}
                 />
                 <FormatButton
                     icon={<CheckSquare className="w-4 h-4" />}
-                    title="Task List"
+                    title={t('taskList')}
                     isActive={editor.isActive('taskList')}
                     onClick={() => editor.chain().focus().toggleTaskList().run()}
                 />
                 <FormatButton
                     icon={<Quote className="w-4 h-4" />}
-                    title="Blockquote (Ctrl+Shift+B)"
+                    title={t('blockquote')}
                     isActive={editor.isActive('blockquote')}
                     onClick={() => editor.chain().focus().toggleBlockquote().run()}
                 />
                 <FormatButton
                     icon={<CodeIcon className="w-4 h-4" />}
-                    title="Code Block (Ctrl+Alt+C)"
+                    title={t('codeBlock')}
                     isActive={editor.isActive('codeBlock')}
                     onClick={() => editor.chain().focus().toggleCodeBlock().run()}
                 />
@@ -159,19 +161,19 @@ const EditorToolbar = ({
             <div className="flex items-center mr-1.5">
                 <FormatButton
                     icon={<AlignLeft className="w-4 h-4" />}
-                    title="Align Left"
+                    title={t('alignLeft')}
                     isActive={!editor.isActive({ textAlign: 'center' }) && !editor.isActive({ textAlign: 'right' })}
                     onClick={() => editor.chain().focus().setTextAlign('left').run()}
                 />
                 <FormatButton
                     icon={<AlignCenter className="w-4 h-4" />}
-                    title="Align Center"
+                    title={t('alignCenter')}
                     isActive={editor.isActive({ textAlign: 'center' })}
                     onClick={() => editor.chain().focus().setTextAlign('center').run()}
                 />
                 <FormatButton
                     icon={<AlignRight className="w-4 h-4" />}
-                    title="Align Right"
+                    title={t('alignRight')}
                     isActive={editor.isActive({ textAlign: 'right' })}
                     onClick={() => editor.chain().focus().setTextAlign('right').run()}
                 />
@@ -181,18 +183,18 @@ const EditorToolbar = ({
             <div className="flex items-center mr-1.5">
                 <FormatButton
                     icon={<Minus className="w-4 h-4" />}
-                    title="Horizontal Rule"
+                    title={t('horizontalRule')}
                     onClick={() => editor.chain().focus().setHorizontalRule().run()}
                 />
                 <FormatButton
                     icon={<ImageIcon className="w-4 h-4" />}
-                    title="Insert Image"
+                    title={t('insertImage')}
                     onClick={handleImage}
                     disabled={isLoading}
                 />
                 <FormatButton
                     icon={<TableIcon className="w-4 h-4" />}
-                    title="Insert Table"
+                    title={t('insertTable')}
                     onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
                     disabled={isLoading}
                 />
@@ -202,13 +204,13 @@ const EditorToolbar = ({
             <div className="flex items-center mr-1.5">
                 <FormatButton
                     icon={<RotateCcw className="w-4 h-4" />}
-                    title="Undo (Ctrl+Z)"
+                    title={t('undo')}
                     onClick={() => editor.chain().focus().undo().run()}
                     disabled={!editor.can().undo()}
                 />
                 <FormatButton
                     icon={<RotateCw className="w-4 h-4" />}
-                    title="Redo (Ctrl+Y)"
+                    title={t('redo')}
                     onClick={() => editor.chain().focus().redo().run()}
                     disabled={!editor.can().redo()}
                 />
@@ -218,11 +220,11 @@ const EditorToolbar = ({
             <div className="ml-auto flex items-center">
                 <button
                     onClick={() => setShowShortcuts(true)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 rounded-md transition-colors duration-150"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
                     title="View keyboard shortcuts"
                 >
                     <PanelLeftClose className="w-3.5 h-3.5" />
-                    <span>Shortcuts</span>
+                    <span>{t('shortcuts')}</span>
                 </button>
             </div>
 
@@ -245,7 +247,7 @@ const EditorToolbar = ({
                 >
                     <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold text-gray-900">Keyboard Shortcuts</h3>
+                            <h3 className="text-lg font-semibold text-gray-900">{t('keyboardShortcuts')}</h3>
                             <button
                                 onClick={() => setShowShortcuts(false)}
                                 className="text-gray-500 hover:text-gray-700"
@@ -257,106 +259,75 @@ const EditorToolbar = ({
                         </div>
                         <div className="space-y-4 text-sm text-gray-700 max-h-[60vh] overflow-y-auto pr-2">
                             <div className="grid grid-cols-2 gap-2">
-                                <div className="font-medium">Text Formatting</div>
+                                <div className="font-medium">{t('textFormatting')}</div>
                                 <div></div>
-                                <div>Bold</div>
+                                <div>{t('bold')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+B</div>
-                                <div>Italic</div>
+                                <div>{t('italic')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+I</div>
-                                <div>Underline</div>
+                                <div>{t('underline')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+U</div>
-                                <div>Link</div>
+                                <div>{t('link')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+K</div>
-                                <div>Strikethrough</div>
+                                <div>{t('strikethrough')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Shift+X</div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-200">
-                                <div className="font-medium">Headings</div>
+                                <div className="font-medium">{t('headings')}</div>
                                 <div></div>
-                                <div>Heading 1</div>
+                                <div>{t('heading1')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Alt+1</div>
-                                <div>Heading 2</div>
+                                <div>{t('heading2')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Alt+2</div>
-                                <div>Heading 3</div>
+                                <div>{t('heading3')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Alt+3</div>
-                                <div>Paragraph</div>
+                                <div>{t('paragraph')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Alt+0</div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-200">
-                                <div className="font-medium">Lists</div>
+                                <div className="font-medium">{t('lists')}</div>
                                 <div></div>
-                                <div>Bullet List</div>
+                                <div>{t('bulletList')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Shift+8</div>
-                                <div>Numbered List</div>
+                                <div>{t('numberedList')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Shift+7</div>
-                                <div>Decrease Indent</div>
-                                <div className="font-mono bg-gray-100 px-1.5 rounded">Shift+Tab</div>
-                                <div>Increase Indent</div>
-                                <div className="font-mono bg-gray-100 px-1.5 rounded">Tab</div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-200">
-                                <div className="font-medium">Text Alignment</div>
-                                <div></div>
-                                <div>Align Left</div>
-                                <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Shift+L</div>
-                                <div>Align Center</div>
-                                <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Shift+E</div>
-                                <div>Align Right</div>
-                                <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Shift+R</div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-200">
-                                <div className="font-medium">Blocks</div>
-                                <div></div>
-                                <div>Blockquote</div>
+                                <div>{t('taskList')}</div>
+                                <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Shift+9</div>
+                                <div>{t('blockquote')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Shift+B</div>
-                                <div>Code Block</div>
-                                <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Alt+C</div>
-                                <div>Horizontal Rule</div>
-                                <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Shift+Minus</div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-200">
-                                <div className="font-medium">History</div>
+                                <div className="font-medium">{t('other')}</div>
                                 <div></div>
-                                <div>Undo</div>
-                                <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Z</div>
-                                <div>Redo</div>
-                                <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+Y</div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-200">
-                                <div className="font-medium">Other</div>
-                                <div></div>
-                                <div>Select All</div>
+                                <div>{t('selectAll')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+A</div>
-                                <div>Copy</div>
+                                <div>{t('copy')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+C</div>
-                                <div>Paste</div>
+                                <div>{t('paste')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+V</div>
-                                <div>Cut</div>
+                                <div>{t('cut')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+X</div>
-                                <div>Find</div>
+                                <div>{t('find')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Ctrl+F</div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-200">
-                                <div className="font-medium">Tables</div>
+                                <div className="font-medium">{t('tables')}</div>
                                 <div></div>
-                                <div>Next Cell</div>
+                                <div>{t('nextCell')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Tab</div>
-                                <div>Previous Cell</div>
+                                <div>{t('previousCell')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Shift+Tab</div>
-                                <div>Move to Cell Above</div>
+                                <div>{t('cellAbove')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Arrow Up</div>
-                                <div>Move to Cell Below</div>
+                                <div>{t('cellBelow')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Arrow Down</div>
-                                <div>Insert New Row</div>
+                                <div>{t('insertNewRow')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Enter (at end)</div>
-                                <div>Select Table</div>
+                                <div>{t('selectTable')}</div>
                                 <div className="font-mono bg-gray-100 px-1.5 rounded">Triple Click</div>
                             </div>
                         </div>
@@ -365,7 +336,7 @@ const EditorToolbar = ({
                                 onClick={() => setShowShortcuts(false)}
                                 className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm transition-colors duration-200"
                             >
-                                Close
+                                {t('close')}
                             </button>
                         </div>
                     </div>

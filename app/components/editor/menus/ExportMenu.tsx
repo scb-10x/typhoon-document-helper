@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { saveAs } from 'file-saver';
 import {
     ArrowDownTrayIcon,
     DocumentArrowDownIcon,
 } from '@heroicons/react/24/outline';
+import { saveAs } from 'file-saver';
 import { PDFSettingsDialog, exportToPDF, type PDFExportSettings } from '../../PDFExport';
 import { useExport } from '../../../hooks/useExport';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 // Helper function to convert HTML to plain text
 const htmlToText = (html: string): string => {
@@ -23,6 +24,7 @@ interface ExportMenuProps {
 }
 
 export const ExportMenu = ({ documentName, documentContent, isLoading }: ExportMenuProps) => {
+    const { t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const [isPDFDialogOpen, setIsPDFDialogOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -40,6 +42,9 @@ export const ExportMenu = ({ documentName, documentContent, isLoading }: ExportM
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
+    // Loading state combines both isLoading from props and isExporting from the hook
+    const isLoadingExport = isLoading || isExporting;
 
     const exportAsHTML = () => {
         // Add basic HTML structure
@@ -95,7 +100,7 @@ export const ExportMenu = ({ documentName, documentContent, isLoading }: ExportM
     </style>
 </head>
 <body>
-    ${documentContent}
+${documentContent}
 </body>
 </html>`;
 
@@ -132,9 +137,6 @@ export const ExportMenu = ({ documentName, documentContent, isLoading }: ExportM
         setIsPDFDialogOpen(false);
     };
 
-    // Loading state combines both isLoading from props and isExporting from the hook
-    const isLoadingExport = isLoading || isExporting;
-
     return (
         <>
             <div className="relative" ref={menuRef}>
@@ -144,7 +146,7 @@ export const ExportMenu = ({ documentName, documentContent, isLoading }: ExportM
                     className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                     <ArrowDownTrayIcon className="w-4 h-4" />
-                    <span>Export</span>
+                    <span>{t('export')}</span>
                 </button>
 
                 {isOpen && (
@@ -154,28 +156,28 @@ export const ExportMenu = ({ documentName, documentContent, isLoading }: ExportM
                             className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
                         >
                             <DocumentArrowDownIcon className="w-4 h-4 mr-2 text-gray-500" />
-                            HTML
+                            {t('exportHTML')}
                         </button>
                         <button
                             onClick={exportAsMarkdown}
                             className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
                         >
                             <DocumentArrowDownIcon className="w-4 h-4 mr-2 text-gray-500" />
-                            Markdown
+                            {t('exportMarkdown')}
                         </button>
                         <button
                             onClick={exportAsTXT}
                             className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
                         >
                             <DocumentArrowDownIcon className="w-4 h-4 mr-2 text-gray-500" />
-                            Plain Text
+                            {t('exportTXT')}
                         </button>
                         <button
                             onClick={handleExportPDF}
                             className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
                         >
                             <DocumentArrowDownIcon className="w-4 h-4 mr-2 text-gray-500" />
-                            PDF
+                            {t('exportPDF')}
                         </button>
                     </div>
                 )}

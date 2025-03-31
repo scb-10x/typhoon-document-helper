@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { XMarkIcon, DocumentTextIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { ArrowPathIcon } from '@heroicons/react/24/solid';
+import { saveAs } from 'file-saver';
+import { useLanguage } from '../contexts/LanguageContext';
 
 // Define the types
 export interface PDFExportSettings {
@@ -38,6 +40,7 @@ const getPaperDimensions = (format: string): { width: number; height: number } =
 
 // PDF settings dialog component
 export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: PDFSettingsDialogProps) {
+    const { t } = useLanguage();
     const [settings, setSettings] = useState<PDFExportSettings>({
         format: 'a4',
         orientation: 'portrait',
@@ -88,7 +91,7 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                 <div className="flex justify-between items-center mb-6">
                     <div className="flex items-center gap-2">
                         <DocumentTextIcon className="h-6 w-6 text-purple-600" />
-                        <h3 className="text-lg font-semibold text-gray-900">PDF Export Settings</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">{t('pdfExportSettings')}</h3>
                     </div>
                     <button
                         onClick={onClose}
@@ -104,7 +107,7 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                     <div className="space-y-5">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                File Name
+                                {t('fileName')}
                             </label>
                             <input
                                 type="text"
@@ -113,14 +116,14 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                                 onChange={handleChange}
                                 disabled={isExporting}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
-                                placeholder="Enter file name..."
+                                placeholder={t('fileNamePlaceholder')}
                             />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Paper Size
+                                    {t('paperSize')}
                                 </label>
                                 <select
                                     name="format"
@@ -139,7 +142,7 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Orientation
+                                    {t('orientation')}
                                 </label>
                                 <select
                                     name="orientation"
@@ -148,41 +151,55 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                                     disabled={isExporting}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white cursor-pointer bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22%236B7280%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M5.293%207.293a1%201%200%20011.414%200L10%2010.586l3.293-3.293a1%201%200%20111.414%201.414l-4%204a1%201%200%2001-1.414%200l-4-4a1%201%200%20010-1.414z%22%20clip-rule%3D%22evenodd%22%20%2F%3E%3C%2Fsvg%3E')] bg-[length:1.25em_1.25em] bg-[right_0.5rem_center] bg-no-repeat pr-10 transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
                                 >
-                                    <option value="portrait">Portrait</option>
-                                    <option value="landscape">Landscape</option>
+                                    <option value="portrait">{t('portrait')}</option>
+                                    <option value="landscape">{t('landscape')}</option>
                                 </select>
                             </div>
                         </div>
 
                         <div className="mt-6 mb-4">
                             <label className="block text-sm font-medium text-gray-700 mb-3">
-                                Paper Size Preview
+                                {t('pageColor')}
                             </label>
-                            <div className="flex justify-center">
-                                <div
-                                    className="border-2 border-gray-300 rounded-md bg-white shadow-sm relative transition-all duration-300"
-                                    style={{
-                                        width: settings.orientation === 'portrait'
-                                            ? `${getPaperDimensions(settings.format).width / 5}px`
-                                            : `${getPaperDimensions(settings.format).height / 5}px`,
-                                        height: settings.orientation === 'portrait'
-                                            ? `${getPaperDimensions(settings.format).height / 5}px`
-                                            : `${getPaperDimensions(settings.format).width / 5}px`,
-                                        transition: 'all 0.3s ease'
-                                    }}
-                                >
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div
-                                            className="border border-dashed border-gray-400 transition-all duration-300"
-                                            style={{
-                                                width: `calc(100% - ${settings.margin * 2 / 5}px)`,
-                                                height: `calc(100% - ${settings.margin * 2 / 5}px)`,
-                                                backgroundColor: settings.pageColor
-                                            }}
-                                        >
-                                            <div className="flex h-full items-center justify-center text-xs text-gray-500">
-                                                Content Area
-                                            </div>
+                            <div className="flex items-center">
+                                <input
+                                    type="color"
+                                    name="pageColor"
+                                    value={settings.pageColor}
+                                    onChange={handleChange}
+                                    disabled={isExporting}
+                                    className="w-10 h-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent cursor-pointer transition-all duration-200 disabled:opacity-50"
+                                />
+                                <input
+                                    type="text"
+                                    name="pageColor"
+                                    value={settings.pageColor}
+                                    onChange={handleChange}
+                                    disabled={isExporting}
+                                    className="flex-1 ml-3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex items-center">
+                            <div className="flex justify-between items-center mb-1">
+                                <label className="block text-sm font-medium text-gray-700">
+                                    {t('margin')}
+                                </label>
+                                <span className="text-xs text-gray-500">{settings.margin} mm</span>
+                            </div>
+                            <div className="relative h-[140px] border border-gray-200 rounded-lg p-2 bg-gray-50">
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <div
+                                        className="border border-dashed border-gray-400 transition-all duration-300"
+                                        style={{
+                                            width: `calc(100% - ${settings.margin * 2 / 5}px)`,
+                                            height: `calc(100% - ${settings.margin * 2 / 5}px)`,
+                                            backgroundColor: settings.pageColor
+                                        }}
+                                    >
+                                        <div className="flex h-full items-center justify-center text-xs text-gray-500">
+                                            {t('contentArea')}
                                         </div>
                                     </div>
                                 </div>
@@ -191,14 +208,14 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                                 {settings.orientation === 'portrait'
                                     ? `${getPaperDimensions(settings.format).width}mm × ${getPaperDimensions(settings.format).height}mm`
                                     : `${getPaperDimensions(settings.format).height}mm × ${getPaperDimensions(settings.format).width}mm`}
-                                {' '}- {settings.orientation}
+                                {' '}- {settings.orientation === 'portrait' ? t('portrait') : t('landscape')}
                             </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Margin (mm)
+                                    {t('margin')}
                                 </label>
                                 <input
                                     type="number"
@@ -210,30 +227,6 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                                     disabled={isExporting}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
                                 />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Page Color
-                                </label>
-                                <div className="flex items-center space-x-2">
-                                    <input
-                                        type="color"
-                                        name="pageColor"
-                                        value={settings.pageColor}
-                                        onChange={handleChange}
-                                        disabled={isExporting}
-                                        className="p-0 w-10 h-10 border-0 rounded transition-all duration-200 disabled:opacity-50"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="pageColor"
-                                        value={settings.pageColor}
-                                        onChange={handleChange}
-                                        disabled={isExporting}
-                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 disabled:bg-gray-100 disabled:text-gray-500"
-                                    />
-                                </div>
                             </div>
                         </div>
 
@@ -248,7 +241,7 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                                 className="h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 transition-all duration-200 disabled:opacity-50"
                             />
                             <label htmlFor="includeBackground" className="ml-2 block text-sm text-gray-700">
-                                Include Background Colors
+                                {t('includeBackgroundColors')}
                             </label>
                         </div>
                     </div>
@@ -260,7 +253,7 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                             disabled={isExporting}
                             className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Cancel
+                            {t('cancel')}
                         </button>
                         <button
                             type="submit"
@@ -270,12 +263,12 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                             {isExporting ? (
                                 <>
                                     <ArrowPathIcon className="h-4 w-4 animate-spin" />
-                                    Generating PDF...
+                                    {t('generatingPDF')}
                                 </>
                             ) : (
                                 <>
                                     <CheckIcon className="h-4 w-4" />
-                                    Export PDF
+                                    {t('exportPDFButton')}
                                 </>
                             )}
                         </button>

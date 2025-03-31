@@ -4,19 +4,23 @@ import React, { useEffect, useState } from 'react';
 import { Editor } from '@tiptap/react';
 import {
     ChevronDown,
+    RowsIcon,
     Columns,
     Trash2,
     Grid2X2,
+    AlignLeft,
     Rows3,
     RowsIcon as RowIcon,
     ColumnsIcon,
 } from 'lucide-react';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 interface TableMenuProps {
     editor: Editor;
 }
 
 export const TableMenu: React.FC<TableMenuProps> = ({ editor }) => {
+    const { t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const [isTableSelected, setIsTableSelected] = useState(false);
 
@@ -39,48 +43,48 @@ export const TableMenu: React.FC<TableMenuProps> = ({ editor }) => {
     const menuItems = [
         {
             icon: <Rows3 size={14} />,
-            label: 'Insert row above',
+            label: t('insertRowAbove'),
             action: () => editor.chain().focus().addRowBefore().run(),
         },
         {
             icon: <RowIcon size={14} />,
-            label: 'Insert row below',
+            label: t('insertRowBelow'),
             action: () => editor.chain().focus().addRowAfter().run(),
         },
         {
             icon: <ColumnsIcon size={14} />,
-            label: 'Insert column left',
+            label: t('insertColLeft'),
             action: () => editor.chain().focus().addColumnBefore().run(),
         },
         {
             icon: <Columns size={14} />,
-            label: 'Insert column right',
+            label: t('insertColRight'),
             action: () => editor.chain().focus().addColumnAfter().run(),
         },
         {
             icon: <Trash2 size={14} />,
-            label: 'Delete row',
+            label: t('deleteRow'),
             action: () => editor.chain().focus().deleteRow().run(),
         },
         {
             icon: <Trash2 size={14} />,
-            label: 'Delete column',
+            label: t('deleteCol'),
             action: () => editor.chain().focus().deleteColumn().run(),
         },
         {
             icon: <Trash2 size={14} />,
-            label: 'Delete table',
+            label: t('deleteTable'),
             action: () => editor.chain().focus().deleteTable().run(),
         },
         {
             icon: <Grid2X2 size={14} />,
-            label: 'Merge cells',
+            label: t('mergeCells'),
             action: () => editor.chain().focus().mergeCells().run(),
             isDisabled: () => !editor.can().mergeCells(),
         },
         {
             icon: <Grid2X2 size={14} />,
-            label: 'Split cell',
+            label: t('splitCell'),
             action: () => editor.chain().focus().splitCell().run(),
             isDisabled: () => !editor.can().splitCell(),
         },
@@ -94,7 +98,7 @@ export const TableMenu: React.FC<TableMenuProps> = ({ editor }) => {
                     className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-white bg-purple-600 rounded-md shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                 >
                     <Grid2X2 size={16} />
-                    <span>Table</span>
+                    <span>{t('table')}</span>
                     <ChevronDown
                         size={14}
                         className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}

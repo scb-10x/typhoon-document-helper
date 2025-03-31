@@ -14,6 +14,7 @@ import LinkModal from './modals/LinkModal';
 import ImageModal from './modals/ImageModal';
 import TranslateModal from './modals/TranslateModal';
 import { TableMenu } from './menus/TableMenu';
+import LanguageSwitcher from './LanguageSwitcher';
 
 // Import extracted modules and hooks
 import { createEditorExtensions } from '../../lib/editorConfig';
@@ -22,6 +23,7 @@ import { getEditorContent } from '../../lib/editorUtils';
 import { useDocumentManager } from '../../hooks/useDocumentManager';
 import { useEditorModals } from '../../hooks/useEditorModals';
 import { useAIActions } from '../../hooks/useAIActions';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 // Define types
 export interface Document {
@@ -49,6 +51,9 @@ export default function Editor({
     onDeleteDocument = () => { },
     onRenameDocument = () => { },
 }: EditorProps) {
+    // Get translation function
+    const { t } = useLanguage();
+
     // UI state
     const [isMounted, setIsMounted] = useState(false);
 
@@ -177,11 +182,11 @@ export default function Editor({
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
                     </svg>
-                    <span>New</span>
+                    <span>{t('newDocument')}</span>
                 </button>
 
                 <ExportMenu
-                    documentName={document?.name || 'Untitled'}
+                    documentName={document?.name || t('untitledDocument')}
                     documentContent={getEditorContent(editor)}
                     isLoading={aiActions.isLoading}
                 />
@@ -193,6 +198,8 @@ export default function Editor({
                     setLineHeight={setLineHeight}
                     isLoading={aiActions.isLoading}
                 />
+
+                <LanguageSwitcher />
             </div>
         </div>
     );
@@ -229,21 +236,21 @@ export default function Editor({
             {hasNoDocuments && (
                 <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg shadow-2xl p-8 max-w-md mx-4">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-4">Welcome to Typhoon Document Editor</h2>
-                        <p className="text-gray-600 mb-6">Get started by creating a new document or loading a sample.</p>
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">{t('welcome')}</h2>
+                        <p className="text-gray-600 mb-6">{t('welcomeSubtitle')}</p>
 
                         <div className="flex flex-col sm:flex-row gap-3">
                             <button
                                 onClick={() => onAddDocument()}
                                 className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors"
                             >
-                                New Document
+                                {t('createNew')}
                             </button>
                             <button
                                 onClick={() => aiActions.loadSampleDocument(createSampleDocument, onAddDocument)}
                                 className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 transition-colors"
                             >
-                                Load Sample
+                                {t('loadSample')}
                             </button>
                         </div>
                     </div>
@@ -267,7 +274,7 @@ export default function Editor({
                         onClick={() => aiActions.loadSampleDocument(createSampleDocument, onAddDocument)}
                         className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
                     >
-                        Load Sample
+                        {t('loadSample')}
                     </button>
                 </div>
             </div>

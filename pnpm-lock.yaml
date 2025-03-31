@@ -20,9 +20,6 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.16(tailwindcss@4.0.17)
-      '@tiptap-pro/extension-mathematics':
-        specifier: ^2.17.6
-        version: 2.17.6(@tiptap/core@2.11.7(@tiptap/pm@2.11.7))(@tiptap/pm@2.11.7)(katex@0.16.21)
       '@tiptap/core':
         specifier: ^2.11.7
         version: 2.11.7(@tiptap/pm@2.11.7)
@@ -752,13 +749,6 @@ packages:
     resolution: {integrity: sha512-0wDLwCVF5V3x3b1SGXPCDcdsbDHMBe+lkFzBRaHeLvNi+nrrnZ1lA18u+OTWO8iSWU2GxUOCvlXtDuqftc1oiA==}
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders || >=4.0.0-alpha.20 || >=4.0.0-beta.1'
-
-  '@tiptap-pro/extension-mathematics@2.17.6':
-    resolution: {integrity: sha512-BJjkuoi9Vw/qAvXe0Bern3UbXwAjiAFPaGJ29KQiVaaG6Xa/ltmprDQ+M2UmYvGGaftkoV6eb68hB836mn8ajw==}
-    peerDependencies:
-      '@tiptap/core': ^2.0.0
-      '@tiptap/pm': ^2.0.0
-      katex: ^0.16.4
 
   '@tiptap/core@2.11.7':
     resolution: {integrity: sha512-zN+NFFxLsxNEL8Qioc+DL6b8+Tt2bmRbXH22Gk6F6nD30x83eaUSFlSv3wqvgyCq3I1i1NO394So+Agmayx6rQ==}
@@ -3278,12 +3268,6 @@ snapshots:
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
       tailwindcss: 4.0.17
-
-  '@tiptap-pro/extension-mathematics@2.17.6(@tiptap/core@2.11.7(@tiptap/pm@2.11.7))(@tiptap/pm@2.11.7)(katex@0.16.21)':
-    dependencies:
-      '@tiptap/core': 2.11.7(@tiptap/pm@2.11.7)
-      '@tiptap/pm': 2.11.7
-      katex: 0.16.21
 
   '@tiptap/core@2.11.7(@tiptap/pm@2.11.7)':
     dependencies:

@@ -3,8 +3,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Editor } from '@tiptap/core';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const HeadingSelector = ({ editor }: { editor: Editor }) => {
+    const { t } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -51,10 +53,10 @@ const HeadingSelector = ({ editor }: { editor: Editor }) => {
                 className="flex items-center gap-1 px-2 py-1.5 bg-white border border-gray-200 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 min-w-[110px]"
             >
                 <span className="mr-1">
-                    {currentValue === 'paragraph' ? 'Paragraph' :
-                        currentValue === 'h1' ? 'Heading 1' :
-                            currentValue === 'h2' ? 'Heading 2' :
-                                'Heading 3'}
+                    {currentValue === 'paragraph' ? t('paragraph') :
+                        currentValue === 'h1' ? t('heading1') :
+                            currentValue === 'h2' ? t('heading2') :
+                                t('heading3')}
                 </span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -66,25 +68,25 @@ const HeadingSelector = ({ editor }: { editor: Editor }) => {
                             onClick={() => handleHeadingChange('h1')}
                             className={`w-full text-left px-3 py-1.5 text-sm ${currentValue === 'h1' ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-50'}`}
                         >
-                            Heading 1
+                            {t('heading1')}
                         </button>
                         <button
                             onClick={() => handleHeadingChange('h2')}
                             className={`w-full text-left px-3 py-1.5 text-sm ${currentValue === 'h2' ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-50'}`}
                         >
-                            Heading 2
+                            {t('heading2')}
                         </button>
                         <button
                             onClick={() => handleHeadingChange('h3')}
                             className={`w-full text-left px-3 py-1.5 text-sm ${currentValue === 'h3' ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-50'}`}
                         >
-                            Heading 3
+                            {t('heading3')}
                         </button>
                         <button
                             onClick={() => handleHeadingChange('paragraph')}
                             className={`w-full text-left px-3 py-1.5 text-sm ${currentValue === 'paragraph' ? 'bg-purple-50 text-purple-700' : 'text-gray-700 hover:bg-gray-50'}`}
                         >
-                            Paragraph
+                            {t('paragraph')}
                         </button>
                     </div>
                 </div>

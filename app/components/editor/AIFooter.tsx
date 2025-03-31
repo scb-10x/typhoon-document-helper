@@ -9,6 +9,7 @@ import {
     DocumentCheckIcon, AcademicCapIcon, ChatBubbleLeftRightIcon, LightBulbIcon,
     ArrowsPointingOutIcon, ArrowPathIcon, DocumentTextIcon, LanguageIcon, BeakerIcon, MegaphoneIcon
 } from '@heroicons/react/24/outline';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface AIFooterProps {
     editor: Editor | null;
@@ -17,6 +18,7 @@ interface AIFooterProps {
 }
 
 const AIFooter = ({ editor, onAIAction, isLoading }: AIFooterProps) => {
+    const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('improve');
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -27,66 +29,66 @@ const AIFooter = ({ editor, onAIAction, isLoading }: AIFooterProps) => {
     const allAIOptions = {
         improve: [
             {
-                label: "Proofread",
+                label: t('proofread'),
                 value: "proofread",
                 icon: <DocumentCheckIcon className="w-4 h-4" />,
-                description: "Fix spelling, grammar, and punctuation"
+                description: t('proofreadDesc')
             },
             {
-                label: "Make professional",
+                label: t('makeProfessional'),
                 value: "professional",
                 icon: <AcademicCapIcon className="w-4 h-4" />,
-                description: "Formal tone for business documents"
+                description: t('makeProfessionalDesc')
             },
             {
-                label: "Make casual",
+                label: t('makeCasual'),
                 value: "casual",
                 icon: <ChatBubbleLeftRightIcon className="w-4 h-4" />,
-                description: "Conversational, friendly tone"
+                description: t('makeCasualDesc')
             },
             {
-                label: "Improve clarity",
+                label: t('improveClarity'),
                 value: "clarity",
                 icon: <LightBulbIcon className="w-4 h-4" />,
-                description: "Make text clearer and easier to understand"
+                description: t('improveClarityDesc')
             },
             {
-                label: "Fix wordiness",
+                label: t('fixWordiness'),
                 value: "concise",
                 icon: <ArrowsPointingOutIcon className="w-4 h-4 rotate-45" />,
-                description: "Make text more concise without losing meaning"
+                description: t('fixWordinessDesc')
             }
         ],
         transform: [
             {
-                label: "Extend",
+                label: t('extend'),
                 value: "extend",
                 icon: <ArrowPathIcon className="w-4 h-4" />,
-                description: "Elaborate and expand on selected text"
+                description: t('extendDesc')
             },
             {
-                label: "Summarize",
+                label: t('summarize'),
                 value: "summarize",
                 icon: <DocumentTextIcon className="w-4 h-4" />,
-                description: "Create a shorter version of the text"
+                description: t('summarizeDesc')
             },
             {
-                label: "Translate",
+                label: t('translate'),
                 value: "translate",
                 icon: <LanguageIcon className="w-4 h-4" />,
-                description: "Translate text to another language"
+                description: t('translateDesc')
             },
             {
-                label: "Explain like I'm 5",
+                label: t('explainLikeIm5'),
                 value: "eli5",
                 icon: <BeakerIcon className="w-4 h-4" />,
-                description: "Explain complex concepts in simple terms"
+                description: t('explainLikeIm5Desc')
             },
             {
-                label: "Make persuasive",
+                label: t('makePersuasive'),
                 value: "persuade",
                 icon: <MegaphoneIcon className="w-4 h-4" />,
-                description: "Make text more convincing"
+                description: t('makePersuasiveDesc')
             }
         ]
     };
@@ -126,7 +128,7 @@ const AIFooter = ({ editor, onAIAction, isLoading }: AIFooterProps) => {
                             }`}
                         onClick={() => setActiveTab('improve')}
                     >
-                        Improve
+                        {t('improve')}
                     </button>
                     <button
                         className={`px-3 py-1 text-xs font-medium ${activeTab === 'transform'
@@ -135,7 +137,7 @@ const AIFooter = ({ editor, onAIAction, isLoading }: AIFooterProps) => {
                             }`}
                         onClick={() => setActiveTab('transform')}
                     >
-                        Transform
+                        {t('transform')}
                     </button>
                 </div>
 
@@ -158,7 +160,7 @@ const AIFooter = ({ editor, onAIAction, isLoading }: AIFooterProps) => {
                 <div className="ml-auto relative">
                     <input
                         type="text"
-                        placeholder="Search AI actions..."
+                        placeholder={t('searchAIActions')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="text-sm border border-gray-200 rounded-md py-1 px-2 w-44 focus:outline-none focus:ring-1 focus:ring-purple-500"
