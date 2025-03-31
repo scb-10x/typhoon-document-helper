@@ -6,7 +6,7 @@ import {
     Bold, Italic, Underline as UnderlineIcon, Link as LinkIcon, List, ListOrdered,
     AlignLeft, AlignCenter, AlignRight, Code as CodeIcon, Quote,
     Minus, PanelLeftClose, RotateCcw, RotateCw, Eraser, Strikethrough, Image as ImageIcon,
-    Subscript as SubscriptIcon, Superscript as SuperscriptIcon,
+    Subscript as SubscriptIcon, Superscript as SuperscriptIcon, CheckSquare,
 } from 'lucide-react';
 import FormatButton from './FormatButton';
 import HeadingSelector from './HeadingSelector'
@@ -133,6 +133,12 @@ const EditorToolbar = ({
                     title="Numbered List (Ctrl+Shift+7)"
                     isActive={editor.isActive('orderedList')}
                     onClick={() => editor.chain().focus().toggleOrderedList().run()}
+                />
+                <FormatButton
+                    icon={<CheckSquare className="w-4 h-4" />}
+                    title="Task List"
+                    isActive={editor.isActive('taskList')}
+                    onClick={() => editor.chain().focus().toggleTaskList().run()}
                 />
                 <FormatButton
                     icon={<Quote className="w-4 h-4" />}

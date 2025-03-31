@@ -325,26 +325,70 @@ body {
 .ProseMirror ul[data-type="taskList"] {
   list-style: none;
   padding: 0;
+  margin: 1em 0;
 }
 
 .ProseMirror ul[data-type="taskList"] li {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 0.5em;
-  gap: 0.5em;
+  gap: 0.25em;
 }
 
 .ProseMirror ul[data-type="taskList"] li > label {
-  margin-right: 0.5em;
+  margin-right: 0;
   user-select: none;
+  display: flex;
+  align-items: center;
+  min-width: 1.25em;
 }
 
 .ProseMirror ul[data-type="taskList"] li > div {
   flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* Fix for vertical alignment issue */
+.ProseMirror ul[data-type="taskList"] li > div > p {
+  margin: 0;
+  padding: 0;
+  line-height: normal;
 }
 
 .ProseMirror ul[data-type="taskList"] li > label input[type="checkbox"] {
   cursor: pointer;
+  width: 1.1em;
+  height: 1.1em;
+  margin: 0;
+  border-radius: 3px;
+  border: 1px solid #cbd5e1;
+  position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: background 0.2s ease, border 0.2s ease;
+}
+
+.ProseMirror ul[data-type="taskList"] li > label input[type="checkbox"]:hover {
+  border-color: #a1a1aa;
+  background-color: #f8fafc;
+}
+
+.ProseMirror ul[data-type="taskList"] li > label input[type="checkbox"]:checked {
+  background-color: #673ab7;
+  border-color: #673ab7;
+}
+
+.ProseMirror ul[data-type="taskList"] li > label input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 40%;
+  width: 25%;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: translate(-75%, -60%) rotate(45deg);
 }
 
 .task-list-item.checked > div > p {

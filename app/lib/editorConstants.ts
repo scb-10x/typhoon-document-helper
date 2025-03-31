@@ -44,6 +44,14 @@ export const createSampleDocument = (): string => {
         <li>Export and share!</li>
     </ol>
     
+    <h3>Task List</h3>
+    <ul data-type="taskList">
+        <li data-type="taskItem" data-checked="true"><label><input type="checkbox" checked="checked"></label><div><p>Create your document</p></div></li>
+        <li data-type="taskItem" data-checked="true"><label><input type="checkbox" checked="checked"></label><div><p>Format your content</p></div></li>
+        <li data-type="taskItem" data-checked="false"><label><input type="checkbox"></label><div><p>Add task lists with checkboxes</p></div></li>
+        <li data-type="taskItem" data-checked="false"><label><input type="checkbox"></label><div><p>Share your work with others</p></div></li>
+    </ul>
+    
     <h2>Text Styling</h2>
     <p><span style="color: #e62739;">You can change text colors</span> and <span style="background-color: #ffcc00;">highlight important information</span>.</p>
     <p>Scientific notation: H<sub>2</sub>O and E=mc<sup>2</sup> using subscript and superscript.</p>

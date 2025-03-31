@@ -10,6 +10,8 @@ import { Superscript } from '@tiptap/extension-superscript';
 import { Image } from '@tiptap/extension-image';
 import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
+import { TaskList } from '@tiptap/extension-task-list';
+import { TaskItem } from '@tiptap/extension-task-item';
 
 // Create a lowlight instance with common languages
 const lowlight = createLowlight(common);
@@ -47,6 +49,18 @@ export const createEditorExtensions = () => [
         lowlight,
         HTMLAttributes: {
             class: 'rounded-md bg-gray-800 p-4 my-4',
+        },
+    }),
+    // Task list with checkboxes
+    TaskList.configure({
+        HTMLAttributes: {
+            class: 'task-list',
+        },
+    }),
+    TaskItem.configure({
+        nested: true,
+        HTMLAttributes: {
+            class: 'task-item',
         },
     }),
 ]; 
