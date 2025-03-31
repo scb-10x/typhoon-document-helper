@@ -33,9 +33,12 @@ const HeadingSelector = ({ editor }: { editor: Editor }) => {
 
         if (value === 'paragraph') {
             editor.chain().focus().setParagraph().run();
-        } else if (['h1', 'h2', 'h3'].includes(value)) {
-            const level = parseInt(value.charAt(1));
-            editor.chain().focus().setHeading({ level }).run();
+        } else if (value === 'h1') {
+            editor.chain().focus().setHeading({ level: 1 }).run();
+        } else if (value === 'h2') {
+            editor.chain().focus().setHeading({ level: 2 }).run();
+        } else if (value === 'h3') {
+            editor.chain().focus().setHeading({ level: 3 }).run();
         }
     };
 
