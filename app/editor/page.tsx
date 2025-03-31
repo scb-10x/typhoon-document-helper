@@ -5,6 +5,7 @@ import Editor, { Document } from "../components/editor/Editor";
 import { Toaster, toast } from "react-hot-toast";
 import Image from "next/image";
 import Link from "next/link";
+import { useLanguage } from '../contexts/LanguageContext';
 
 // Default empty document
 const emptyDocument: Document = {
@@ -19,6 +20,9 @@ export default function EditorPage() {
   const [activeDocumentId, setActiveDocumentId] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isClient, setIsClient] = useState(false);
+
+  // Language context
+  const { t } = useLanguage();
 
   // Set client-side flag
   useEffect(() => {
@@ -86,7 +90,7 @@ export default function EditorPage() {
     localStorage.setItem('typhoon-docs', JSON.stringify(updatedDocs));
 
     // Show success notification
-    toast.success("Document renamed");
+    toast.success(t('documentRenamed'));
   };
 
   // Handler for deleting a document

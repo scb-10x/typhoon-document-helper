@@ -214,6 +214,23 @@ export type Translations = {
 
     // PDF Export Modal extra
     preview: string;
+
+    // PDF Export Toast Messages
+    creatingPDF: string;
+    pdfCreatedSuccess: string;
+    pdfExportError: string;
+    pdfExporting: string;
+    pdfExportComplete: string;
+    pdfExportFailed: string;
+
+    // Toast Messages
+    documentRenamed: string;
+    selectTextOrContent: string;
+    actionApplied: string;
+    requestFailed: string;
+    translatedTo: string;
+    translationFailed: string;
+    sampleLoaded: string;
   };
 };
 
@@ -431,6 +448,23 @@ export const translations: Translations = {
 
     // PDF Export Modal extra
     preview: 'Preview',
+
+    // PDF Export Toast Messages
+    creatingPDF: 'Creating your PDF...',
+    pdfCreatedSuccess: 'PDF created successfully!',
+    pdfExportError: 'Failed to export as PDF. Please try again.',
+    pdfExporting: 'Exporting to PDF...',
+    pdfExportComplete: 'PDF export complete!',
+    pdfExportFailed: 'Failed to export PDF. Please try again.',
+
+    // Toast Messages
+    documentRenamed: 'Document renamed',
+    selectTextOrContent: 'Please select some text or ensure the document has content.',
+    actionApplied: 'Successfully applied {action} to your text.',
+    requestFailed: 'Failed to process your request. Please try again later.',
+    translatedTo: 'Translated to {language}',
+    translationFailed: 'Translation failed. Please try again.',
+    sampleLoaded: 'Sample document loaded',
   },
   th: {
     // Header
@@ -645,5 +679,30 @@ export const translations: Translations = {
 
     // PDF Export Modal extra
     preview: 'ตัวอย่าง',
+
+    // PDF Export Toast Messages
+    creatingPDF: 'กำลังสร้าง PDF...',
+    pdfCreatedSuccess: 'สร้าง PDF สำเร็จ!',
+    pdfExportError: 'ไม่สามารถส่งออกเป็น PDF ได้ กรุณาลองใหม่อีกครั้ง',
+    pdfExporting: 'กำลังส่งออกเป็น PDF...',
+    pdfExportComplete: 'ส่งออก PDF เสร็จสิ้น!',
+    pdfExportFailed: 'ไม่สามารถส่งออก PDF ได้ กรุณาลองใหม่อีกครั้ง',
+
+    // Toast Messages
+    documentRenamed: 'เปลี่ยนชื่อเอกสารแล้ว',
+    selectTextOrContent: 'กรุณาเลือกข้อความหรือตรวจสอบให้แน่ใจว่าเอกสารมีเนื้อหา',
+    actionApplied: 'ใช้ {action} กับข้อความของคุณสำเร็จ',
+    requestFailed: 'ไม่สามารถประมวลผลคำขอของคุณได้ กรุณาลองใหม่อีกครั้ง',
+    translatedTo: 'แปลเป็น {language} แล้ว',
+    translationFailed: 'การแปลล้มเหลว กรุณาลองใหม่อีกครั้ง',
+    sampleLoaded: 'โหลดเอกสารตัวอย่างแล้ว',
   }
-}; 
+};
+
+// Add a helper type for translation interpolation
+type TranslationParams = {
+  [key: string]: string | number;
+};
+
+// Update the translation function type
+export type TranslationFunction = (key: keyof typeof translations.en, params?: TranslationParams) => string; 

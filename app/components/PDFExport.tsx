@@ -13,7 +13,6 @@ import {
     Cog6ToothIcon
 } from '@heroicons/react/24/outline';
 import { ArrowPathIcon } from '@heroicons/react/24/solid';
-import { saveAs } from 'file-saver';
 import { useLanguage } from '../contexts/LanguageContext';
 
 // Define the types
@@ -118,8 +117,8 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                         <button
                             onClick={() => setActiveTab('basic')}
                             className={`px-4 py-3 text-sm font-medium flex items-center gap-1.5 transition-colors ${activeTab === 'basic'
-                                    ? 'text-purple-600 border-b-2 border-purple-600'
-                                    : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
+                                ? 'text-purple-600 border-b-2 border-purple-600'
+                                : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
                                 }`}
                         >
                             <DocumentIcon className="w-4 h-4" />
@@ -128,8 +127,8 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                         <button
                             onClick={() => setActiveTab('advanced')}
                             className={`px-4 py-3 text-sm font-medium flex items-center gap-1.5 transition-colors ${activeTab === 'advanced'
-                                    ? 'text-purple-600 border-b-2 border-purple-600'
-                                    : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
+                                ? 'text-purple-600 border-b-2 border-purple-600'
+                                : 'text-gray-600 hover:text-purple-600 hover:bg-purple-50'
                                 }`}
                         >
                             <Cog6ToothIcon className="w-4 h-4" />
@@ -343,8 +342,10 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
 
 // PDF export function
 export function exportToPDF(settings: PDFExportSettings, documentContent: string) {
+    const { t } = useLanguage();
+
     // Show a toast notification when starting the export
-    toast.loading('Creating your PDF...', { id: 'pdf-export' });
+    toast.loading(t('creatingPDF'), { id: 'pdf-export' });
 
     // Import html2pdf dynamically to avoid SSR issues
     return import('html2pdf.js')
@@ -369,12 +370,21 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
             // Add custom styling for headings to ensure they transfer properly
             const styleElement = document.createElement('style');
             styleElement.textContent = `
+                /* Base text styles */
+                body {
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                    line-height: 1.6;
+                    color: #333333;
+                }
+
+                /* Headings */
                 h1 {
                     font-size: 2.25rem;
                     font-weight: 800;
                     margin-top: 2rem;
                     margin-bottom: 1rem;
                     color: #111827;
+                    line-height: 1.2;
                 }
                 h2 {
                     font-size: 1.875rem;
@@ -382,6 +392,7 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
                     margin-top: 1.75rem;
                     margin-bottom: 0.875rem;
                     color: #1F2937;
+                    line-height: 1.3;
                 }
                 h3 {
                     font-size: 1.5rem;
@@ -389,6 +400,7 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
                     margin-top: 1.5rem;
                     margin-bottom: 0.75rem;
                     color: #374151;
+                    line-height: 1.4;
                 }
                 h4 {
                     font-size: 1.25rem;
@@ -411,115 +423,201 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
                     margin-bottom: 0.5rem;
                     color: #6B7280;
                 }
+
+                /* Paragraphs and spacing */
                 p {
                     margin-bottom: 1rem;
                     line-height: 1.6;
                 }
-                ul {
-                    margin-bottom: 1rem;
+
+                /* Lists */
+                ul, ol {
+                    margin: 1rem 0;
                     padding-left: 2rem;
+                }
+
+                ul {
                     list-style-type: disc;
                 }
+
                 ol {
-                    margin-bottom: 1rem;
-                    padding-left: 2rem;
                     list-style-type: decimal;
                 }
+
                 ul li, ol li {
                     margin-bottom: 0.5rem;
                     padding-left: 0.5rem;
                 }
+
                 ul ul, ol ul {
                     list-style-type: circle;
+                    margin: 0.5rem 0;
                 }
+
                 ul ol, ol ol {
                     list-style-type: lower-alpha;
+                    margin: 0.5rem 0;
                 }
+
+                /* Task Lists */
+                ul.task-list {
+                    list-style-type: none;
+                    padding-left: 0.5rem;
+                }
+
+                li.task-item {
+                    display: flex !important;
+                    align-items: flex-start;
+                    margin-bottom: 0.5rem;
+                    padding-left: 0;
+                }
+
+                li.task-item > input[type="checkbox"] {
+                    margin: 0.3rem 0.5rem 0 0;
+                    width: 1rem;
+                    height: 1rem;
+                    border: 2px solid #9CA3AF;
+                    border-radius: 0.25rem;
+                    appearance: none;
+                    -webkit-appearance: none;
+                    position: relative;
+                    cursor: pointer;
+                }
+
+                li.task-item > input[type="checkbox"]:checked {
+                    background-color: #8B5CF6;
+                    border-color: #8B5CF6;
+                }
+
+                li.task-item > input[type="checkbox"]:checked::after {
+                    content: '';
+                    position: absolute;
+                    left: 4px;
+                    top: 1px;
+                    width: 4px;
+                    height: 8px;
+                    border: solid white;
+                    border-width: 0 2px 2px 0;
+                    transform: rotate(45deg);
+                }
+
+                /* Text formatting */
                 mark, span[style*="background-color"] {
-                    /* The background-color is already set inline via style attribute */
-                    padding: 0 1px;
+                    padding: 0 2px;
                     border-radius: 2px;
-                    display: inline;
                 }
+
                 s, strike, del {
                     text-decoration: line-through;
+                    color: #6B7280;
                 }
+
+                /* Blockquotes */
                 blockquote {
                     border-left: 4px solid #E5E7EB;
-                    padding-left: 1rem;
+                    padding: 0.5rem 0 0.5rem 1rem;
+                    margin: 1.5rem 0;
                     font-style: italic;
-                    margin: 1rem 0;
+                    color: #4B5563;
+                    background-color: #F9FAFB;
                 }
+
+                /* Code blocks */
                 pre {
                     background-color: #F3F4F6;
                     padding: 1rem;
                     border-radius: 0.375rem;
                     overflow-x: auto;
-                    margin-bottom: 1rem;
+                    margin: 1.5rem 0;
+                    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+                    font-size: 0.875em;
+                    line-height: 1.5;
                 }
+
                 code {
-                    font-family: monospace;
+                    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
                     background-color: #F3F4F6;
                     padding: 0.2rem 0.4rem;
                     border-radius: 0.25rem;
                     font-size: 0.875em;
+                    color: #DC2626;
                 }
+
+                /* Links */
                 a {
                     color: #8B5CF6;
                     text-decoration: underline;
+                    text-decoration-thickness: 0.1em;
+                    text-underline-offset: 0.15em;
                 }
+
+                /* Images */
                 img {
                     max-width: 100%;
                     height: auto;
-                    margin: 1rem 0;
+                    margin: 1.5rem auto;
+                    display: block;
+                    border-radius: 0.375rem;
                 }
+
+                figure {
+                    margin: 2rem 0;
+                    text-align: center;
+                }
+
+                figcaption {
+                    margin-top: 0.5rem;
+                    font-size: 0.875rem;
+                    color: #6B7280;
+                    font-style: italic;
+                }
+
+                /* Tables */
+                table {
+                    width: 100%;
+                    margin: 1.5rem 0;
+                    border-collapse: collapse;
+                    border: 2px solid #E5E7EB;
+                    break-inside: avoid;
+                }
+
+                th {
+                    background-color: #F9FAFB;
+                    font-weight: 600;
+                    text-align: left;
+                    padding: 0.75rem;
+                    border: 1px solid #D1D5DB;
+                    border-bottom: 2px solid #9CA3AF;
+                    color: #374151;
+                }
+
+                td {
+                    padding: 0.75rem;
+                    border: 1px solid #D1D5DB;
+                    vertical-align: top;
+                }
+
+                tr:nth-child(even) {
+                    background-color: #F9FAFB;
+                }
+
                 /* Subscript and Superscript */
                 sub {
                     vertical-align: sub;
                     font-size: 0.75em;
                 }
+
                 sup {
                     vertical-align: super;
                     font-size: 0.75em;
                 }
-                /* Task list styling */
-                ul.task-list {
-                    list-style-type: none;
-                    padding-left: 1rem;
-                }
-                li.task-item {
-                    display: flex !important;
-                    align-items: flex-start;
-                    margin-bottom: 0.5rem;
-                }
-                li.task-item > input[type="checkbox"] {
-                    margin-right: 0.5rem;
-                    margin-top: 0.3rem;
-                }
-                /* Table styling */
-                table {
-                    border-collapse: collapse;
-                    width: 100%;
-                    margin: 1rem 0;
-                    table-layout: fixed;
-                    max-width: 100%;
-                    border: 2px solid #e5e7eb;
-                    break-inside: avoid;
-                }
-                th, td {
-                    border: 1px solid #d1d5db;
-                    padding: 8px;
-                    text-align: left;
-                    word-wrap: break-word;
-                    min-width: 60px;
-                }
-                th {
-                    background-color: #f9fafb;
-                    font-weight: 600;
-                    border-bottom: 2px solid #9ca3af;
-                }
-                tr:nth-child(even) {
-                    background-color: #f9fafb;
+
+                /* Horizontal Rule */
+                hr {
+                    border: 0;
+                    height: 2px;
+                    background-color: #E5E7EB;
+                    margin: 2rem 0;
                 }
             `;
             container.prepend(styleElement);
@@ -682,15 +780,19 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
                 html2canvas: {
                     scale: 2,
                     useCORS: true,
-                    allowTaint: true, // Allow loading of cross-origin images
+                    allowTaint: true,
                     backgroundColor: settings.pageColor,
                     removeContainer: true,
-                    logging: false, // Set to true for debugging image loading issues
+                    logging: false,
+                    letterRendering: true, // Improve text rendering
+                    scrollY: 0, // Prevent scroll issues
                 },
                 jsPDF: {
                     unit: 'mm',
                     format: settings.format,
-                    orientation: settings.orientation
+                    orientation: settings.orientation,
+                    compress: true,
+                    precision: 16
                 }
             };
 
@@ -699,13 +801,13 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
                 .then(() => {
                     // Remove the temporary elements
                     document.body.removeChild(wrapper);
-                    toast.success(`PDF created successfully!`, { id: 'pdf-export' });
+                    toast.success(t('pdfCreatedSuccess'), { id: 'pdf-export' });
                     return true;
                 });
         })
         .catch(error => {
             console.error('Error exporting to PDF:', error);
-            toast.error('Failed to export as PDF. Please try again.', { id: 'pdf-export' });
+            toast.error(t('pdfExportError'), { id: 'pdf-export' });
             return false;
         });
 } 

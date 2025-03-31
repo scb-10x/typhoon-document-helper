@@ -6,7 +6,7 @@ import { Language, translations } from '../lib/translations';
 interface LanguageContextType {
   currentLanguage: Language;
   setLanguage: (language: Language) => void;
-  t: (key: keyof typeof translations['en']) => string;
+  t: (key: keyof typeof translations['en'], params?: Record<string, any>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -27,9 +27,17 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     localStorage.setItem('language', language);
   };
 
-  // Translation function
-  const t = (key: keyof typeof translations['en']) => {
-    return translations[currentLanguage][key];
+  // Update the translation function to support interpolation
+  const t: TranslationFunction = (key, params) => {
+    let translation = translations[currentLanguage][key];
+
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        translation = translation.replace(`{${key}}`, String(value));
+      });
+    }
+
+    return translation;
   };
 
   return (

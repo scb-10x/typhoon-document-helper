@@ -3,12 +3,15 @@ import { Editor as TiptapEditor } from '@tiptap/react';
 import toast from 'react-hot-toast';
 import { aiTextService } from '../lib/aiServices';
 import { hasSelection, getSelectedText } from '../lib/editorUtils';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export function useAIActions(editor: TiptapEditor | null) {
     const [isLoading, setIsLoading] = useState(false);
 
     // Expose state to handle translate modal
     const [isTranslateModalOpen, setIsTranslateModalOpen] = useState(false);
+
+    const { t } = useLanguage();
 
     // Handle general AI actions like proofread, professional, etc.
     const handleAIAction = async (action: string) => {
@@ -26,7 +29,7 @@ export function useAIActions(editor: TiptapEditor | null) {
 
         // Don't process if no text or too short
         if (!text || text.trim().length < 2) {
-            toast.error('Please select some text or ensure the document has content.');
+            toast.error(t('selectTextOrContent'));
             return;
         }
 
@@ -68,10 +71,10 @@ export function useAIActions(editor: TiptapEditor | null) {
                 }
             }
 
-            toast.success(`Successfully applied ${action} to your text.`);
+            toast.success(t('actionApplied', { action }));
         } catch (error) {
             console.error('Error processing AI action:', error);
-            toast.error('Failed to process your request. Please try again later.');
+            toast.error(t('requestFailed'));
         } finally {
             setIsLoading(false);
         }
@@ -137,10 +140,10 @@ export function useAIActions(editor: TiptapEditor | null) {
                 }
             }
 
-            toast.success(`Translated to ${language}`);
+            toast.success(t('translatedTo', { language }));
         } catch (error) {
             console.error('Translation error:', error);
-            toast.error('Translation failed. Please try again.');
+            toast.error(t('translationFailed'));
         } finally {
             setIsLoading(false);
             setIsTranslateModalOpen(false);  // Close modal when done
@@ -157,7 +160,7 @@ export function useAIActions(editor: TiptapEditor | null) {
         // Create a new document with sample content
         onAddDocument(sampleContent);
 
-        toast.success('Sample document loaded');
+        toast.success(t('sampleLoaded'));
     };
 
     return {
