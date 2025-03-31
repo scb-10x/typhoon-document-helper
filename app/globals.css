@@ -256,7 +256,7 @@ body {
 
 /* Code styling is now in syntax-highlighting.css */
 .ProseMirror code:not([class*="language-"]) {
-  @apply font-mono bg-gray-100 text-sm px-1 py-0.5 rounded text-gray-800;
+  @apply font-mono text-sm px-1 py-0.5 rounded text-gray-200;
 }
 
 /* Pre styling is now in syntax-highlighting.css */
