@@ -4,11 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { Editor } from '@tiptap/react';
 import {
     ChevronDown,
-    RowsIcon,
     Columns,
     Trash2,
     Grid2X2,
-    AlignLeft,
     Rows3,
     RowsIcon as RowIcon,
     ColumnsIcon,

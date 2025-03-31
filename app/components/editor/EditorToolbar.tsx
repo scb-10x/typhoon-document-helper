@@ -7,7 +7,7 @@ import {
     AlignLeft, AlignCenter, AlignRight, Code as CodeIcon, Quote,
     Minus, PanelLeftClose, RotateCcw, RotateCw, Eraser, Strikethrough, Image as ImageIcon,
     Subscript as SubscriptIcon, Superscript as SuperscriptIcon, CheckSquare,
-    Table as TableIcon, TableProperties,
+    Table as TableIcon,
 } from 'lucide-react';
 import FormatButton from './FormatButton';
 import HeadingSelector from './HeadingSelector'

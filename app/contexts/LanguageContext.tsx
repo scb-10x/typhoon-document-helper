@@ -6,7 +6,7 @@ import { Language, TranslationFunction, translations } from '../lib/translations
 interface LanguageContextType {
   currentLanguage: Language;
   setLanguage: (language: Language) => void;
-  t: (key: keyof typeof translations['en'], params?: Record<string, any>) => string;
+  t: (key: keyof typeof translations['en'], params?: Record<string, string | number>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);

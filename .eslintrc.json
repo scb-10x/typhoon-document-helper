@@ -4,11 +4,6 @@
     "node_modules",
     ".next/**/*",
     "out",
-    "app/components/Editor.tsx",
-    "app/components/ui/button.tsx",
-    "app/api/ai/route.ts",
-    "app/api/unsplash/route.ts",
-    "app/components/CustomExtensions.tsx",
     "*.d.ts"
   ],
   "rules": {

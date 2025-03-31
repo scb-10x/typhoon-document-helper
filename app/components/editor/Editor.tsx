@@ -103,6 +103,7 @@ export default function Editor({
                 documentManager.previousDocumentId.current = document.id;
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editor, document]);
 
     // Update style when font size or line height changes
