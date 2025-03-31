@@ -231,6 +231,24 @@ export type Translations = {
     translatedTo: string;
     translationFailed: string;
     sampleLoaded: string;
+
+    // Error messages
+    genericError: string;
+    apiError: string;
+    apiError404: string;
+    apiError500: string;
+    apiError503: string;
+    exportError: string;
+    aiServiceError: string;
+    imageError: string;
+    pdfError: string;
+    networkError: string;
+    validationError: string;
+    unsupportedFileType: string;
+    fileTooLarge: string;
+    sessionExpired: string;
+    unauthorized: string;
+    rateLimitExceeded: string;
   };
 };
 
@@ -465,6 +483,24 @@ export const translations: Translations = {
     translatedTo: 'Translated to {language}',
     translationFailed: 'Translation failed. Please try again.',
     sampleLoaded: 'Sample document loaded',
+
+    // Error messages
+    genericError: 'An unexpected error occurred. Please try again.',
+    apiError: 'Failed to communicate with the server. Please try again.',
+    apiError404: 'The requested resource was not found.',
+    apiError500: 'Server error. Please try again later.',
+    apiError503: 'Service temporarily unavailable. Please try again later.',
+    exportError: 'Failed to export document. Please try again.',
+    aiServiceError: 'AI service is currently unavailable. Please try again later.',
+    imageError: 'Failed to load image. Please try again.',
+    pdfError: 'Failed to generate PDF. Please try again.',
+    networkError: 'Network error. Please check your connection and try again.',
+    validationError: 'Please check your input and try again.',
+    unsupportedFileType: 'Unsupported file type. Please try a different file.',
+    fileTooLarge: 'File is too large. Please try a smaller file.',
+    sessionExpired: 'Your session has expired. Please refresh the page.',
+    unauthorized: 'You are not authorized to perform this action.',
+    rateLimitExceeded: 'Too many requests. Please try again later.',
   },
   th: {
     // Header
@@ -696,6 +732,24 @@ export const translations: Translations = {
     translatedTo: 'แปลเป็น {language} แล้ว',
     translationFailed: 'การแปลล้มเหลว กรุณาลองใหม่อีกครั้ง',
     sampleLoaded: 'โหลดเอกสารตัวอย่างแล้ว',
+
+    // Error messages
+    genericError: 'เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองใหม่อีกครั้ง',
+    apiError: 'ไม่สามารถสื่อสารกับเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง',
+    apiError404: 'ไม่พบทรัพยากรที่ต้องการ',
+    apiError500: 'เกิดข้อผิดพลาดที่เซิร์ฟเวอร์ กรุณาลองใหม่อีกครั้ง',
+    apiError503: 'บริการไม่พร้อมใช้งานชั่วคราว กรุณาลองใหม่อีกครั้ง',
+    exportError: 'ไม่สามารถส่งออกเอกสารได้ กรุณาลองใหม่อีกครั้ง',
+    aiServiceError: 'บริการ AI ไม่พร้อมใช้งานชั่วคราว กรุณาลองใหม่อีกครั้ง',
+    imageError: 'ไม่สามารถโหลดรูปภาพได้ กรุณาลองใหม่อีกครั้ง',
+    pdfError: 'ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่อีกครั้ง',
+    networkError: 'เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาตรวจสอบการเชื่อมต่อและลองใหม่อีกครั้ง',
+    validationError: 'กรุณาตรวจสอบข้อมูลที่ป้อนและลองใหม่อีกครั้ง',
+    unsupportedFileType: 'ไม่รองรับประเภทไฟล์นี้ กรุณาลองใช้ไฟล์อื่น',
+    fileTooLarge: 'ไฟล์มีขนาดใหญ่เกินไป กรุณาลองใช้ไฟล์ที่เล็กลง',
+    sessionExpired: 'เซสชันหมดอายุ กรุณารีเฟรชหน้าเว็บ',
+    unauthorized: 'คุณไม่มีสิทธิ์ในการดำเนินการนี้',
+    rateLimitExceeded: 'มีการร้องขอมากเกินไป กรุณาลองใหม่อีกครั้ง',
   }
 };
 

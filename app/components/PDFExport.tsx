@@ -14,6 +14,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { ArrowPathIcon } from '@heroicons/react/24/solid';
 import { useLanguage } from '../contexts/LanguageContext';
+import { TranslationFunction } from '../lib/translations';
 
 // Define the types
 export interface PDFExportSettings {
@@ -142,7 +143,7 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                         {activeTab === 'basic' ? (
                             <div className="space-y-5">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                    <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
                                         <DocumentIcon className="h-4 w-4 text-gray-500" />
                                         {t('fileName')}
                                     </label>
@@ -159,7 +160,7 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                        <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
                                             <RectangleGroupIcon className="h-4 w-4 text-gray-500" />
                                             {t('paperSize')}
                                         </label>
@@ -179,7 +180,7 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                        <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
                                             <ArrowsPointingOutIcon className="h-4 w-4 text-gray-500" />
                                             {t('orientation')}
                                         </label>
@@ -238,7 +239,7 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
                         ) : (
                             <div className="space-y-5">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
+                                    <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1.5">
                                         <SwatchIcon className="h-4 w-4 text-gray-500" />
                                         {t('pageColor')}
                                     </label>
@@ -264,7 +265,7 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
 
                                 <div>
                                     <div className="flex justify-between items-center mb-1">
-                                        <label className="block text-sm font-medium text-gray-700 flex items-center gap-1.5">
+                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
                                             <ArrowsPointingOutIcon className="h-4 w-4 text-gray-500" />
                                             {t('margin')}
                                         </label>
@@ -341,9 +342,11 @@ export function PDFSettingsDialog({ isOpen, onClose, onExport, documentName }: P
 }
 
 // PDF export function
-export function exportToPDF(settings: PDFExportSettings, documentContent: string) {
-    const { t } = useLanguage();
-
+export async function exportToPDF(
+    settings: PDFExportSettings,
+    documentContent: string,
+    t: TranslationFunction
+) {
     // Show a toast notification when starting the export
     toast.loading(t('creatingPDF'), { id: 'pdf-export' });
 
@@ -370,64 +373,79 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
             // Add custom styling for headings to ensure they transfer properly
             const styleElement = document.createElement('style');
             styleElement.textContent = `
-                /* Base text styles */
+                /* Base styles */
+                :root {
+                    --primary: 139, 92, 246;
+                    --success: 34, 197, 94;
+                    --error: 239, 68, 68;
+                    --warning: 234, 179, 8;
+                }
+
                 body {
                     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
                     line-height: 1.6;
                     color: #333333;
+                    background-color: #ffffff;
+                    margin: 0;
+                    padding: 0;
                 }
 
-                /* Headings */
+                /* Typography */
+                h1, h2, h3, h4, h5, h6 {
+                    font-weight: 600;
+                    line-height: 1.2;
+                    margin-top: 1.5em;
+                    margin-bottom: 0.5em;
+                    color: #111827;
+                }
+
                 h1 {
                     font-size: 2.25rem;
                     font-weight: 800;
                     margin-top: 2rem;
                     margin-bottom: 1rem;
-                    color: #111827;
-                    line-height: 1.2;
                 }
+
                 h2 {
                     font-size: 1.875rem;
                     font-weight: 700;
                     margin-top: 1.75rem;
                     margin-bottom: 0.875rem;
-                    color: #1F2937;
-                    line-height: 1.3;
                 }
+
                 h3 {
                     font-size: 1.5rem;
                     font-weight: 600;
                     margin-top: 1.5rem;
                     margin-bottom: 0.75rem;
-                    color: #374151;
-                    line-height: 1.4;
                 }
+
                 h4 {
                     font-size: 1.25rem;
                     font-weight: 600;
                     margin-top: 1.25rem;
                     margin-bottom: 0.625rem;
-                    color: #4B5563;
                 }
+
                 h5 {
                     font-size: 1.125rem;
                     font-weight: 600;
                     margin-top: 1.125rem;
                     margin-bottom: 0.5rem;
-                    color: #6B7280;
                 }
+
                 h6 {
                     font-size: 1rem;
                     font-weight: 600;
                     margin-top: 1rem;
                     margin-bottom: 0.5rem;
-                    color: #6B7280;
                 }
 
                 /* Paragraphs and spacing */
                 p {
                     margin-bottom: 1rem;
                     line-height: 1.6;
+                    color: #374151;
                 }
 
                 /* Lists */
@@ -447,6 +465,7 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
                 ul li, ol li {
                     margin-bottom: 0.5rem;
                     padding-left: 0.5rem;
+                    color: #374151;
                 }
 
                 ul ul, ol ul {
@@ -470,6 +489,7 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
                     align-items: flex-start;
                     margin-bottom: 0.5rem;
                     padding-left: 0;
+                    color: #374151;
                 }
 
                 li.task-item > input[type="checkbox"] {
@@ -480,334 +500,222 @@ export function exportToPDF(settings: PDFExportSettings, documentContent: string
                     border-radius: 0.25rem;
                     appearance: none;
                     -webkit-appearance: none;
-                    position: relative;
-                    cursor: pointer;
                 }
 
                 li.task-item > input[type="checkbox"]:checked {
                     background-color: #8B5CF6;
                     border-color: #8B5CF6;
-                }
-
-                li.task-item > input[type="checkbox"]:checked::after {
-                    content: '';
-                    position: absolute;
-                    left: 4px;
-                    top: 1px;
-                    width: 4px;
-                    height: 8px;
-                    border: solid white;
-                    border-width: 0 2px 2px 0;
-                    transform: rotate(45deg);
-                }
-
-                /* Text formatting */
-                mark, span[style*="background-color"] {
-                    padding: 0 2px;
-                    border-radius: 2px;
-                }
-
-                s, strike, del {
-                    text-decoration: line-through;
-                    color: #6B7280;
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd'/%3E%3C/svg%3E");
+                    background-size: 100% 100%;
+                    background-position: center;
+                    background-repeat: no-repeat;
                 }
 
                 /* Blockquotes */
                 blockquote {
-                    border-left: 4px solid #E5E7EB;
-                    padding: 0.5rem 0 0.5rem 1rem;
                     margin: 1.5rem 0;
-                    font-style: italic;
-                    color: #4B5563;
+                    padding: 1rem 1.5rem;
+                    border-left: 4px solid #E5E7EB;
                     background-color: #F9FAFB;
+                    color: #4B5563;
+                    font-style: italic;
+                }
+
+                blockquote p {
+                    margin: 0;
                 }
 
                 /* Code blocks */
                 pre {
-                    background-color: #F3F4F6;
-                    padding: 1rem;
-                    border-radius: 0.375rem;
-                    overflow-x: auto;
                     margin: 1.5rem 0;
-                    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-                    font-size: 0.875em;
-                    line-height: 1.5;
+                    padding: 1rem;
+                    background-color: #1F2937;
+                    border-radius: 0.5rem;
+                    overflow-x: auto;
                 }
 
                 code {
-                    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-                    background-color: #F3F4F6;
-                    padding: 0.2rem 0.4rem;
-                    border-radius: 0.25rem;
-                    font-size: 0.875em;
-                    color: #DC2626;
-                }
-
-                /* Links */
-                a {
-                    color: #8B5CF6;
-                    text-decoration: underline;
-                    text-decoration-thickness: 0.1em;
-                    text-underline-offset: 0.15em;
-                }
-
-                /* Images */
-                img {
-                    max-width: 100%;
-                    height: auto;
-                    margin: 1.5rem auto;
-                    display: block;
-                    border-radius: 0.375rem;
-                }
-
-                figure {
-                    margin: 2rem 0;
-                    text-align: center;
-                }
-
-                figcaption {
-                    margin-top: 0.5rem;
+                    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
                     font-size: 0.875rem;
-                    color: #6B7280;
-                    font-style: italic;
+                    line-height: 1.5;
+                }
+
+                pre code {
+                    color: #E5E7EB;
+                    background-color: transparent;
+                    padding: 0;
                 }
 
                 /* Tables */
                 table {
                     width: 100%;
-                    margin: 1.5rem 0;
                     border-collapse: collapse;
-                    border: 2px solid #E5E7EB;
-                    break-inside: avoid;
+                    margin: 1.5rem 0;
+                }
+
+                th, td {
+                    padding: 0.75rem;
+                    border: 1px solid #E5E7EB;
+                    text-align: left;
                 }
 
                 th {
-                    background-color: #F9FAFB;
+                    background-color: #F3F4F6;
                     font-weight: 600;
-                    text-align: left;
-                    padding: 0.75rem;
-                    border: 1px solid #D1D5DB;
-                    border-bottom: 2px solid #9CA3AF;
-                    color: #374151;
-                }
-
-                td {
-                    padding: 0.75rem;
-                    border: 1px solid #D1D5DB;
-                    vertical-align: top;
+                    color: #111827;
                 }
 
                 tr:nth-child(even) {
                     background-color: #F9FAFB;
                 }
 
-                /* Subscript and Superscript */
-                sub {
-                    vertical-align: sub;
+                /* Links */
+                a {
+                    color: #8B5CF6;
+                    text-decoration: none;
+                    border-bottom: 1px solid transparent;
+                    transition: border-color 0.2s;
+                }
+
+                a:hover {
+                    border-bottom-color: #8B5CF6;
+                }
+
+                /* Horizontal rules */
+                hr {
+                    margin: 2rem 0;
+                    border: 0;
+                    border-top: 1px solid #E5E7EB;
+                }
+
+                /* Images */
+                img {
+                    max-width: 100%;
+                    height: auto;
+                    margin: 1.5rem 0;
+                    border-radius: 0.5rem;
+                }
+
+                figure {
+                    margin: 1.5rem 0;
+                }
+
+                figcaption {
+                    text-align: center;
+                    color: #6B7280;
+                    font-size: 0.875rem;
+                    margin-top: 0.5rem;
+                }
+
+                /* Text formatting */
+                strong {
+                    font-weight: 600;
+                    color: #111827;
+                }
+
+                em {
+                    font-style: italic;
+                }
+
+                del {
+                    text-decoration: line-through;
+                    color: #6B7280;
+                }
+
+                mark {
+                    background-color: #FEF3C7;
+                    color: #92400E;
+                    padding: 0.2em 0;
+                }
+
+                /* Subscript and superscript */
+                sub, sup {
                     font-size: 0.75em;
+                    line-height: 0;
+                    position: relative;
+                    vertical-align: baseline;
                 }
 
                 sup {
-                    vertical-align: super;
-                    font-size: 0.75em;
+                    top: -0.5em;
                 }
 
-                /* Horizontal Rule */
-                hr {
-                    border: 0;
-                    height: 2px;
-                    background-color: #E5E7EB;
-                    margin: 2rem 0;
+                sub {
+                    bottom: -0.25em;
+                }
+
+                /* Print-specific styles */
+                @media print {
+                    body {
+                        background-color: ${settings.pageColor};
+                        color: #333333;
+                    }
+
+                    a {
+                        text-decoration: underline;
+                    }
+
+                    img {
+                        max-height: 100vh;
+                        page-break-inside: avoid;
+                    }
+
+                    table {
+                        page-break-inside: avoid;
+                    }
+
+                    pre {
+                        page-break-inside: avoid;
+                    }
+
+                    blockquote {
+                        page-break-inside: avoid;
+                    }
                 }
             `;
-            container.prepend(styleElement);
 
-            // Check for existing heading styles and enhance them if needed
-            const headings = container.querySelectorAll('h1, h2, h3, h4, h5, h6');
-            headings.forEach(heading => {
-                // Preserve any inline styles that might be applied
-                const existingStyle = heading.getAttribute('style') || '';
-                heading.setAttribute('style', `font-weight: bold; ${existingStyle}`);
-            });
+            // Add the style element to the container
+            container.appendChild(styleElement);
 
-            // Fix for strikethrough and highlight elements
-            const strikethroughElements = container.querySelectorAll('s');
-            strikethroughElements.forEach(element => {
-                element.style.textDecoration = 'line-through';
-            });
-
-            // Ensure highlight styles are preserved
-            const highlightedElements = container.querySelectorAll('[data-type="highlight"]');
-            highlightedElements.forEach(element => {
-                const style = element.getAttribute('style') || '';
-                if (!style.includes('background-color')) {
-                    // Assign a default highlight color if none is specified
-                    element.setAttribute('style', `${style}; background-color: #FFFF00;`);
-                }
-
-                // Make sure display is inline to prevent line breaks
-                if (!style.includes('display:')) {
-                    element.setAttribute('style', `${style}; display: inline;`);
-                }
-            });
-
-            // Fix for list items to ensure they render properly
-            const listItems = container.querySelectorAll('li');
-            listItems.forEach(item => {
-                const existingStyle = item.getAttribute('style') || '';
-                item.setAttribute('style', `display: list-item; ${existingStyle}`);
-            });
-
-            // Fix task lists and checkboxes
-            const taskItems = container.querySelectorAll('.task-item');
-            taskItems.forEach(item => {
-                // Add proper styling
-                const itemStyle = item.getAttribute('style') || '';
-                item.setAttribute('style', `display: flex; align-items: flex-start; ${itemStyle}`);
-
-                // Process checkbox
-                const checkbox = item.querySelector('input[type="checkbox"]');
-                if (checkbox) {
-                    // Make sure it's not just a placeholder
-                    if (checkbox.parentElement) {
-                        // Add some spacing after the checkbox
-                        const checkStyle = checkbox.getAttribute('style') || '';
-                        checkbox.setAttribute('style', `margin-right: 8px; margin-top: 4px; ${checkStyle}`);
-                    }
-                }
-            });
-
-            // Fix table styling for PDF output
-            const tables = container.querySelectorAll('table');
-            tables.forEach(table => {
-                // Ensure tables have proper styling
-                const existingStyle = table.getAttribute('style') || '';
-                table.setAttribute('style', `border-collapse: collapse; width: 100%; margin: 1rem 0; border: 2px solid #e5e7eb; ${existingStyle}`);
-
-                // Add page-break-inside: avoid to prevent tables from breaking across pages
-                if (!existingStyle.includes('page-break-inside') && !existingStyle.includes('break-inside')) {
-                    table.style.pageBreakInside = 'avoid';
-                    table.style.breakInside = 'avoid';
-                }
-
-                // Ensure all cells have borders
-                const cells = table.querySelectorAll('th, td');
-                cells.forEach(cell => {
-                    const cellStyle = cell.getAttribute('style') || '';
-                    cell.setAttribute('style', `border: 1px solid #d1d5db; padding: 8px; word-wrap: break-word; ${cellStyle}`);
-                });
-
-                // Style header cells
-                const headerCells = table.querySelectorAll('th');
-                headerCells.forEach(cell => {
-                    const cellStyle = cell.getAttribute('style') || '';
-                    cell.setAttribute('style', `background-color: #f9fafb; font-weight: 600; border-bottom: 2px solid #9ca3af; ${cellStyle}`);
-                });
-            });
-
-            // Process images to ensure they load properly
-            const images = container.querySelectorAll('img');
-            images.forEach(img => {
-                // Add crossOrigin attribute to help with CORS issues
-                img.crossOrigin = 'anonymous';
-
-                // Ensure images have max-width for better PDF layout
-                const existingStyle = img.getAttribute('style') || '';
-                img.setAttribute('style', `max-width: 100%; height: auto; display: block; margin: 1rem auto; ${existingStyle}`);
-
-                // If an image has a figure or figcaption parent, center and style it
-                const figure = img.closest('figure');
-                if (figure) {
-                    figure.style.textAlign = 'center';
-                    figure.style.margin = '1.5rem 0';
-
-                    // Style figcaption if present
-                    const figcaption = figure.querySelector('figcaption');
-                    if (figcaption) {
-                        figcaption.style.textAlign = 'center';
-                        figcaption.style.fontSize = '0.875rem';
-                        figcaption.style.fontStyle = 'italic';
-                        figcaption.style.color = '#4B5563';
-                        figcaption.style.marginTop = '0.5rem';
-                    }
-                }
-
-                // If an image doesn't have alt text, add an empty one for accessibility
-                if (!img.hasAttribute('alt')) {
-                    img.setAttribute('alt', '');
-                }
-
-                // Add title as tooltip if available
-                if (img.hasAttribute('alt') && !img.hasAttribute('title')) {
-                    img.setAttribute('title', img.getAttribute('alt') || '');
-                }
-
-                // Add border to images that don't have transparent backgrounds
-                if (img.src.match(/\.(jpg|jpeg|png)$/i) && !img.src.match(/transparent/i)) {
-                    if (!existingStyle.includes('border')) {
-                        img.style.border = '1px solid #e5e7eb';
-                        img.style.borderRadius = '4px';
-                    }
-                }
-            });
-
-            // Process subscript and superscript elements
-            const subElements = container.querySelectorAll('sub');
-            subElements.forEach(element => {
-                const style = element.getAttribute('style') || '';
-                element.setAttribute('style', `vertical-align: sub; font-size: 0.75em; ${style}`);
-            });
-
-            const supElements = container.querySelectorAll('sup');
-            supElements.forEach(element => {
-                const style = element.getAttribute('style') || '';
-                element.setAttribute('style', `vertical-align: super; font-size: 0.75em; ${style}`);
-            });
-
-            // Create a wrapper for proper page breaks
-            const wrapper = document.createElement('div');
-            wrapper.appendChild(container);
-            document.body.appendChild(wrapper);
+            // Get paper dimensions
+            const dimensions = getPaperDimensions(settings.format);
+            const width = settings.orientation === 'landscape' ? dimensions.height : dimensions.width;
+            const height = settings.orientation === 'landscape' ? dimensions.width : dimensions.height;
 
             // Configure html2pdf options
             const opt = {
                 margin: settings.margin,
                 filename: `${settings.fileName}.pdf`,
-                image: {
-                    type: 'jpeg',
-                    quality: 0.98
-                },
+                image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: {
                     scale: 2,
                     useCORS: true,
-                    allowTaint: true,
-                    backgroundColor: settings.pageColor,
-                    removeContainer: true,
-                    logging: false,
-                    letterRendering: true, // Improve text rendering
-                    scrollY: 0, // Prevent scroll issues
+                    letterRendering: true,
+                    scrollY: 0,
+                    windowWidth: width * 3.78, // Convert mm to pixels (1mm ≈ 3.78px)
+                    windowHeight: height * 3.78,
+                    backgroundColor: settings.pageColor
                 },
                 jsPDF: {
                     unit: 'mm',
-                    format: settings.format,
+                    format: [width, height],
                     orientation: settings.orientation,
-                    compress: true,
-                    precision: 16
+                    compress: true
                 }
             };
 
-            // Generate the PDF
-            return html2pdf().from(wrapper).set(opt).save()
+            // Generate PDF
+            return html2pdf().from(container).set(opt).save()
                 .then(() => {
-                    // Remove the temporary elements
-                    document.body.removeChild(wrapper);
                     toast.success(t('pdfCreatedSuccess'), { id: 'pdf-export' });
-                    return true;
+                })
+                .catch((error: Error) => {
+                    console.error('PDF generation error:', error);
+                    toast.error(t('pdfExportError'), { id: 'pdf-export' });
                 });
         })
-        .catch(error => {
-            console.error('Error exporting to PDF:', error);
+        .catch((error) => {
+            console.error('Error loading html2pdf:', error);
             toast.error(t('pdfExportError'), { id: 'pdf-export' });
-            return false;
         });
 } 

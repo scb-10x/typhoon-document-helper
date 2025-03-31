@@ -133,7 +133,7 @@ ${documentContent}
     };
 
     const handlePDFExport = (settings: PDFExportSettings) => {
-        exportToPDF(settings, documentContent);
+        exportToPDF(settings, documentContent, t);
         setIsPDFDialogOpen(false);
     };
 
