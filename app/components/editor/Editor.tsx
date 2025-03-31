@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 
 // Import custom components
@@ -13,6 +13,7 @@ import DocumentSwitcher from './DocumentSwitcher';
 import LinkModal from './modals/LinkModal';
 import ImageModal from './modals/ImageModal';
 import TranslateModal from './modals/TranslateModal';
+import ContextMenu from './ContextMenu';
 
 // Import extracted modules and hooks
 import { createEditorExtensions } from '../../lib/editorConfig';
@@ -54,6 +55,13 @@ export default function Editor({
     // Editor appearance
     const [fontSize, setFontSize] = useState(16);
     const [lineHeight, setLineHeight] = useState(1.5);
+
+    // Context menu state
+    const [contextMenu, setContextMenu] = useState({
+        isVisible: false,
+        x: 0,
+        y: 0,
+    });
 
     // Handle client-side mounting
     useEffect(() => {
@@ -122,6 +130,51 @@ export default function Editor({
     const modals = useEditorModals(editor);
     const aiActions = useAIActions(editor);
 
+    // Handle right-click on selected text
+    const handleContextMenu = useCallback(
+        (event: MouseEvent) => {
+            // Context menu functionality is disabled
+            return;
+
+            // Original functionality commented out
+            /*
+            const selection = window.getSelection();
+
+            // Only show context menu if there's a text selection
+            if (selection && selection.toString().trim().length > 0 && editor) {
+                event.preventDefault();
+
+                // Position the menu at the cursor position - let the component handle viewport constraints
+                setContextMenu({
+                    isVisible: true,
+                    x: event.clientX,
+                    y: event.clientY,
+                });
+            } else if (contextMenu.isVisible) {
+                // Hide the menu if clicking elsewhere
+                setContextMenu({ ...contextMenu, isVisible: false });
+            }
+            */
+        },
+        [editor, contextMenu]
+    );
+
+    // Close the context menu
+    const closeContextMenu = useCallback(() => {
+        setContextMenu({ ...contextMenu, isVisible: false });
+    }, [contextMenu]);
+
+    // Handle AI action from context menu
+    const handleContextMenuAction = useCallback(
+        (action: string) => {
+            if (!editor) return;
+
+            closeContextMenu();
+            aiActions.handleAIAction(action);
+        },
+        [editor, aiActions, closeContextMenu]
+    );
+
     // Add editor focus styling
     useEffect(() => {
         if (!editor) return;
@@ -140,6 +193,20 @@ export default function Editor({
             editorElement.removeEventListener('blur', handleEditorBlur);
         };
     }, [editor]);
+
+    // Setup context menu event listener
+    useEffect(() => {
+        if (!editor) return;
+
+        const editorElement = editor.view.dom;
+
+        // Add context menu event listener
+        editorElement.addEventListener('contextmenu', handleContextMenu);
+
+        return () => {
+            editorElement.removeEventListener('contextmenu', handleContextMenu);
+        };
+    }, [editor, handleContextMenu]);
 
     // Handle translation request
     const handleTranslateSubmit = (language: string) => {
@@ -327,6 +394,15 @@ export default function Editor({
 
             {/* Modals */}
             {renderModals()}
+
+            {/* Context Menu */}
+            <ContextMenu
+                x={contextMenu.x}
+                y={contextMenu.y}
+                isVisible={contextMenu.isVisible}
+                onClose={closeContextMenu}
+                onAction={handleContextMenuAction}
+            />
         </div>
     );
 }
