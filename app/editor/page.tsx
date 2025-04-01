@@ -5,6 +5,8 @@ import Editor, { Document } from "../components/editor/Editor";
 import { Toaster, toast } from "react-hot-toast";
 import Image from "next/image";
 import Link from "next/link";
+import { FaGithub, FaDiscord, FaXTwitter } from 'react-icons/fa6';
+import { SiHuggingface } from "react-icons/si";
 import { useLanguage } from '../contexts/LanguageContext';
 
 // Default empty document
@@ -236,16 +238,50 @@ export default function EditorPage() {
           />
         </div>
       </main>
-      <footer className="py-2 px-6 border-t border-gray-200 bg-white text-xs text-gray-500">
-        <div className="text-center">
-          <a
-            href="https://opentyphoon.ai/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-indigo-600 transition-colors"
-          >
-            Built with Typhoon
-          </a>{" "}
+      <footer className="bg-white border-t border-gray-200">
+        <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 text-sm text-gray-500">
+            <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
+              <span>© 2025 Typhoon. All rights reserved</span>
+              <a
+                href="https://opentyphoon.ai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-purple-600 hover:text-purple-800 transition-colors font-medium"
+              >
+                #BuiltWithTyphoon
+              </a>
+            </div>
+
+            <div className="flex items-center space-x-6">
+              <a
+                href="https://opentyphoon.ai/tac"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-gray-900 transition-colors"
+              >
+                Terms and Conditions
+              </a>
+              <div className="flex items-center space-x-4">
+                <a href="https://github.com/scb-10x" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-gray-400 hover:text-gray-900 transition-colors">
+                  <span className="sr-only">GitHub</span>
+                  <FaGithub className="h-5 w-5" />
+                </a>
+                <a href="https://discord.gg/9F6nrFXyNt" target="_blank" rel="noopener noreferrer" aria-label="Discord" className="text-gray-400 hover:text-gray-900 transition-colors">
+                  <span className="sr-only">Discord</span>
+                  <FaDiscord className="h-5 w-5" />
+                </a>
+                <a href="https://huggingface.co/scb10x" target="_blank" rel="noopener noreferrer" aria-label="Hugging Face" className="text-gray-400 hover:text-gray-900 transition-colors">
+                  <span className="sr-only">Hugging Face</span>
+                  <SiHuggingface className="h-5 w-5" />
+                </a>
+                <a href="https://x.com/opentyphoon" target="_blank" rel="noopener noreferrer" aria-label="X (formerly Twitter)" className="text-gray-400 hover:text-gray-900 transition-colors">
+                  <span className="sr-only">X</span>
+                  <FaXTwitter className="h-5 w-5" />
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </footer>
 
