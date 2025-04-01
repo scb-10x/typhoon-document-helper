@@ -58,10 +58,11 @@ export default function Home() {
             <div className="h-9 w-9 rounded-lg overflow-hidden">
               <Image
                 src="/images/logo.svg"
-                alt="Typhoon Docs Logo"
+                alt="Typhoon AI Logo"
                 width={36}
                 height={36}
                 className="h-full w-full object-cover"
+                priority
               />
             </div>
             <h1 className="text-xl font-semibold text-gradient-subtle">
@@ -70,20 +71,10 @@ export default function Home() {
           </div>
           <div className="flex items-center space-x-4">
             <LanguageSwitcher />
-            <a
-              href="https://github.com/scb-10x/typhoon-document-helper"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden md:flex items-center text-sm text-gray-600 hover:text-indigo-600 transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 .333A9.911 9.911 0 0 0 6.866 19.65c.5.092.678-.215.678-.477 0-.237-.01-1.017-.014-1.845-2.757.6-3.338-1.169-3.338-1.169a2.627 2.627 0 0 0-1.1-1.451c-.9-.615.07-.6.07-.6a2.084 2.084 0 0 1 1.518 1.021 2.11 2.11 0 0 0 2.884.823c.044-.503.268-.973.63-1.325-2.2-.25-4.516-1.1-4.516-4.9A3.832 3.832 0 0 1 4.7 7.068a3.56 3.56 0 0 1 .095-2.623s.832-.266 2.726 1.016a9.409 9.409 0 0 1 4.962 0c1.89-1.282 2.717-1.016 2.717-1.016.366.83.402 1.768.1 2.623a3.827 3.827 0 0 1 1.02 2.659c0 3.807-2.319 4.644-4.525 4.889a2.366 2.366 0 0 1 .673 1.834c0 1.326-.012 2.394-.012 2.72 0 .263.18.572.681.475A9.911 9.911 0 0 0 10 .333Z" clipRule="evenodd" />
-              </svg>
-              {t('github')}
-            </a>
             <Link
               href="/editor"
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-md transition-all button-shine"
+              aria-label="Try the Typhoon AI document editor demo"
             >
               {t('openApp')} <FiArrowRight />
             </Link>
@@ -92,7 +83,11 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-32 overflow-hidden">
+      <section className="relative pt-24 pb-32 overflow-hidden" itemScope itemType="https://schema.org/SoftwareApplication">
+        <meta itemProp="applicationCategory" content="DocumentEditor" />
+        <meta itemProp="operatingSystem" content="Web browser" />
+        <meta itemProp="offers" itemScope itemType="https://schema.org/Offer" content="https://opentyphoon.ai" />
+        <meta itemProp="name" content="Typhoon AI Document Editor" />
         <BackgroundElements />
         <div className="max-w-7xl mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-16">
@@ -105,14 +100,15 @@ export default function Home() {
               {t('builtWithTyphoon')}
             </motion.div>
 
-            <motion.h1
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-5xl sm:text-6xl font-bold mb-6 text-gradient"
+              itemProp="description"
             >
               {t('heroTitle')}
-            </motion.h1>
+            </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -131,6 +127,8 @@ export default function Home() {
               <Link
                 href="/editor"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 text-lg font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg hover:shadow-md transition-all button-shine"
+                aria-label="Try the Typhoon AI document editor"
+                itemProp="url"
               >
                 {t('tryEditor')} <FiArrowRight />
               </Link>
@@ -147,40 +145,36 @@ export default function Home() {
               <Link
                 href="/editor"
                 className="px-8 py-3 rounded-lg bg-white text-indigo-600 text-lg font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 button-shine"
+                aria-label="Try Typhoon AI document editing capabilities"
               >
                 {t('tryTyphoonDocs')} <FiArrowRight />
               </Link>
             </div>
-            <div className="w-full aspect-video bg-gradient-to-r from-purple-100 to-indigo-100 flex items-center justify-center">
-              <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-100 w-4/5 h-3/4 flex flex-col">
-                <div className="h-4 w-24 bg-purple-200 rounded mb-4"></div>
-                <div className="h-3 w-full bg-gray-100 rounded mb-2"></div>
-                <div className="h-3 w-full bg-gray-100 rounded mb-2"></div>
-                <div className="h-3 w-4/5 bg-gray-100 rounded mb-4"></div>
-                <div className="h-32 w-full bg-purple-50 rounded mb-4 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-purple-300" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                  </svg>
-                </div>
-                <div className="h-3 w-full bg-gray-100 rounded mb-2"></div>
-                <div className="h-3 w-full bg-gray-100 rounded mb-2"></div>
-                <div className="h-3 w-3/5 bg-gray-100 rounded"></div>
-              </div>
+            <div className="w-full aspect-video bg-gradient-to-r from-purple-100 to-indigo-100 flex items-center justify-center" aria-hidden="true">
+              <Image
+                src="/static/screenshot.png"
+                alt="Typhoon Document Editor screenshot"
+                width={1200}
+                height={675}
+                className="rounded-lg shadow-sm w-full h-auto object-cover"
+                priority
+              />
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gray-50 relative overflow-hidden">
+      <section className="py-20 bg-gray-50 relative overflow-hidden" aria-labelledby="features-heading">
         <div className="bg-noise"></div>
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4 text-gradient-subtle">{t('featuresTitle')}</h2>
+            <h2 id="features-heading" className="text-3xl font-bold mb-4 text-gradient-subtle">{t('featuresTitle')}</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">{t('featuresSubtitle')}</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
+            {/* Feature 1 */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -188,12 +182,12 @@ export default function Home() {
               viewport={{ once: true }}
               className="animate-float"
             >
-              <div className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-start h-full">
-                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600 mb-4">
+              <div className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-start h-full" itemScope itemType="https://schema.org/Thing">
+                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600 mb-4" aria-hidden="true">
                   <FiEdit size={24} />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{t('richTextTitle')}</h3>
-                <p className="text-gray-600">{t('richTextDescription')}</p>
+                <h3 className="text-lg font-semibold mb-2" itemProp="name">{t('richTextTitle')}</h3>
+                <p className="text-gray-600" itemProp="description">{t('richTextDescription')}</p>
                 <div className="mt-auto pt-4">
                   <Link href="/features/rich-text" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
                     {t('learnMore')} <FiArrowRight className="ml-1" />
@@ -202,6 +196,7 @@ export default function Home() {
               </div>
             </motion.div>
 
+            {/* Feature 2 */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -209,12 +204,12 @@ export default function Home() {
               viewport={{ once: true }}
               className="animate-float-reverse"
             >
-              <div className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-start h-full">
-                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600 mb-4">
+              <div className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-start h-full" itemScope itemType="https://schema.org/Thing">
+                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600 mb-4" aria-hidden="true">
                   <FiCpu size={24} />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{t('aiSuggestionsTitle')}</h3>
-                <p className="text-gray-600">{t('aiSuggestionsDescription')}</p>
+                <h3 className="text-lg font-semibold mb-2" itemProp="name">{t('aiSuggestionsTitle')}</h3>
+                <p className="text-gray-600" itemProp="description">{t('aiSuggestionsDescription')}</p>
                 <div className="mt-auto pt-4">
                   <Link href="/features/ai-suggestions" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
                     {t('learnMore')} <FiArrowRight className="ml-1" />
@@ -223,6 +218,7 @@ export default function Home() {
               </div>
             </motion.div>
 
+            {/* Feature 3 */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -230,12 +226,12 @@ export default function Home() {
               viewport={{ once: true }}
               className="animate-float"
             >
-              <div className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-start h-full">
-                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600 mb-4">
+              <div className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-start h-full" itemScope itemType="https://schema.org/Thing">
+                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600 mb-4" aria-hidden="true">
                   <FiDownload size={24} />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{t('exportOptionsTitle')}</h3>
-                <p className="text-gray-600">{t('exportOptionsDescription')}</p>
+                <h3 className="text-lg font-semibold mb-2" itemProp="name">{t('exportOptionsTitle')}</h3>
+                <p className="text-gray-600" itemProp="description">{t('exportOptionsDescription')}</p>
                 <div className="mt-auto pt-4">
                   <Link href="/features/export" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
                     {t('learnMore')} <FiArrowRight className="ml-1" />
@@ -243,6 +239,28 @@ export default function Home() {
                 </div>
               </div>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Add a new section about integration with Typhoon */}
+      <section className="py-16 bg-white" aria-labelledby="typhoon-integration-heading">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-10">
+            <h2 id="typhoon-integration-heading" className="text-3xl font-bold mb-4 text-gradient-subtle">Integrate Typhoon AI in Your Own Applications</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              This demo showcases just one example of what you can build with Typhoon AI. Visit <a href="https://opentyphoon.ai" className="text-indigo-600 hover:text-indigo-800 font-medium">opentyphoon.ai</a> to learn how to add these capabilities to your own products.
+            </p>
+          </div>
+          <div className="flex justify-center mt-6">
+            <a
+              href="https://opentyphoon.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 text-lg font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg hover:shadow-md transition-all button-shine"
+            >
+              Visit Typhoon AI <FiArrowRight />
+            </a>
           </div>
         </div>
       </section>

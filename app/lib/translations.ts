@@ -261,31 +261,31 @@ export const translations: Translations = {
     // Header
     appName: 'Typhoon Docs',
     github: 'GitHub',
-    openApp: 'Open App',
+    openApp: 'Try It',
 
     // Hero Section
-    builtWithTyphoon: '✨ Built with Typhoon',
-    heroTitle: 'Create beautiful documents with AI',
-    heroSubtitle: 'Transform your writing workflow with intelligent suggestions and powerful editing tools. Create, edit, and collaborate with ease.',
+    builtWithTyphoon: '✨ Powered by Typhoon AI',
+    heroTitle: 'Experience the power of Typhoon AI in document creation',
+    heroSubtitle: 'This interactive demo showcases how Typhoon AI transforms document editing with intelligent suggestions and powerful tools. See what your applications could do with Typhoon.',
     tryEditor: 'Try the Editor',
-    tryTyphoonDocs: 'Try Typhoon Docs',
+    tryTyphoonDocs: 'Experience Typhoon Docs',
 
     // Features Section
-    featuresTitle: 'Feature-Rich Document Editor',
-    featuresSubtitle: 'Everything you need to create professional documents with AI assistance',
+    featuresTitle: 'Typhoon AI Capabilities Showcase',
+    featuresSubtitle: 'Explore what you can build with Typhoon AI in your own applications',
 
     // Feature 1
     richTextTitle: 'Rich Text Editing',
-    richTextDescription: 'Create beautiful documents with our advanced rich text editor that supports formatting, tables, images, and more.',
+    richTextDescription: 'Create beautiful documents with our advanced rich text editor that supports formatting, tables, images, and more - all enhanced by Typhoon AI.',
     learnMore: 'Learn more',
 
     // Feature 2
-    aiSuggestionsTitle: 'AI-Powered Suggestions',
-    aiSuggestionsDescription: 'Get intelligent writing suggestions and assistance powered by Typhoon. Automatically improve your text quality and grammar.',
+    aiSuggestionsTitle: 'AI-Powered Intelligence',
+    aiSuggestionsDescription: 'Experience intelligent writing suggestions and assistance powered by Typhoon AI. See how it can automatically improve text quality, clarity, and style.',
 
     // Feature 3
-    exportOptionsTitle: 'Export Options',
-    exportOptionsDescription: 'Export your documents in multiple formats including PDF, Word, and HTML. Share your work with others easily.',
+    exportOptionsTitle: 'Seamless Integration',
+    exportOptionsDescription: 'See how Typhoon AI can be integrated into existing workflows with multiple export formats including PDF, Word, and HTML.',
 
     // Footer
     copyright: 'All rights reserved',
@@ -345,13 +345,13 @@ export const translations: Translations = {
     splitCell: 'Split cell',
 
     // Welcome Screen
-    welcome: 'Welcome to Typhoon Document Editor',
-    welcomeSubtitle: 'Get started by creating a new document or loading a sample.',
+    welcome: 'Welcome to the Typhoon AI Document',
+    welcomeSubtitle: 'This interactive showcase demonstrates how Typhoon AI can enhance document creation. Get started by creating a document or loading a sample.',
     createNew: 'New Document',
 
     // AI Footer
-    improve: 'Improve',
-    transform: 'Transform',
+    improve: 'Improve with Typhoon AI',
+    transform: 'Transform with Typhoon AI',
     searchAIActions: 'Search AI actions...',
 
     // AI Improve options
