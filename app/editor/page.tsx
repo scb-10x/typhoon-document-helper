@@ -242,7 +242,6 @@ export default function EditorPage() {
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 text-sm text-gray-500">
             <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
-              <span>© 2025 Typhoon. All rights reserved</span>
               <a
                 href="https://opentyphoon.ai"
                 target="_blank"
