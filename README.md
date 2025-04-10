@@ -1,52 +1,47 @@
 # Typhoon Document Helper
 
-A modern, feature-rich document editor built with Next.js and TipTap. This application provides a powerful WYSIWYG editor with AI-powered features, multilingual support, and various export options.
+## Introduction
 
-## Features
+[Typhoon Document Helper](https://apps.opentyphoon.ai) is a feature-rich document editor that combines modern web technologies with AI capabilities to enhance the writing experience. It provides a powerful WYSIWYG editor with intelligent text enhancement, translation features, and versatile export options.
 
-- 📝 Rich text editing with TipTap
-- 🤖 AI-powered text enhancement and translation
-- 🌐 Multilingual support (English and Thai)
-- 📤 Multiple export formats (PDF, HTML, Markdown, TXT)
-- 🎨 Customizable PDF export settings
-- 📱 Responsive design
-- ⌨️ Keyboard shortcuts
-- 📊 Table support with cell merging and header rows
-- ✅ Task lists with checkboxes
-- 🎯 Code blocks with syntax highlighting
-- 🎨 Text styling (color, highlight, underline)
-- 📝 Subscript and superscript support
-- 🔗 Link management with modal interface
-- 📏 Comfort settings (font size, line height)
-- 📄 Multiple document management
-- 💾 Local storage persistence
+This project is part of [Typhoon Application Week](https://apps.opentyphoon.ai), showcasing the capabilities of the [Typhoon platform](https://opentyphoon.ai). Please note that this application is not maintained for production use and is not production-ready. Use at your own risk.
 
-## Tech Stack
+## Application Week URLs
 
-- Next.js 15.2.4
-- React 19.1.0
-- TipTap Editor 2.11.7
-- TailwindCSS 4.0.17
-- TypeScript 5.8.2
-- Framer Motion 12.6.2
-- React Hot Toast 2.5.2
-- HTML2PDF.js 0.10.3
-- Axios 1.8.4
-- Radix UI Components
-- Lucide React Icons
+- Landing page: [apps.opentyphoon.ai](https://apps.opentyphoon.ai)
+- Detective Game: [detective.apps.opentyphoon.ai](https://detective.apps.opentyphoon.ai)
+- Chat With Your Website: [chat.apps.opentyphoon.ai](https://chat.apps.opentyphoon.ai)
+- Travel Planner: [travel.apps.opentyphoon.ai](https://travel.apps.opentyphoon.ai)
+- Deep Research: [deep-research.apps.opentyphoon.ai](https://deep-research.apps.opentyphoon.ai)
+- Slides: [slides.apps.opentyphoon.ai](https://slides.apps.opentyphoon.ai)
+- Optimizer: [optimizer.apps.opentyphoon.ai](https://optimizer.apps.opentyphoon.ai)
+- Docs: [docs.apps.opentyphoon.ai](https://docs.apps.opentyphoon.ai)
 
-## Getting Started
+## Highlighted Features + Typhoon Integration
+
+- **AI-Powered Text Enhancement**: Typhoon analyzes your text to suggest improvements, fix grammar errors, and enhance readability, providing a more polished final document.
+
+- **Intelligent Translation Support**: Leverage Typhoon's multilingual capabilities to translate your content between languages while maintaining context and meaning, with special support for English and Thai.
+
+- **Content Transformation**: Typhoon powers features like tone adjustment (making text more professional or casual), clarity improvement, wordiness reduction, and content summarization.
+
+- **Explain Like I'm 5 (ELI5)**: Complex concepts are simplified through Typhoon's ability to reformulate technical content into easy-to-understand explanations.
+
+- **Multiple Document Management**: The application intelligently handles document organization and preservation using local storage, with Typhoon assisting in generating document titles and suggestions.
+
+## Getting Started (Local Development)
 
 ### Prerequisites
 
 - Node.js 18 or later
 - pnpm (recommended) or npm
+- Typhoon API key
 
 ### Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/scb-10x/typhoon-document-helper.git
+git clone https://github.com/yourusername/typhoon-document-helper.git
 cd typhoon-document-helper
 ```
 
@@ -57,7 +52,7 @@ pnpm install
 
 3. Create a `.env.local` file in the root directory and add your environment variables:
 ```env
-NEXT_PUBLIC_AI_API_URL=your_ai_api_url
+TYPHOON_API_KEY=your_typhoon_api_key_here
 ```
 
 4. Run the development server:
@@ -65,95 +60,16 @@ NEXT_PUBLIC_AI_API_URL=your_ai_api_url
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## Development
-
-- `pnpm dev` - Start development server with Turbopack
-- `pnpm build` - Build for production
-- `pnpm start` - Start production server
-- `pnpm lint` - Run ESLint
-- `pnpm type-check` - Run TypeScript type checking
-
-## Project Structure
-
-```
-app/
-├── api/           # API routes
-├── components/    # Reusable components
-├── contexts/      # React contexts
-├── editor/        # Editor page and components
-├── hooks/         # Custom React hooks
-├── lib/           # Utility functions and configurations
-├── styles/        # Global styles
-└── types/         # TypeScript type definitions
-```
-
-## Features in Detail
-
-### Document Management
-- Create, rename, and delete multiple documents
-- Automatic saving to local storage
-- Document switching with state preservation
-- Welcome screen for first-time users
-
-### Editor Features
-- Rich text formatting
-- Table creation and manipulation
-- Code blocks with syntax highlighting
-- Task lists with checkboxes
-- Link management with modal interface
-- Text styling options (color, highlight, underline)
-- Subscript and superscript support
-
-### AI Integration
-- Text enhancement and improvement
-- Translation support
-- Professional tone adjustment
-- Clarity improvement
-- Wordiness reduction
-- Content extension and summarization
-- ELI5 (Explain Like I'm 5) mode
-- Persuasive writing assistance
-
-### Export Options
-- PDF export with customizable settings
-- HTML export
-- Markdown export
-- Plain text export
-
-### User Experience
-- Responsive design for all screen sizes
-- Comfort settings for font size and line height
-- Keyboard shortcuts for common actions
-- Toast notifications for user feedback
-- Loading states and error handling
-
-## Deployment
-
-The application is optimized for deployment on Vercel:
-
-1. Push your code to GitHub
-2. Import your repository on Vercel
-3. Add your environment variables in the Vercel dashboard
-4. Deploy!
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT) - see the LICENSE file for details.
 
-## Acknowledgments
+## Connect With Us
 
-- [TipTap](https://tiptap.dev/) for the amazing editor
-- [Next.js](https://nextjs.org/) for the framework
-- [TailwindCSS](https://tailwindcss.com/) for the styling
-- [Radix UI](https://www.radix-ui.com/) for accessible components
-- [Lucide](https://lucide.dev/) for beautiful icons
+- Website: [Typhoon](https://opentyphoon.ai)
+- GitHub: [SCB 10X](https://github.com/scb-10x)
+- Hugging Face: [SCB 10X](https://huggingface.co/scb10x)
+- Discord: [Join our community](https://discord.com/invite/9F6nrFXyNt)
+- X (formerly Twitter): [Typhoon](https://x.com/opentyphoon)
