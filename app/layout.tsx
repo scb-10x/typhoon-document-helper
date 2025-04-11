@@ -64,7 +64,7 @@ export default function RootLayout({
     <html lang="en" className="light">
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        <Script type="application/ld+json" dangerouslySetInnerHTML={{
+        <Script id="json-loader" type="application/ld+json" dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebApplication",
