@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const TYPHOON_API_URL = process.env.TYPHOON_API_URL || 'https://api.opentyphoon.ai/v1/chat/completions';
 const TYPHOON_API_KEY = process.env.TYPHOON_API_KEY;
+const TYPHOON_MODEL = process.env.TYPHOON_MODEL || 'typhoon-v2.1-12b-instruct';
 
 // Define valid action types to improve type safety
 type ActionType =
@@ -187,7 +188,7 @@ export async function POST(request: Request) {
             TYPHOON_API_URL,
             {
                 messages: messages,
-                model: "typhoon-v2.1-12b-instruct",
+                model:TYPHOON_MODEL,
                 temperature: 1.0,
                 max_tokens: 2048,
             },
