@@ -19,15 +19,15 @@ export const metadata: Metadata = {
   description: "Experience the power of Typhoon AI in this interactive document editor demo. Create, edit and enhance text with AI assistance. #BuiltWithTyphoon",
   keywords: "Typhoon AI, document editor, AI document, text editor, AI assistant, Typhoon demo, document helper",
   authors: [{ name: "Typhoon Team" }],
-  metadataBase: new URL("https://docs.opentyphoon.ai"),
+  metadataBase: new URL("https://docs.apps.opentyphoon.ai"),
   openGraph: {
     title: "Typhoon Docs | AI-Powered Document Editor",
     description: "Experience the power of Typhoon AI in this interactive document editor demo. Create, edit and enhance text with AI assistance.",
-    url: "https://docs.opentyphoon.ai",
+    url: "https://docs.apps.opentyphoon.ai",
     siteName: "Typhoon Document Helper",
     images: [
       {
-        url: "/images/og-image.png",
+        url: "/images/og.jpg",
         width: 1200,
         height: 630,
         alt: "Typhoon Docs - AI-Powered Document Editor",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     title: "Typhoon Docs | AI-Powered Document Editor",
     description: "Experience the power of Typhoon AI in this interactive document editor demo. Create, edit and enhance your documents with AI assistance.",
     creator: "@opentyphoon",
-    images: ["/images/twitter-image.png"],
+    images: ["/images/og.jpg"],
   },
   icons: {
     icon: '/favicon.ico',
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: "https://docs.opentyphoon.ai",
+    canonical: "https://docs.apps.opentyphoon.ai",
   },
 };
 
@@ -69,7 +69,7 @@ export default function RootLayout({
             "@context": "https://schema.org",
             "@type": "WebApplication",
             "name": "Typhoon Docs",
-            "url": "https://docs.opentyphoon.ai",
+            "url": "https://docs.apps.opentyphoon.ai",
             "description": "AI-powered document editor demonstration built with Typhoon",
             "applicationCategory": "DeveloperApplication, BusinessApplication",
             "operatingSystem": "Any",
