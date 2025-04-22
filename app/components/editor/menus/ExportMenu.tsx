@@ -127,6 +127,15 @@ ${documentContent}
         setIsOpen(false);
     };
 
+    const exportAsDOCX = async () => {
+        await exportDocument('docx', {
+            content: documentContent,
+            fileName: documentName || 'document',
+            title: documentName
+        });
+        setIsOpen(false);
+    };
+
     const handleExportPDF = () => {
         setIsPDFDialogOpen(true);
         setIsOpen(false);
@@ -171,6 +180,13 @@ ${documentContent}
                         >
                             <DocumentArrowDownIcon className="w-4 h-4 mr-2 text-gray-500" />
                             {t('exportTXT')}
+                        </button>
+                        <button
+                            onClick={exportAsDOCX}
+                            className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                        >
+                            <DocumentArrowDownIcon className="w-4 h-4 mr-2 text-gray-500" />
+                            {t('exportDOCX')}
                         </button>
                         <button
                             onClick={handleExportPDF}

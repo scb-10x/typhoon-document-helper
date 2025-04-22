@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-type ExportFormat = 'txt' | 'html' | 'markdown';
+type ExportFormat = 'txt' | 'html' | 'markdown' | 'docx';
 
 interface ExportOptions {
     content: string;
