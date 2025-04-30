@@ -18,6 +18,7 @@ export const ExportButton = ({ content, documentTitle }: ExportButtonProps) => {
                 variant="ghost"
                 size="sm"
                 className="flex items-center gap-2"
+                id="export-button"
             >
                 <FileDown className="h-4 w-4" />
                 Export

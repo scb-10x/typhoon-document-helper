@@ -22,6 +22,7 @@ export default function EditorPage() {
   const [activeDocumentId, setActiveDocumentId] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [showSourceCode, setShowSourceCode] = useState(false);
 
   // Language context
   const { t } = useLanguage();
@@ -30,6 +31,26 @@ export default function EditorPage() {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Check if source code button should be visible
+  useEffect(() => {
+    if (!isClient) return;
+
+    const releaseDate = new Date('2025-05-08T17:00:01Z').getTime();
+
+    const checkDate = () => {
+      const now = new Date().getTime();
+      setShowSourceCode(now >= releaseDate);
+    };
+
+    // Check immediately
+    checkDate();
+
+    // Set up interval to check periodically
+    const interval = setInterval(checkDate, 60000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [isClient]);
 
   // Load documents from localStorage on client-side
   useEffect(() => {
@@ -207,6 +228,20 @@ export default function EditorPage() {
               </h1>
             </div>
           </Link>
+
+          {showSourceCode && (
+            <a
+              href="https://github.com/scb-10x/typhoon-document-helper"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200 transition-all"
+              aria-label="View source code on GitHub"
+              id="editor-github-source-button"
+            >
+              <FaGithub className="h-5 w-5" />
+              Source
+            </a>
+          )}
         </div>
       </header>
       <main className="flex-1 container mx-auto px-2 py-6 overflow-hidden flex items-stretch max-w-[95%]" itemProp="mainEntityOfPage">

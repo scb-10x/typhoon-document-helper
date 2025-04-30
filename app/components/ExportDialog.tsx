@@ -67,11 +67,12 @@ export const ExportDialog = ({
                         value={selectedFormat}
                         onValueChange={(value) => setSelectedFormat(value as 'txt' | 'html' | 'markdown')}
                         className="w-full"
+                        id="export-format-tabs"
                     >
                         <TabsList className="grid grid-cols-3 w-full">
-                            <TabsTrigger value="txt">Text</TabsTrigger>
-                            <TabsTrigger value="html">HTML</TabsTrigger>
-                            <TabsTrigger value="markdown">Markdown</TabsTrigger>
+                            <TabsTrigger value="txt" id="export-format-txt">Text</TabsTrigger>
+                            <TabsTrigger value="html" id="export-format-html">HTML</TabsTrigger>
+                            <TabsTrigger value="markdown" id="export-format-markdown">Markdown</TabsTrigger>
                         </TabsList>
                     </Tabs>
 
@@ -81,10 +82,10 @@ export const ExportDialog = ({
                 </div>
 
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    <Button variant="outline" onClick={() => onOpenChange(false)} id="export-cancel-button">
                         Cancel
                     </Button>
-                    <Button onClick={handleExport} disabled={isExporting}>
+                    <Button onClick={handleExport} disabled={isExporting} id="export-confirm-button">
                         {isExporting ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

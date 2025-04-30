@@ -8,6 +8,7 @@ import { FaGithub, FaDiscord, FaXTwitter } from 'react-icons/fa6';
 import { SiHuggingface } from "react-icons/si";
 import { useLanguage } from './contexts/LanguageContext';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
+import { useEffect, useState } from 'react';
 
 // Animated background elements
 const BackgroundElements = () => (
@@ -48,6 +49,24 @@ const BackgroundElements = () => (
 
 export default function Home() {
   const { t } = useLanguage();
+  const [showSourceCode, setShowSourceCode] = useState(false);
+
+  useEffect(() => {
+    const releaseDate = new Date('2025-05-08T17:00:01Z').getTime();
+
+    const checkDate = () => {
+      const now = new Date().getTime();
+      setShowSourceCode(now >= releaseDate);
+    };
+
+    // Check immediately
+    checkDate();
+
+    // Set up interval to check periodically
+    const interval = setInterval(checkDate, 60000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -71,10 +90,24 @@ export default function Home() {
           </div>
           <div className="flex items-center space-x-4">
             <LanguageSwitcher />
+            {showSourceCode && (
+              <a
+                href="https://github.com/scb-10x/typhoon-document-helper"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 text-gray-800 hover:bg-gray-200 transition-all"
+                aria-label="View source code on GitHub"
+                id="github-source-button"
+              >
+                <FaGithub className="h-5 w-5" />
+                Source
+              </a>
+            )}
             <Link
               href="/editor"
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-md transition-all button-shine"
               aria-label="Try the Typhoon AI document editor demo"
+              id="header-try-editor-button"
             >
               {t('openApp')} <FiArrowRight />
             </Link>
@@ -129,6 +162,7 @@ export default function Home() {
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 text-lg font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg hover:shadow-md transition-all button-shine"
                 aria-label="Try the Typhoon AI document editor"
                 itemProp="url"
+                id="hero-try-editor-button"
               >
                 {t('tryEditor')} <FiArrowRight />
               </Link>
@@ -146,6 +180,7 @@ export default function Home() {
                 href="/editor"
                 className="px-8 py-3 rounded-lg bg-white text-indigo-600 text-lg font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 button-shine"
                 aria-label="Try Typhoon AI document editing capabilities"
+                id="screenshot-overlay-button"
               >
                 {t('tryTyphoonDocs')} <FiArrowRight />
               </Link>
@@ -189,7 +224,7 @@ export default function Home() {
                 <h3 className="text-lg font-semibold mb-2" itemProp="name">{t('richTextTitle')}</h3>
                 <p className="text-gray-600" itemProp="description">{t('richTextDescription')}</p>
                 <div className="mt-auto pt-4">
-                  <Link href="/features/rich-text" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
+                  <Link href="/features/rich-text" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center" id="feature-rich-text-learn-more">
                     {t('learnMore')} <FiArrowRight className="ml-1" />
                   </Link>
                 </div>
@@ -211,7 +246,7 @@ export default function Home() {
                 <h3 className="text-lg font-semibold mb-2" itemProp="name">{t('aiSuggestionsTitle')}</h3>
                 <p className="text-gray-600" itemProp="description">{t('aiSuggestionsDescription')}</p>
                 <div className="mt-auto pt-4">
-                  <Link href="/features/ai-suggestions" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
+                  <Link href="/features/ai-suggestions" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center" id="feature-ai-suggestions-learn-more">
                     {t('learnMore')} <FiArrowRight className="ml-1" />
                   </Link>
                 </div>
@@ -233,7 +268,7 @@ export default function Home() {
                 <h3 className="text-lg font-semibold mb-2" itemProp="name">{t('exportOptionsTitle')}</h3>
                 <p className="text-gray-600" itemProp="description">{t('exportOptionsDescription')}</p>
                 <div className="mt-auto pt-4">
-                  <Link href="/features/export" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center">
+                  <Link href="/features/export" className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center" id="feature-export-learn-more">
                     {t('learnMore')} <FiArrowRight className="ml-1" />
                   </Link>
                 </div>
