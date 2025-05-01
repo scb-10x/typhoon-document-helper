@@ -84,9 +84,14 @@ export default function Home() {
                 priority
               />
             </div>
-            <h1 className="text-xl font-semibold text-gradient-subtle">
-              {t('appName')}
-            </h1>
+            <div className="flex items-center">
+              <h1 className="text-xl font-semibold text-gradient-subtle">
+                {t('appName')}
+              </h1>
+              <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full">
+                DEMO
+              </span>
+            </div>
           </div>
           <div className="flex items-center space-x-4">
             <LanguageSwitcher />

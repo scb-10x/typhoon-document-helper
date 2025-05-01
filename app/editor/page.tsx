@@ -226,6 +226,9 @@ export default function EditorPage() {
               <h1 className="text-xl font-semibold text-gradient-subtle" itemProp="name">
                 {t('appName')}
               </h1>
+              <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full">
+                DEMO
+              </span>
             </div>
           </Link>
 
